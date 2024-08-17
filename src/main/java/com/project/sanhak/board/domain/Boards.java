@@ -2,22 +2,24 @@ package com.project.sanhak.board.domain;
 
 import com.project.sanhak.user.domain.User;
 import jakarta.persistence.*;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "Boards")
 public class Boards {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int BId;
+    private int B_Id;
 
-    private int BLikes;
-    private int BReport;
-    private int BView;
-    private int BCate;
+    private int B_Likes;
+    private int B_Report;
+    private int B_View;
+    private int B_Cate;
 
-    @ManyToOne
     @JoinColumn(name = "U_id")
-    private User user;
+    @ManyToOne
+    private User U_id;
 
 }
