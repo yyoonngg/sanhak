@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Data
-public class CodeSkiltreeSkilConnectId implements Serializable {
-    private int CST_id;
+public class PositionCodeSkilConnectId implements Serializable {
+    private int P_id;
     private int CS_id;
 }

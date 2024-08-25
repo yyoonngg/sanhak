@@ -5,13 +5,13 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "Code_Skiltree")
-public class CodeSkiltree {
+@Table(name = "Positions")
+public class Positions {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int CST_Id;
+    private int P_Id;
 
-    private String CST_Name;
-    private String CST_Info;
+    private String P_Name;
+    private String P_Info;
 }

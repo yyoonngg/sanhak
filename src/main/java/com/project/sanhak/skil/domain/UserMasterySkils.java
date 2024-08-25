@@ -6,19 +6,18 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "User_Code_Skils_Masterys")
-public class UserCodeSkilMastery {
+@Table(name = "User_Masterys_Skils")
+public class UserMasterySkils {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int UCSM_Id;
+    private int UMS_Id;
 
     @ManyToOne
     @JoinColumn(name = "U_id")
     private User U_id;
 
     @ManyToOne
-    @JoinColumn(name = "CSM_id")
-    private CodeSkilMastery CSM_id;
-
+    @JoinColumn(name = "MS_id")
+    private Mastery_skil MS_id;
 }

@@ -8,7 +8,6 @@ import lombok.Data;
 @Entity
 @Table(name = "Boards")
 public class Boards {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int B_Id;
@@ -21,5 +20,4 @@ public class Boards {
     @JoinColumn(name = "U_id")
     @ManyToOne
     private User U_id;
-
 }
