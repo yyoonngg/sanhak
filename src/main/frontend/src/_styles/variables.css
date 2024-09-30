@@ -1,0 +1,21 @@
+:root{
+    --red:#FF6F61;
+    --purple:#7C3FFC;
+    --light-dark:#1F1A38;
+    --deep-dark:#3D3D4E;
+    --blue:#4A5FCF;
+    --light-blue:#C6DFDD;
+    --deep-blue:#3F5978;
+    --mint:#36D8D6;
+
+    --main-font:Pretendard;
+    --sub-font:Helvetica Neue;
+    --menu-font:Gmarket Sans;
+    --login-font:ABeeZee;
+
+    --main-font-size:16px;
+    --detail-font-size:12px;
+    --subj-font-size:24px;
+    --hero-font-size:64px;
+    --menu-font-size:18px;
+}
