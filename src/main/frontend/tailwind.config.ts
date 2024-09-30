@@ -2,34 +2,37 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     colors: {
       primary: '#FFFFFF',
-      // secondary: '#37B6B8',
-      // black: '#000000',
-      // dark: {
-      //   DEFAULT: '#242629',
-      //   light: '#3E444D',
-      //   semi: '#31353B',
-      // },
-      // gray: {
-      //   45: '#454545',
-      //   cc: '#CCC',
-      //   d6: '#5D626B',
-      //   66: '#666666',
-      //   99: '#999',
-      //   d2: '#D2D2D2',
-      //   da: '#DADADA',
-      //   dc: '#DCDCDC',
-      //   dark: '#262626',
-      // },
-      // red: {
-      //   f1: '#F1416C',
-      // },
+      secondary: '#37B6B8',
+      black: '#000000',
+      dark: {
+        DEFAULT: '#242629',
+        light: '#3E444D',
+        semi: '#31353B',
+      },
+      gray: {
+        45: '#454545',
+        cc: '#CCC',
+        d6: '#5D626B',
+        66: '#666666',
+        99: '#999',
+        d2: '#D2D2D2',
+        da: '#DADADA',
+        dc: '#DCDCDC',
+        dark: '#262626',
+      },
+      red: {
+        f1: '#F1416C',
+      },
+      category: {
+        front: "#FF6F61",
+      },
       white: '#FFFFFF',
       transparent: 'transparent',
     },
