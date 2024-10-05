@@ -5,12 +5,14 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Positions {
+public class SkilPreque {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int PId;
+    private int SP_id;
 
-    private String PName;
-    private String PInfo;
+    private int SP_parents_id;
+    private int SP_child_id;
 }
+
+
