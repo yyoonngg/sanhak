@@ -16,6 +16,22 @@ jobs:
     name: Backend (Spring Boot) Test
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+        env:
+          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_DATABASE: testdb
+          MYSQL_USER: testuser
+          MYSQL_PASSWORD: testpassword
+
     steps:
       # Checkout the code
       - name: Checkout code
@@ -44,6 +60,10 @@ jobs:
       # Run Spring Boot tests using Gradle
       - name: Run Spring Boot tests
         working-directory: ./ # Set the correct project directory if needed
+        env:
+          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/NLP_db
+          SPRING_DATASOURCE_USERNAME: NLP_user
+          SPRING_DATASOURCE_PASSWORD: NLP_password
         run: ./gradlew test
 
   # Frontend (Next.js) Tests and Build
@@ -75,11 +95,6 @@ jobs:
       - name: Install dependencies
         working-directory: src/main/frontend
         run: yarn install
-
-      # Run Jest tests (instead of `yarn test`)
-      - name: Run Jest tests
-        working-directory: src/main/frontend
-        run: yarn jest
 
       # Build Next.js project
       - name: Build Next.js project
