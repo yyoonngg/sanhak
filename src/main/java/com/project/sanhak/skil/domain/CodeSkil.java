@@ -5,12 +5,13 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Positions {
+public class CodeSkil {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int PId;
-
-    private String PName;
-    private String PInfo;
+    private int CSId;
+    private String CSName;
+    private int CSCate;
+    private int CSX;
+    private int CSY;
 }

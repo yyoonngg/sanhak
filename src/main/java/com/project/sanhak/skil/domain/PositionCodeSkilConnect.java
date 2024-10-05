@@ -5,19 +5,18 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "Position_Code_Skil_Connect")
 @IdClass(PositionCodeSkilConnectId.class)
 public class PositionCodeSkilConnect {
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "P_id")
-    private Positions P_id;
+    @JoinColumn(name = "PId")
+    private Positions PId;
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "CS_id")
-    private CodeSkils CS_id;
+    @JoinColumn(name = "CSId")
+    private CodeSkil CSId;
 
-    private int PCSC_Position;
+    private int PCSCPosition;
 }

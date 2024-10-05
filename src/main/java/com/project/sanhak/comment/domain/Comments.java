@@ -7,25 +7,24 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "Comments")
-public class Comment {
+public class Comments {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int C_Id;
+    private int CId;
 
-    private int C_Likes;
-    private int C_Report;
+    private int CLikes;
+    private int CReport;
 
-    @JoinColumn(name = "B_id")
+    @JoinColumn(name = "Bid")
     @ManyToOne
-    private Boards B_id;
+    private Boards BId;
 
-    @JoinColumn(name = "C_is_parents")
+    @JoinColumn(name = "CIsParents")
     @ManyToOne
-    private Comment C_is_parents;
+    private Comments CIsParents;
 
-    @JoinColumn(name = "U_id")
+    @JoinColumn(name = "UId")
     @ManyToOne
-    private User U_id;
+    private User UId;
 }
