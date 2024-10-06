@@ -3,6 +3,8 @@ package com.project.sanhak.user.domain;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 @Entity
 @Table(name = "User")
@@ -10,5 +12,9 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int U_Id;
+    private int UId;
+    private String UGitId;
+    private LocalDateTime UCreate;
+    private LocalDateTime ULastLog;
+
 }

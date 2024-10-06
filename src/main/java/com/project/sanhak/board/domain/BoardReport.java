@@ -6,20 +6,19 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "B_reports")
 public class BoardReport {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int BR_Id;
+    private int BRId;
 
-    private String BR_Time;
+    private String BRTime;
 
-    @JoinColumn(name = "U_id")
+    @JoinColumn(name = "UId")
     @ManyToOne
-    private User U_id;
+    private User UId;
 
-    @JoinColumn(name = "B_id")
+    @JoinColumn(name = "BId")
     @ManyToOne
-    private Boards B_id;
+    private Boards BId;
 }

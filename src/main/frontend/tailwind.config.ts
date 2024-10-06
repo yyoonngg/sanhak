@@ -46,7 +46,7 @@ const config: Config = {
     },
     extend: {
       fontFamily: {
-        pretendard: ["Pretendard Variable"],
+        pretendard: ["pretendard",'sans-serif'],
         dsdigi: ["DS-DIGI"],
         dsdigib: ["DS-DIGIB"],
         dsdigii: ["DS-DIGII"],
@@ -55,6 +55,11 @@ const config: Config = {
         spoqab: ["Spoqa Han Sans Bold"],
         spoqal: ["Spoqa Han Sans Light"],
         roboto: ["Roboto"],
+        helveticaBold: ["Helvetica-Black",'sans-serif'],
+        helvetica:["Helvetica-Bold",'sans-serif'],
+        gmarketsansBold:["GmarketSans-Bold",'sans-serif'],
+        gmarketsansMedium:["GmarketSans-Medium",'sans-serif'],
+        gmarketsansLight:["GmarketSans-Light",'sans-serif'],
       }
     },
   },

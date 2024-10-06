@@ -6,21 +6,20 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "C_Reports")
 public class CommentReport {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int CR_Id;
+    private int CRId;
 
-    private String CR_Time;
+    private String CRTime;
 
-    @JoinColumn(name = "C_id")
+    @JoinColumn(name = "CId")
     @ManyToOne
-    private Comment C_id;
+    private Comments CId;
 
-    @JoinColumn(name = "U_id")
+    @JoinColumn(name = "UId")
     @ManyToOne
-    private User U_id;
+    private User UId;
 }
 

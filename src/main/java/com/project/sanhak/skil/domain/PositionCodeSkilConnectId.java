@@ -7,6 +7,6 @@ import java.util.Objects;
 
 @Data
 public class PositionCodeSkilConnectId implements Serializable {
-    private int P_id;
-    private int CS_id;
+    private int PId;
+    private int CSId;
 }

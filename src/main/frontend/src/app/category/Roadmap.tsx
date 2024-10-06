@@ -87,8 +87,8 @@ export default function Roadmap() {
   return (
     <div className='w-3/4 h-3/4 border border-2 border-dashed p-5'>
       <div className='flex flex-col'>
-        <div className='font-bold'>RoadMap</div>
-        <div className='font-semibold text-category-front'>Web_FrontEnd</div>
+        <div className='font-bold text-3xl font-helveticaBold'>RoadMap</div>
+        <div className='font-semibold text-category-front text-xl font-helvetica'>Web_FrontEnd</div>
       </div>
       <svg width="100%" height="95%" viewBox={getViewBox()} preserveAspectRatio="xMinYMin meet">
         {roadmapSkills.map((skill) => {

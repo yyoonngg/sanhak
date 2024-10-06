@@ -33,7 +33,8 @@ const SkillNode = ({
       <text 
         x={0} 
         y={40}
-        fill="black" 
+        fill="black"
+        fontSize='20px'
         textAnchor="middle"
       >
         {skill.name}
