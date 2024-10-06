@@ -11,9 +11,15 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-        <NavigationBar />
-      <body className="w-full h-full flex flex-col items-center font-pretendard">{children}</body>
-    </html>
-  )
+      <html lang="ko">
+      <head>
+      </head>
+      <body>
+      <nav>
+          <NavigationBar />
+      </nav>
+      {children}
+      </body>
+      </html>
+  );
 }
