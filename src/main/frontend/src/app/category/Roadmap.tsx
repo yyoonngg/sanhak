@@ -1,5 +1,7 @@
 import React from 'react';
 import SkillNode from './SkillNode';
+import {timeLineSkills} from "@/app/category/TimeLineRoadMap";
+import {tag} from "postcss-selector-parser";
 // import {TimeLineTag} from "@/app/category/TimeLineRoadMap";
 
 const ROADMAP_SCALE = 200;
@@ -84,32 +86,47 @@ const getViewBox = () => {
   return `${minX * 100 - padding} ${minY * 100 - padding} ${ (maxX - minX) * 200 + 2 * padding} ${(maxY - minY) * 200 + 2 * padding}`;
 };
 
+const timeLine = () => {
+  return timeLineSkills(roadmapSkills);
+};
+
 export default function Roadmap() {
   return (
-    <div className='w-3/4 h-3/4 border border-2 border-dashed p-5'>
-      <div className='flex flex-col'>
-        <div className='font-bold text-3xl font-helveticaBold'>RoadMap</div>
-        <div className='font-semibold text-category-front text-xl font-helvetica'>Web_FrontEnd</div>
-      </div>
-      <svg width="100%" height="95%" viewBox={getViewBox()} preserveAspectRatio="xMinYMin meet">
-        {roadmapSkills.map((skill) => {
-          if (skill.child) {
-            return skill.child.map((childId) => {
-              const childSkill = roadmapSkills.find((s) => s.id === childId);
-              if (childSkill) {
-                return drawPath(skill, childSkill);
-              }
-              return null;
-            });
-          }
-          return null;
-        })}
+      <div className='w-3/4 h-3/4 border border-2 border-dashed p-5'>
+        <div>
+          {Object.entries(timeLine()).map(([tag, skills]) => (
+              <div key={tag}>
+                <ul>
+                  {skills.map(skill => (
+                      <li key={skill.id}>{skill.id}</li>
+                  ))}
+                </ul>
+              </div>
+          ))}
+        </div>
+        <div className='flex flex-col'>
+          <div className='font-bold text-3xl font-helveticaBold'>RoadMap</div>
+          <div className='font-semibold text-category-front text-xl font-helvetica'>Web_FrontEnd</div>
+        </div>
+        <svg width="100%" height="95%" viewBox={getViewBox()} preserveAspectRatio="xMinYMin meet">
+          {roadmapSkills.map((skill) => {
+            if (skill.child) {
+              return skill.child.map((childId) => {
+                const childSkill = roadmapSkills.find((s) => s.id === childId);
+                if (childSkill) {
+                  return drawPath(skill, childSkill);
+                }
+                return null;
+              });
+            }
+            return null;
+          })}
 
-        {roadmapSkills.map((skill) => (
-          <SkillNode key={skill.id} skill={skill} scale={ROADMAP_SCALE} />
-        ))}
-      </svg>
-    </div>
+          {roadmapSkills.map((skill) => (
+              <SkillNode key={skill.id} skill={skill} scale={ROADMAP_SCALE}/>
+          ))}
+        </svg>
+      </div>
   );
 }
 
