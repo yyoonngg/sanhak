@@ -1,16 +1,19 @@
 import React from 'react';
+// import {TimeLineTag} from "@/app/category/TimeLineRoadMap";
 
+//SkillNodeProps값 변경, 해당 API 변경
 type SkillNodeProps = {
   skill: RoadmapSkill,
   scale: number,
 }
 const SkillNode = ({
   skill,
-  scale
+  scale,
 }: SkillNodeProps) => {
-  const imageSkillName = skill.name.toLowerCase().replace(/\s+/g, '').replace(/\./g, ''); // 소문자, 공백제거, "."제거
-  const imageSrc = `/asset/png/frontend/${imageSkillName}_img.png`;
-  return (
+    const imageSkillName = skill.name.toLowerCase().replace(/\s+/g, '').replace(/\./g, ''); // 소문자, 공백제거, "."제거
+    const imageSrc = `/asset/png/frontend/${imageSkillName}_img.png`;
+
+    return (
     <g transform={`translate(${skill.position[0] * scale}, ${skill.position[1] * scale})`}>
       <rect 
         x={-50} // 테두리의 x 위치
