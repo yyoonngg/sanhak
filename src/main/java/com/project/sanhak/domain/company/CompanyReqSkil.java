@@ -6,17 +6,16 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "Company_Req_Skil")
 public class CompanyReqSkil {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int ComRSId;
 
-    @JoinColumn(name = "CSId")
+    @JoinColumn(referencedColumnName = "CSId")
     @ManyToOne
     private CodeSkil ComRScsid;
 
-    @JoinColumn(name = "ComRId")
+    @JoinColumn(referencedColumnName = "ComRId")
     @ManyToOne
     private CompanyReq ComRScomrid;
 }

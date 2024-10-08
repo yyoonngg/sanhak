@@ -14,7 +14,7 @@ public class MasterySkil {
     private String MSName;
     private String MSInfo;
 
-    @JoinColumn(name = "CSId")
+    @JoinColumn(referencedColumnName ="CSId")
     @ManyToOne
     private CodeSkil MS_csid;
 }

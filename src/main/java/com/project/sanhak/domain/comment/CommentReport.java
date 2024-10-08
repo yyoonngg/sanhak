@@ -12,10 +12,10 @@ public class CommentReport {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int CRId;
     private String CRTime;
-    @JoinColumn(name = "CId")
+    @JoinColumn(referencedColumnName = "CId")
     @ManyToOne
     private Comments CRcid;
-    @JoinColumn(name = "UId")
+    @JoinColumn(referencedColumnName ="UId")
     @ManyToOne
     private User CRuid;
 }

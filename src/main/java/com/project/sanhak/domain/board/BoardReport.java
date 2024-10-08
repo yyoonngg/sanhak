@@ -14,11 +14,11 @@ public class BoardReport {
 
     private String BRTime;
 
-    @JoinColumn(name = "UId")
+    @JoinColumn(referencedColumnName = "UId")
     @ManyToOne
     private User BRuid;
 
-    @JoinColumn(name = "BId")
+    @JoinColumn(referencedColumnName = "BId")
     @ManyToOne
     private Boards BRbid;
 }

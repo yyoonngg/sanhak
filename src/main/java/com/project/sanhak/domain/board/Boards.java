@@ -16,7 +16,7 @@ public class Boards {
     private int BView;
     private int BCate;
 
-    @JoinColumn(name = "UId")
+    @JoinColumn(referencedColumnName = "UId")
     @ManyToOne
     private User Buid;
 }

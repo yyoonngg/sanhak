@@ -14,10 +14,10 @@ public class UserCodeSkil {
     private int UCSId;
 
     @ManyToOne
-    @JoinColumn(name = "UId")
+    @JoinColumn(referencedColumnName ="UId")
     private User UCSuid;
 
     @ManyToOne
-    @JoinColumn(name = "CSId")
+    @JoinColumn(referencedColumnName ="CSId")
     private CodeSkil UCScsid;
 }

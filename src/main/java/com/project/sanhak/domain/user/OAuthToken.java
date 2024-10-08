@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "OAuthToken")
 public class OAuthToken {
 
     @Id

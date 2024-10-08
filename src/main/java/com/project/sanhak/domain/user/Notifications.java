@@ -18,6 +18,6 @@ public class Notifications {
     private LocalDateTime NDate;
 
     @ManyToOne
-    @JoinColumn(name = "UId")
+    @JoinColumn(referencedColumnName ="UId")
     private User Nuid;
 }

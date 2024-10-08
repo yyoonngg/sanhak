@@ -16,6 +16,6 @@ public class Mentors {
     private String MAvaTime;
 
     @ManyToOne
-    @JoinColumn(name = "UId")
+    @JoinColumn(referencedColumnName = "UId")
     private User Muid;
 }

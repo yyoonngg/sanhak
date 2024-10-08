@@ -4,18 +4,17 @@ import jakarta.persistence.*;
 import lombok.Data;
 @Data
 @Entity
-@Table(name = "Com_Com_Req_Connect")
 public class ComComReqConnect {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int CCRCId;
 
     @ManyToOne
-    @JoinColumn(name = "COMId")
+    @JoinColumn(referencedColumnName = "COMId")
     private Company CCRCcomid;
 
     @ManyToOne
-    @JoinColumn(name = "ComRId")
+    @JoinColumn(referencedColumnName ="ComRId")
     private CompanyReq CCRCcomrid;
 
 }

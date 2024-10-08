@@ -10,13 +10,13 @@ import lombok.Data;
 public class UserRoadmapSkil {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int UCSId;
+    private int URSId;
 
     @ManyToOne
-    @JoinColumn(name = "URId")
+    @JoinColumn(referencedColumnName ="URId")
     private UserRoadmap URSurid;
 
     @ManyToOne
-    @JoinColumn(name="CSID")
+    @JoinColumn(referencedColumnName ="CSID")
     private CodeSkil URScsid;
 }

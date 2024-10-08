@@ -13,13 +13,13 @@ public class Comments {
     private int CId;
     private int CLikes;
     private int CReport;
-    @JoinColumn(name = "BId")
+    @JoinColumn(referencedColumnName = "BId")
     @ManyToOne
     private Boards Cbid;
-    @JoinColumn(name = "CIsParents")
+    @JoinColumn(referencedColumnName = "CId")
     @ManyToOne
     private Comments CIsParents;
-    @JoinColumn(name = "UId")
+    @JoinColumn(referencedColumnName = "UId")
     @ManyToOne
     private User Cuid;
 }

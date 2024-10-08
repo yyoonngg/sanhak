@@ -11,7 +11,7 @@ public class ExperienceCard {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int ECId;
 
-    @JoinColumn(name = "UId")
+    @JoinColumn(referencedColumnName = "UId")
     @ManyToOne
     private User ECuid;
 

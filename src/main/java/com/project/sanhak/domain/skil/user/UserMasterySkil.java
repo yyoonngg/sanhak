@@ -14,10 +14,10 @@ public class UserMasterySkil {
     private int UMSId;
 
     @ManyToOne
-    @JoinColumn(name = "UId")
+    @JoinColumn(referencedColumnName ="UId")
     private User UMSuid;
 
     @ManyToOne
-    @JoinColumn(name = "MSId")
+    @JoinColumn(referencedColumnName ="MSId")
     private MasterySkil UMSmsid;
 }

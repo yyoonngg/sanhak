@@ -13,6 +13,6 @@ public class UserRoadmap {
     private int URId;
 
     @ManyToOne
-    @JoinColumn(name = "UId")
+    @JoinColumn(referencedColumnName ="UId")
     private User URuid;
 }

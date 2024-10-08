@@ -11,8 +11,13 @@ public class SkilPreque {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int SPId;
 
-    private int SPParentscsid;
-    private int SPChildcsid;
+    @ManyToOne
+    @JoinColumn(referencedColumnName ="CSId")
+    private CodeSkil SPParentscsid;
+
+    @ManyToOne
+    @JoinColumn(referencedColumnName ="CSId")
+    private CodeSkil SPChildcsid;
 }
 
 

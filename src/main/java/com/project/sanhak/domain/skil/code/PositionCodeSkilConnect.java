@@ -13,12 +13,12 @@ public class PositionCodeSkilConnect {
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "PId")
+    @JoinColumn(referencedColumnName ="PId")
     private Positions PCSCpid;
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "CSId")
+    @JoinColumn(referencedColumnName ="CSId")
     private CodeSkil PCSCcsid;
 
     private int PCSCPosition;

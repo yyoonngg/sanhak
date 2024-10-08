@@ -12,7 +12,7 @@ public class UserInfo {
 
     @Id
     @OneToOne
-    @JoinColumn(name = "UId")
+    @JoinColumn(referencedColumnName = "UId")
     private User UIuid;
 
     private String UIBio;
