@@ -1,9 +1,10 @@
 package com.project.sanhak.company.repository;
 
-import com.project.sanhak.domain.company.Company;
+import com.project.sanhak.domain.company.CompanyReqSkil;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface companyRepository extends JpaRepository<Company, Integer> {
+public interface companyReqSkilRepository extends JpaRepository<CompanyReqSkil, Integer> {
+
 }
