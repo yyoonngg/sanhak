@@ -5,7 +5,6 @@ type RoadmapSkill = {
     parent?: number[];
     child?: number[];
     position: [number, number];
-    tag: number[];
 };
 
 // 카테고리별 모든 스킬 리스트

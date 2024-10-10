@@ -1,7 +1,7 @@
 //컴포넌트1 가로로 정렬된 로드맵 : 들어가야하는 직무별 사진은 href 형태로...?
 //컴포넌트 2 전체 카드 폼 형식 : 직무 카테고리 별 아이콘은 서로 다르게 짤수있도록
 
-import RoadmapSkill from "@/app/category/Roadmap";
+//import RoadmapSkill from "@/app/category/Roadmap";
 
 
 // export enum TimeLineTag{
@@ -13,20 +13,20 @@ import RoadmapSkill from "@/app/category/Roadmap";
 //
 // }
 
-export function timeLineSkills(skillParams: RoadmapSkill[]) {
-    const selectedSkills = skillParams.filter((skill) => skill.tag !== 0 && skill.tag !== undefined);
-    const groupedSkills = selectedSkills.reduce((group, skill) => {
-        const tagIndex = skill.tag!;
-        if (!group[tagIndex]) {
-            group[tagIndex] = [];
-        }
-        group[tagIndex].push(skill);
-        return group;
-    }, {} as { [key: number]: RoadmapSkill[] });
+//export function timeLineSkills(skillParams: RoadmapSkill[]) {
+//    const selectedSkills = skillParams.filter((skill) => skill.tag !== 0 && skill.tag !== undefined);
+//    const groupedSkills = selectedSkills.reduce((group, skill) => {
+//        const tagIndex = skill.tag!;
+//        if (!group[tagIndex]) {
+//            group[tagIndex] = [];
+//        }
+//        group[tagIndex].push(skill);
+//        return group;
+//    }, {} as { [key: number]: RoadmapSkill[] });
 
-    for (const tagIndex in groupedSkills) {
-        groupedSkills[tagIndex].sort((a, b) => a.id - b.id);
-    }
-
-    return groupedSkills;
-}
+//    for (const tagIndex in groupedSkills) {
+//        groupedSkills[tagIndex].sort((a, b) => a.id - b.id);
+//    }
+//
+//    return groupedSkills;
+//}
