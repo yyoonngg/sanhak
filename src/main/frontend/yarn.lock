@@ -1649,6 +1649,11 @@
   resolved "https://registry.npmjs.org/@leichtgewicht/ip-codec/-/ip-codec-2.0.5.tgz"
   integrity sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==
 
+"@netlify/plugin-nextjs@^5.7.4":
+  version "5.7.4"
+  resolved "https://registry.yarnpkg.com/@netlify/plugin-nextjs/-/plugin-nextjs-5.7.4.tgz#3f8976c7115e99b0101b1878730d770854869b09"
+  integrity sha512-kOvZ/vn94r2kRXpwppeR610mRSJFbkVakvUoHwtJQczPUR0el9QfVwYNl+6CHMRQSGc94FNs/pT9R32uyWwUmQ==
+
 "@next/env@14.2.14":
   version "14.2.14"
   resolved "https://registry.npmjs.org/@next/env/-/env-14.2.14.tgz"
