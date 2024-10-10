@@ -62,14 +62,14 @@ export default function CategoryPage() {
                 setRoadmapSkills(formattedData);
             } else {
                 console.error('API 응답이 배열이 아닙니다:', data);
-                // setRoadmapSkills(mockRoadmapSkills);
+                setRoadmapSkills(mockRoadmapSkills);
                 setError(true);
             }
             setLoading(false);
         })
         .catch((error) => {
           console.error('데이터를 가져오는 중 오류 발생:', error);
-          // setRoadmapSkills(mockRoadmapSkills);
+          setRoadmapSkills(mockRoadmapSkills);
           setError(true);
           setLoading(false);
         });
