@@ -1,47 +1,11 @@
-import React from 'react';
+"use client";
+import React, { useState, useEffect } from 'react';
 import SkillNode from './SkillNode';
 
 const ROADMAP_SCALE = 200;
+const DRAG_SENSITIVITY = 0.01; // 드래그 이동 감도 값
 
-// TODO: API 연결
-const roadmapSkills: RoadmapSkill[] = [
-  { id: 1, name: 'HTML', child: [27, 28, 29], position: [0, 0] }, 
-  { id: 2, name: 'CSS', child: [5, 6], position: [1, 0] },
-  { id: 3, name: 'JavaScript', child: [4, 7, 8, 9], position: [3, 0] },
-  { id: 4, name: 'TypeScript', parent:[3], child: [7, 8, 9], position: [4, 0] },
-
-  { id: 5, name: 'Tailwind', parent: [2], child:[10], position: [1, 1] },
-  { id: 6, name: 'Bootstrap', parent: [2], position: [2, 1] },
-  { id: 7, name: 'React', parent: [3], child:[11, 12, 13], position: [3, 1] },
-  { id: 8, name: 'Angular', parent: [3], child:[14], position: [6, 1] },
-  { id: 9, name: 'Vue.js', parent: [3], child:[15, 16, 17], position: [7, 1] },
-
-  { id: 10, name: 'SASS', parent: [5], child:[18], position: [1, 2] },
-  { id: 11, name: 'React Hooks', parent: [7],  child:[19, 20, 21], position: [3, 2] }, 
-  { id: 12, name: 'Redux', parent: [7], child:[19, 20, 21], position: [4, 2] }, 
-  { id: 13, name: 'Recoil', parent: [7], child:[19, 20, 21], position: [5, 2] },
-  { id: 14, name: 'RxJS', parent: [8], child:[19, 20, 21], position: [6, 2] },
-  { id: 15, name: 'VueX', parent: [9], child:[19, 20, 21], position: [7, 2] }, 
-  { id: 16, name: 'Pinia', parent: [9], child:[19, 20, 21], position: [8, 2] },
-  { id: 17, name: 'Vite', parent: [9], child:[19, 20, 21], position: [9, 2] }, 
-
-  { id: 18, name: 'PostCSS', parent: [10], child:[27, 28, 29], position: [1, 3] },
-  { id: 19, name: 'Axios', parent: [11, 12, 13, 14, 15, 16, 17], child:[22, 23], position: [3, 3] },
-  { id: 20, name: 'Web Socket', parent: [11, 12, 13, 14, 15, 16, 17], child:[22, 23], position: [4, 3] },
-  { id: 21, name: 'ESLint', parent: [11, 12, 13, 14, 15, 16, 17], child:[22, 23], position: [5, 3] },
-
-  { id: 22, name: 'Webpack', parent: [19, 20, 21], child:[24, 25, 26], position: [3, 4] },
-  { id: 23, name: 'GraphQL', parent: [19, 20, 21], child:[24, 25, 26], position: [4, 4] },
-
-  { id: 24, name: 'Cypress', parent: [22, 23], child:[27, 28, 29], position: [3, 5] }, 
-  { id: 25, name: 'Jest', parent: [22, 23], child:[27, 28, 29], position: [4, 5] },
-  { id: 26, name: 'MobX', parent: [22, 23], child:[27, 28, 29], position: [5, 5] },
-
-  { id: 27, name: 'Vercel', parent: [1, 18, 24, 25, 26], position: [1, 6] },
-  { id: 28, name: 'AWS S3', parent: [1, 18, 24, 25, 26], position: [2, 6] },
-  { id: 29, name: 'Netlify', parent: [1, 18, 24, 25, 26], position: [3, 6] },
-];
-
+// 로드맵 스킬노드들을 이어주는 선을 그려주는 함수
 const drawPath = (parent: RoadmapSkill, child: RoadmapSkill) => {
   const [x1, y1] = parent.position;
   const [x2, y2] = child.position;
@@ -62,41 +26,181 @@ const drawPath = (parent: RoadmapSkill, child: RoadmapSkill) => {
     `;
   }
 
-  return <path d={pathData} stroke="#9E9EA7" strokeWidth={2} fill="none" />;
+  return <path d={pathData} stroke="#9E9EA7" strokeWidth={3} fill="none" />;
 };
 
-// TODO: 데이터 수에 따라 svg 크기가 잘 맞는지 확인
-const getViewBox = () => {
-  let minX = Infinity;
-  let minY = Infinity;
-  let maxX = -Infinity;
-  let maxY = -Infinity;
-
-  roadmapSkills.forEach(skill => {
-    const [x, y] = skill.position;
-    minX = Math.min(minX, x);
-    minY = Math.min(minY, y);
-    maxX = Math.max(maxX, x);
-    maxY = Math.max(maxY, y);
-  });
+// 스킬들의 좌표를 바탕으로 초기 격자무늬 width, height 설정
+const getInitialDimensions = (skills: RoadmapSkill[]) => {
   const padding = 100;
-  return `${minX * 100 - padding} ${minY * 100 - padding} ${ (maxX - minX) * 200 + 2 * padding} ${(maxY - minY) * 200 + 2 * padding}`;
+  if (skills.length === 0) return { width: 100, height: 100 };
+
+  const xs = skills.map(skill => skill.position[0]);
+  const ys = skills.map(skill => skill.position[1]);
+
+  const maxX = Math.max(...xs);
+  const maxY = Math.max(...ys);
+  const minX = Math.min(...xs);
+  const minY = Math.min(...ys);
+
+  const initialWidth = (maxX - minX + 1) * ROADMAP_SCALE + 2 * padding;
+  const initialHeight = (maxY - minY + 1) * ROADMAP_SCALE + 2 * padding;
+
+  return { width: initialWidth, height: initialHeight };
 };
 
-export default function Roadmap() {
-  return (
-    <div className='w-3/4 h-3/4 border border-2 border-dashed p-5'>
-      <div className='flex flex-col'>
-        <div className='font-bold text-3xl font-helveticaBold'>RoadMap</div>
-        <div className='font-semibold text-category-front text-xl font-helvetica'>Web_FrontEnd</div>
-      </div>
-      <svg width="100%" height="95%" viewBox={getViewBox()} preserveAspectRatio="xMinYMin meet">
-        {roadmapSkills.map((skill) => {
+type RoadmapProps = {
+  isEditMode: boolean;
+  roadmapSkills: RoadmapSkill[];
+  handleUpdateSkill?: (newRoadmapSkill: RoadmapSkill) => void,
+  onSelectDetail?: (id: number) => void,
+  detailContent?: SkillDetail 
+};
+
+const Roadmap = ({
+  isEditMode,
+  roadmapSkills,
+  handleUpdateSkill,
+  onSelectDetail,
+  detailContent
+}: RoadmapProps) => {
+  const [skills, setSkills] = useState(roadmapSkills);
+  const [selectedSkillIds, setSelectedSkillIds] = useState<number[]>([]);
+  const [dimensions, setDimensions] = useState(() => getInitialDimensions(roadmapSkills));
+  const [minX, setMinX] = useState(0);
+  const [minY, setMinY] = useState(0);
+  const [zoom, setZoom] = useState(1); 
+  const [dragging, setDragging] = useState(false); 
+  const [startDrag, setStartDrag] = useState<{ x: number, y: number } | null>(null);
+
+  // 편집모드 -> 보기모드 변환할때 로드맵 위치 초기화
+  useEffect(() => {
+    if(isEditMode === false) {
+      setMinX(0);
+      setMinY(0);
+      setStartDrag({x: 0, y: 0});
+    }
+  }, [isEditMode]);
+
+  // 노드들의 좌표값에 따라 동적으로 viewBox 크기 설정
+  useEffect(() => {
+    const { width, height } = getInitialDimensions(roadmapSkills);
+    setDimensions({ width, height });
+    setSkills(roadmapSkills);
+  }, [roadmapSkills]);
+
+  // 노드가 2개째 선택되면 선후관계를 정해줌
+  useEffect(() => {
+    if (selectedSkillIds.length === 2) {
+      const [firstId, secondId] = selectedSkillIds;
+      const firstNode = skills.find(skill => skill.id === firstId);
+      const secondNode = skills.find(skill => skill.id === secondId);
+
+      if (firstNode && secondNode) {
+        const updatedFirstNode = {
+          ...firstNode,
+          child: [...(firstNode.child || []), secondId],
+        };
+        const updatedSecondNode = {
+          ...secondNode,
+          parent: [...(secondNode.parent || []), firstId], 
+        };
+        handleUpdateSkill?.(updatedFirstNode);
+        handleUpdateSkill?.(updatedSecondNode);
+      }
+
+      setSelectedSkillIds([]);
+    } 
+  }, [selectedSkillIds]);
+  
+  // 스킬 노드을 옮겼을 경우 좌표를 최신화하는 함수
+  const handleDrag = (id: number, newPosition: [number, number]) => {
+    setSkills(prevSkills => 
+      prevSkills.map(skill => 
+        skill.id === id ? { ...skill, position: newPosition } : skill
+      )
+    );
+  };
+
+  // SkillNode 컴포넌트에서 callback 받는 함수 -> [편집모드] : 선후관계 표시
+  const handleSelectForPath = (id: number) => {
+    setSelectedSkillIds(prevIds => 
+      prevIds.includes(id) ? prevIds.filter(skillId => skillId !== id) : [...prevIds, id] 
+    );
+  };
+
+  // SkillNode 컴포넌트에서 callback 받는 함수 -> [보기모드] : 상세 사이드바 표시
+  const handleSelectForDetail = (id: number) => {
+    console.log(id);
+    onSelectDetail?.(id);
+  };
+
+  // 로드맵 바탕 격자무늬를 확장시켜주는 함수
+  const increaseSize = () => {
+    setDimensions(prevDimensions => ({
+      width: prevDimensions.width + ROADMAP_SCALE, 
+      height: prevDimensions.height + ROADMAP_SCALE,
+    }));
+  };
+  
+  // 화면 드래그 이동 기능
+    // 드래그 시작
+  const handleMouseDown = (event: React.MouseEvent<SVGElement>) => {
+    setDragging(true);
+    setStartDrag({ x: event.clientX, y: event.clientY });
+  };
+    // 드래그 하는 중
+  const handleMouseMove = (event: React.MouseEvent<SVGElement>) => {
+    if (!dragging || !startDrag) return;
+    const dx = (event.clientX - startDrag.x) * DRAG_SENSITIVITY / zoom;
+    const dy = (event.clientY - startDrag.y) * DRAG_SENSITIVITY / zoom;
+    setMinX(prevMinX => prevMinX - dx);
+    setMinY(prevMinY => prevMinY - dy);
+    setStartDrag({ x: event.clientX, y: event.clientY });
+  };
+    // 드래그 종료
+  const handleMouseUp = () => {
+    setDragging(false);
+    setStartDrag(null);
+  };
+
+  return (  
+    <div className='w-full h-full flex flex-col items-end border border-2 border-dashed p-5 overflow-auto'>
+      {isEditMode && (
+        <button
+          onClick={increaseSize}
+          className="bg-primary text-white px-4 py-2 rounded-xl"
+        >
+          로드맵 확장하기
+        </button>
+      )}
+      <svg 
+        width="100%" 
+        height="95%" 
+        viewBox={`${minX * ROADMAP_SCALE - 100} ${minY * ROADMAP_SCALE - 100} ${dimensions.width} ${dimensions.height}`} 
+        preserveAspectRatio="xMinYMin meet"
+        onMouseDown={isEditMode ? handleMouseDown : undefined} 
+        onMouseMove={isEditMode ? handleMouseMove : undefined} 
+        onMouseUp={isEditMode ? handleMouseUp : undefined} 
+        onMouseLeave={isEditMode ? handleMouseUp : undefined} 
+      >
+        {isEditMode && (
+          <>
+            <defs>
+              <pattern id="grid" width={ROADMAP_SCALE} height={ROADMAP_SCALE} patternUnits="userSpaceOnUse">
+                <rect width={ROADMAP_SCALE} height={ROADMAP_SCALE} fill="none" stroke="#CCC" strokeWidth="1" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+          </>
+        )}
+        {skills.map((skill) => {
           if (skill.child) {
             return skill.child.map((childId) => {
-              const childSkill = roadmapSkills.find((s) => s.id === childId);
+              const childSkill = skills.find((s) => s.id === childId);
               if (childSkill) {
-                return drawPath(skill, childSkill);
+                return (
+                  <g key={`${skill.id}-${childId}`}>{drawPath(skill, childSkill)}</g>
+                )
               }
               return null;
             });
@@ -104,10 +208,19 @@ export default function Roadmap() {
           return null;
         })}
 
-        {roadmapSkills.map((skill) => (
-          <SkillNode key={skill.id} skill={skill} scale={ROADMAP_SCALE} />
+        {skills.map((skill) => (
+          <SkillNode 
+            key={skill.id} 
+            skill={skill} 
+            scale={ROADMAP_SCALE} 
+            isSelected={selectedSkillIds.includes(skill.id)}
+            onSelect={isEditMode ? handleSelectForPath : handleSelectForDetail}
+            onDrag={isEditMode ? handleDrag : undefined}
+          />
         ))}
       </svg>
     </div>
   );
 }
+
+export default Roadmap;
