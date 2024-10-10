@@ -11,7 +11,9 @@ jobs:
         with:
           node-version: ${{ secrets.NODE_VERSION }}
       - name: Install Yarn
-        run: yarn install
+        run: |
+          cd src/main/frontend
+          yarn install
       - name: Build Specific Subfolder
         run: |
           cd src/main/frontend
