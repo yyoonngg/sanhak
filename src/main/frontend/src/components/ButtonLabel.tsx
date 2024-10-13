@@ -1,6 +1,6 @@
 import React from 'react';
 
-type TagButtonProps = {
+type ButtonLabelProps = {
   style?: string;
   type: string;
   label: string;
@@ -15,12 +15,12 @@ const categoryLabels: Record<string, string> = {
   application: '어플리케이션',
 };
 
-export default function TagButton({
+export default function ButtonLabel({
   style,
   label, 
   type,
   onClick 
-}: TagButtonProps) {
+}: ButtonLabelProps) {
   const imageName = label.toLowerCase().replace(/\s+/g, '').replace(/\./g, ''); // 소문자, 공백제거, "."제거
   const imageSrc = `/asset/png/${type}/${imageName}_img.png`;
   const labelName = type === 'category' ? categoryLabels[label] || label : label;

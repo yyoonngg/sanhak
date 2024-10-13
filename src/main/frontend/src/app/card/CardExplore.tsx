@@ -7,6 +7,6 @@ export default function CardExplore({
   onChangePage
 }: CardExploreProps) {
   return (
-    <div onClick={onChangePage}>AI 경험 카드 조회 페이지</div>
+    <div onClick={onChangePage}>AI 경험 카드 제작하러 가기</div>
   );
 }

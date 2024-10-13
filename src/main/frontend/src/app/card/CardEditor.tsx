@@ -26,10 +26,14 @@ const cardInfo: AiCard = {
   ],
   reflection: '이번 프로젝트를 통해 웹/프론트엔드 개발에서 JavaScript와 React를 활용한 실무 경험을 쌓을 수 있었습니다. 협업 도구를 효과적으로 사용하고, 팀원들과의 소통을 통해 문제를 해결하며 더 나은 결과물을 만들어낼 수 있었습니다. 앞으로도 이러한 경험을 바탕으로 성장하고 싶습니다. 성장하는 개발자가 되겠습니다.',
   // TODO -> 사진 어떻게 처리할지 논의 -> 임시로 넣어둠
-  imageUrl: "/asset/png/profile/user_profile_8.png", 
+  imageUrl: '/asset/png/profile/user_profile_8.png', 
   pdfFile: '프로젝트 최종제안서.pdf',
   sourceUrl: ['https://github.com/KAU-2024-Sanhak/sanhak']
 }
+
+// '생성하기'일때 mock data
+// const cardInfo: AiCard = {
+// }
 
 // TODO: API 연결 
 const allCategorySkills: AllKindOfSkills[] = [
@@ -185,14 +189,18 @@ export default function CardEditor({
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        setCard(prevCard => ({
-          ...prevCard,
-          imageUrl: reader.result as string
-        }));
-      };
+      setCard(prevCard => ({
+        ...prevCard,
+        imageUrl: `/asset/png/profile/${file.name}`
+      }))
+      // const reader = new FileReader();
+      // reader.readAsDataURL(file);
+      // reader.onloadend = () => {
+      //   setCard(prevCard => ({
+      //     ...prevCard,
+      //     imageUrl: reader.result as string
+      //   }));
+      // };
     }
   };
 
@@ -219,6 +227,13 @@ export default function CardEditor({
     });
   };
 
+  // [저장] 버튼 클릭
+  // TODO: 경험카드 저장 API 연결
+  const onSaveCard = () => {
+    console.log(card);
+    onChangePage();
+  };
+
   // 디버깅용
   useEffect(()=> {
     console.log(card);
@@ -226,7 +241,6 @@ export default function CardEditor({
   
   return (
     <div className='w-full h-full flex flex-row justify-evenly'>
-      {/* <div onClick={onChangePage}>AI 경험카드 추가</div> */}
       <div className='w-3/5 h-full flex flex-col items-end'>
         <CardEditorFormSection title="경험의 제목과 기간을 입력해주세요">
           <div className='flex flex-row w-full justify-around mb-2'>
@@ -266,108 +280,130 @@ export default function CardEditor({
             </div>
           </div>
         </CardEditorFormSection>
-        <CardEditorFormSection title="내가 맡았던 역할은 무엇인가요?">
-          <div className='flex flex-row w-full justify-between'>
-            {categories.map((c, index) => (
-              <ButtonLabel 
-                key={c}
-                type="category" 
-                label={c} 
-                style={buttonStyles[index]}
-                onClick={() => handleCategoryClick(index)}
-              />
-            ))}
-          </div>
-        </CardEditorFormSection>
-        <CardEditorFormSection title="어떤 언어와 스킬을 경험해보았나요?">
-          <div className='flex flex-row w-full flex-wrap'>
-            {selectedSkills.map(s => (
-              <ButtonLabel 
-                key={s.id} 
-                type="skill" 
-                label={s.name} 
-                style={card.skills?.some(skill => skill.id === s.id) ? '' : 'border-primary'}
-                onClick={()=>handleSkillClick(s)}
-              />
-            ))}
-          </div>
-        </CardEditorFormSection>
-        <CardEditorFormSection title="어떤 개발 도구를 경험해보았나요?">
-          <div className='flex flex-row w-full flex-wrap'>
-            {allTools.map(t => (
-              <ButtonLabel 
-                key={t.id} 
-                type="tool" 
-                label={t.name} 
-                style={card.tools?.some(tool => tool.id === t.id) ? '' : 'border-primary'}
-                onClick={()=>handleToolClick(t)}
-              />
-            ))}
-          </div>
-        </CardEditorFormSection>
-        <CardEditorFormSection title="이번 경험에 대하여">
-          <textarea
-            className='w-full h-52 rounded-xl border-gray-d9 text-sm focus:outline-0 p-3'
-            value={card.reflection}
-            placeholder='느낀점, 배운점, 더 알아보고 싶은 점 등 자유롭게 적어주세요'
-            style={{ textAlign: 'left', verticalAlign: 'top' }}
-            onChange={handlerReflectionInput}
-          />
-        </CardEditorFormSection>
-        <CardEditorFormSection title="사진으로 경험을 보여주세요">
-        <div className='w-full flex'>
-          <label className='cursor-pointer inline-flex items-center mr-4 py-2 px-4 rounded-lg border-0 text-sm font-semibold bg-primary text-white'>
-            <Input 
-              type='file'
-              accept='image/*'
-              className='hidden'
-              onChange={handleImageUpload}
+        { card.title && card.fromDate && card.toDate && card.title.length > 0 && (
+          <CardEditorFormSection title="내가 맡았던 역할은 무엇인가요?">
+            <div className='flex flex-row w-full justify-between'>
+              {categories.map((c, index) => (
+                <ButtonLabel 
+                  key={c}
+                  type="category" 
+                  label={c} 
+                  style={buttonStyles[index]}
+                  onClick={() => handleCategoryClick(index)}
+                />
+              ))}
+            </div>
+          </CardEditorFormSection>
+        )}
+        { card.category && card.category.length > 0 && (
+          <CardEditorFormSection title="어떤 언어와 스킬을 경험해보았나요?">
+            <div className='flex flex-row w-full flex-wrap'>
+              {selectedSkills.map(s => (
+                <ButtonLabel 
+                  key={s.id} 
+                  type="skill" 
+                  label={s.name} 
+                  style={card.skills?.some(skill => skill.id === s.id) ? '' : 'border-primary'}
+                  onClick={()=>handleSkillClick(s)}
+                />
+              ))}
+            </div>
+          </CardEditorFormSection>
+        )}
+        { card.skills && card.skills.length > 0 && (
+          <CardEditorFormSection title="어떤 개발 도구를 경험해보았나요?">
+            <div className='flex flex-row w-full flex-wrap'>
+              {allTools.map(t => (
+                <ButtonLabel 
+                  key={t.id} 
+                  type="tool" 
+                  label={t.name} 
+                  style={card.tools?.some(tool => tool.id === t.id) ? '' : 'border-primary'}
+                  onClick={()=>handleToolClick(t)}
+                />
+              ))}
+            </div>
+          </CardEditorFormSection>
+        )}
+        { card.tools && card.tools.length > 0 && (
+          <CardEditorFormSection title="이번 경험에 대하여">
+            <textarea
+              className='w-full h-52 rounded-xl border-gray-d9 text-sm focus:outline-0 p-3'
+              value={card.reflection}
+              placeholder='느낀점, 배운점, 더 알아보고 싶은 점 등 자유롭게 적어주세요'
+              style={{ textAlign: 'left', verticalAlign: 'top' }}
+              onChange={handlerReflectionInput}
             />
-            파일 선택
-          </label>
-          {card.imageUrl && (
-            <div className="mt-2 font-semibold">{card.imageUrl}</div> 
-          )}
-          </div>
-          {card.imageUrl && (
-            <img
-              src={card.imageUrl}
-              alt="Preview"
-              className="mt-4 w-1/2 h-1/2 object-cover border border-gray-d9 rounded-xl"
-            />
-          )}
-        </CardEditorFormSection>
-        <CardEditorFormSection title="경험을 가장 잘 보여주는 자료(.pdf)">
-          <div className='w-full flex'>
-            <label className="cursor-pointer inline-flex items-center mr-4 py-2 px-4 rounded-lg border-0 text-sm font-semibold bg-primary text-white">
-              <Input 
-                type='file'
-                accept='.pdf'
-                className='hidden'
-                onChange={handlePdfUpload}
+          </CardEditorFormSection>
+        )}
+        { card.reflection && card.reflection.length > 0 && (
+          <CardEditorFormSection title="사진으로 경험을 보여주세요">
+            <div className='w-full flex'>
+              <label className='cursor-pointer inline-flex items-center mr-4 py-2 px-4 rounded-lg border-0 text-sm font-semibold bg-primary text-white'>
+                <Input 
+                  type='file'
+                  accept='image/*'
+                  className='hidden'
+                  onChange={handleImageUpload}
+                />
+                파일 선택
+              </label>
+              {card.imageUrl && (
+                <div className="mt-2 font-semibold">{card.imageUrl}</div> 
+              )}
+            </div>
+            {card.imageUrl && (
+              <img
+                src={card.imageUrl}
+                alt="Preview"
+                className="mt-4 w-1/2 h-1/2 object-cover border border-gray-d9 rounded-xl"
               />
-              파일 선택
-            </label>
-            {card.pdfFile && (
-              <div className="mt-2 font-semibold">{card.pdfFile}</div> 
             )}
-          </div>
-        </CardEditorFormSection>
-        <CardEditorFormSection title="경험을 보여주는 소스 URL을 입력해주세요">
-          {[0, 1].map(index => (
-            <Input 
-              key={index}
-              value={card.sourceUrl?.[index]}
-              type='text'
-              className='w-full mb-2 rounded-xl border-gray-d9 text-sm focus:outline-0'
-              placeholder='ex) Github, Figma, ...'
-              onChange={(e) => handleSourceUrlInput(index, e.target.value)}
-            />
-          ))}
-        </CardEditorFormSection>
+          </CardEditorFormSection>
+        )}
+        { card.imageUrl && card.imageUrl.length > 0 && (
+          <CardEditorFormSection title="경험을 가장 잘 보여주는 자료(.pdf)">
+            <div className='w-full flex'>
+              <label className="cursor-pointer inline-flex items-center mr-4 py-2 px-4 rounded-lg border-0 text-sm font-semibold bg-primary text-white">
+                <Input 
+                  type='file'
+                  accept='.pdf'
+                  className='hidden'
+                  onChange={handlePdfUpload}
+                />
+                파일 선택
+              </label>
+              {card.pdfFile && (
+                <div className="mt-2 font-semibold">{card.pdfFile}</div> 
+              )}
+            </div>
+          </CardEditorFormSection>
+        )}
+        { card.pdfFile && card.pdfFile.length > 0 && (
+          <CardEditorFormSection title="경험을 보여주는 소스 URL을 입력해주세요">
+            {[0, 1].map(index => (
+              <Input 
+                key={index}
+                value={card.sourceUrl?.[index]}
+                type='text'
+                className='w-full mb-2 rounded-xl border-gray-d9 text-sm focus:outline-0'
+                placeholder='ex) Github, Figma, ...'
+                onChange={(e) => handleSourceUrlInput(index, e.target.value)}
+              />
+            ))}
+          </CardEditorFormSection>
+        )}
       </div>
-      <div className='flex flex-col items-center'>
-        <Card card={card}/>
+      <div className='w-1/5 flex flex-col items-center'>
+        <div className='fixed'>
+          <Card card={card}/>
+          {card.sourceUrl && card.sourceUrl.length > 0 && (
+            <div 
+              className='cursor-pointer w-full flex justify-center font-semibold bg-primary text-white border-2 border-primary hover:text-primary hover:bg-white px-4 py-2 mt-2 rounded-xl' 
+              onClick={onSaveCard}>AI경험카드 제작 완료하기
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
