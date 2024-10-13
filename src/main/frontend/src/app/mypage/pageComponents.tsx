@@ -18,7 +18,7 @@ const customRoadmapList: CustomRoadmap[] = [
 ];
 
 // TODO: API 연결 -> 카테고리별 모든 스킬 리스트
-const allCategorySkills: AllKindOfSkills[] = [
+const allCategorySkills: AllKindOfRoadmapSkills[] = [
   { category:"frontend",
     skills: [
     { id: 1, name: 'HTML', child: [27, 28, 29], position: [0, 0] }, 

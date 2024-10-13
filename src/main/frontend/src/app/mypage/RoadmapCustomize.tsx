@@ -4,7 +4,7 @@ import { ExitIcon } from '@/components/icon';
 
 type RoadmapCustomizeProps = {
   customRoadmapList: CustomRoadmap[];
-  allCategorySkills: AllKindOfSkills[];
+  allCategorySkills: AllKindOfRoadmapSkills[];
   skills: RoadmapSkill[];
   handleUpdateRoadmap: (newSkill: RoadmapSkill) => void, 
   onSaveRoadmap: () => void,
@@ -103,7 +103,7 @@ const RoadmapCustomize = ({
   const onSelectDetail = (id: number) => {
     getSelectDetail(id);
     setIsDetailVisible(true);
-    SetSelectedSkillPng(`/asset/png/frontend/${skillDetailData.name.toLowerCase().replace(/\s+/g, '').replace(/\./g, '')}_img.png`)
+    SetSelectedSkillPng(`/asset/png/skill/${skillDetailData.name.toLowerCase().replace(/\s+/g, '').replace(/\./g, '')}_img.png`)
   }
 
   return (

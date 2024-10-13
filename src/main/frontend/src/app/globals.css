@@ -4,37 +4,37 @@
 
 @font-face {
     font-family: 'pretendard';
-    src: url('/frontend/public/asset/fonts/PretendardVariable.ttf') format('truetype');
+    src: url('../../public/asset/fonts/PretendardVariable.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
 }
 @font-face {
     font-family: 'GmarketSans-Bold';
-    src: url('/frontend/public/asset/fonts/GmarketSansTTFBold.ttf') format('truetype');
+    src: url('../../public/asset/fonts/GmarketSansTTFBold.ttf') format('truetype');
     font-weight: 800;
     font-style: normal;
 }
 @font-face {
     font-family: 'GmarketSans-Medium';
-    src: url('/frontend/public/asset/fonts/GmarketSansTTFMedium.ttf') format('truetype');
+    src: url('../../public/asset/fonts/GmarketSansTTFMedium.ttf') format('truetype');
     font-weight: 500;
     font-style: normal;
 }
 @font-face {
     font-family: 'GmarketSans-Light';
-    src: url('/frontend/public/asset/fonts/GmarketSansTTFLight.ttf') format('truetype');
+    src: url('../../public/asset/fonts/GmarketSansTTFLight.ttf') format('truetype');
     font-weight: 300;
     font-style: normal;
 }
 @font-face {
     font-family: 'Helvetica-Black';
-    src: url('/frontend/public/asset/fonts/Helvetica Condensed Black.ttf') format('truetype');
+    src: url('../../public/asset/fonts/Helvetica Condensed Black.ttf') format('truetype');
     font-weight: 900;
     font-style: normal;
 }
 @font-face {
     font-family: 'Helvetica-Bold';
-    src: url('/frontend/public/asset/fonts/Helvetica Condensed Bold.ttf') format('truetype');
+    src: url('../../public/asset/fonts/Helvetica Condensed Bold.ttf') format('truetype');
     font-weight: 700;
     font-style: normal;
 }
