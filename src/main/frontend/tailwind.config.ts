@@ -20,6 +20,7 @@ const config: Config = {
         45: '#454545',
         cc: '#CCC',
         d6: '#5D626B',
+        d9: '#D9D9D9',
         66: '#666666',
         99: '#999',
         d2: '#D2D2D2',
@@ -66,6 +67,7 @@ const config: Config = {
   plugins: [
     require('@tailwindcss/forms'),
     require('@tailwindcss/typography'),
+    require('@tailwindcss/line-clamp')
   ],
 };
 export default config;

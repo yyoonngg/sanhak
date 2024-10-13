@@ -130,7 +130,6 @@ const Roadmap = ({
 
   // SkillNode 컴포넌트에서 callback 받는 함수 -> [보기모드] : 상세 사이드바 표시
   const handleSelectForDetail = (id: number) => {
-    console.log(id);
     onSelectDetail?.(id);
   };
 

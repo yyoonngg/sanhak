@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import UserProfile from './UserProfile';
-import CustomizeRoadmap from './CustomizeRoadmap';
+import RoadmapCustomize from './RoadmapCustomize';
 
 // 스킬 상태에 대한 enum
 enum SkillStatus {
@@ -18,7 +18,7 @@ const customRoadmapList: CustomRoadmap[] = [
 ];
 
 // TODO: API 연결 -> 카테고리별 모든 스킬 리스트
-const allCategorySkills: AllKindOfSkills[] = [
+const allCategorySkills: AllKindOfRoadmapSkills[] = [
   { category:"frontend",
     skills: [
     { id: 1, name: 'HTML', child: [27, 28, 29], position: [0, 0] }, 
@@ -167,7 +167,7 @@ export default function MypagePage() {
         <UserProfile/>
       </div>
       <div className='w-full h-full flex flex-col px-24 pt-10 mb-10'>
-          <CustomizeRoadmap 
+          <RoadmapCustomize 
             customRoadmapList={customRoadmapList} 
             allCategorySkills={allCategorySkills} 
             skills={updatedRoadmap} 
