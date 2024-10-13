@@ -17,10 +17,13 @@ const cardInfo: AiCard = {
   skills: [
     { id: 1, name: "HTML"},
     { id: 2, name: "CSS"},
-    { id: 3, name: "React"},
+    { id: 3, name: "JavaScript"},
     { id: 4, name: "TypeScript"},
   ],
-  tools: ['GitHub', 'Figma'],
+  tools: [
+    { id: 1, name: 'GitHub' }, 
+    { id: 2, name: 'Figma' }
+  ],
   reflection: '이번 프로젝트를 통해 웹/프론트엔드 개발에서 JavaScript와 React를 활용한 실무 경험을 쌓을 수 있었습니다. 협업 도구를 효과적으로 사용하고, 팀원들과의 소통을 통해 문제를 해결하며 더 나은 결과물을 만들어낼 수 있었습니다. 앞으로도 이러한 경험을 바탕으로 성장하고 싶습니다. 성장하는 개발자가 되겠습니다.',
   // TODO -> 사진 어떻게 처리할지 논의 -> 임시로 넣어둠
   imageUrl: "/asset/png/profile/user_profile_8.png", 
@@ -67,6 +70,12 @@ const allCategorySkills: AllKindOfSkills[] = [
     { id: 25, name: 'Jest' },
     { id: 26, name: 'MobX' },
   ]},
+];
+
+// TODO: API 연결
+const allTools: Tool[] = [
+  { id: 1, name: "github" },
+  { id: 2, name: "figma" },
 ];
 
 const categories = ['frontend', 'backend', 'data', 'security', 'application'];
@@ -126,20 +135,20 @@ export default function CardEditor({
     })
   };
 
-  // 3. 언어와 개발도구
+  // 3. 언어와 스킬
   useEffect(() => {
     const filteredSkills = allCategorySkills
       .filter(skill => card.category?.includes(skill.category)) 
       .flatMap(skill => skill.skills); 
 
-      setSelectedSkills(filteredSkills);
-}, [card.category]);
+    setSelectedSkills(filteredSkills);
+  }, [card.category]);
   
   const handleSkillClick = (skill: Skill) => {
     setCard(prevCard => {
       const currentSkills = prevCard.skills || [];
-      const updatedSkills = currentSkills.includes(skill)
-        ? currentSkills.filter(s => s !== skill)
+      const updatedSkills = currentSkills.some(s=> skill.id === s.id)
+        ? currentSkills.filter(s => s.id !== skill.id)
         : [...currentSkills, skill];
       
       return {
@@ -148,8 +157,23 @@ export default function CardEditor({
       };
     });
   };
+
+  // 4 개발 도구
+  const handleToolClick = (tool: Tool) => {
+    setCard(prevCard => {
+      const currentTools = prevCard.tools || [];
+      const updatedTools = currentTools.some(t => tool.id === t.id)
+      ? currentTools.filter(t => t.id !== tool.id)
+      : [...currentTools, tool];
+
+      return {
+        ...prevCard,
+        tools: updatedTools
+      }
+    })
+  }
  
-  // 4. 경험 회고
+  // 5. 경험 회고
   const handlerReflectionInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setCard(prevCard => ({
       ...prevCard,
@@ -157,7 +181,7 @@ export default function CardEditor({
     }))
   }
 
-  // 5. 경험 이미지 업로드
+  // 6. 경험 이미지 업로드
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -172,7 +196,7 @@ export default function CardEditor({
     }
   };
 
-  // 6. pdf 참고자료
+  // 7. pdf 참고자료
   const handlePdfUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -183,7 +207,7 @@ export default function CardEditor({
     }
   };
   
-  // 7. 소스 URL
+  // 8. 소스 URL
   const handleSourceUrlInput = (index: number, value: string) => {
     setCard(prevCard => {
       const newSourceUrl = [...(prevCard.sourceUrl || [])];
@@ -255,7 +279,7 @@ export default function CardEditor({
             ))}
           </div>
         </CardEditorFormSection>
-        <CardEditorFormSection title="어떤 언어와 개발도구를 경험해보았나요?">
+        <CardEditorFormSection title="어떤 언어와 스킬을 경험해보았나요?">
           <div className='flex flex-row w-full flex-wrap'>
             {selectedSkills.map(s => (
               <ButtonLabel 
@@ -264,6 +288,19 @@ export default function CardEditor({
                 label={s.name} 
                 style={card.skills?.some(skill => skill.id === s.id) ? '' : 'border-primary'}
                 onClick={()=>handleSkillClick(s)}
+              />
+            ))}
+          </div>
+        </CardEditorFormSection>
+        <CardEditorFormSection title="어떤 개발 도구를 경험해보았나요?">
+          <div className='flex flex-row w-full flex-wrap'>
+            {allTools.map(t => (
+              <ButtonLabel 
+                key={t.id} 
+                type="tool" 
+                label={t.name} 
+                style={card.tools?.some(tool => tool.id === t.id) ? '' : 'border-primary'}
+                onClick={()=>handleToolClick(t)}
               />
             ))}
           </div>
@@ -330,7 +367,7 @@ export default function CardEditor({
         </CardEditorFormSection>
       </div>
       <div className='flex flex-col items-center'>
-        <Card card={cardInfo}/>
+        <Card card={card}/>
       </div>
     </div>
   );

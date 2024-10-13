@@ -34,7 +34,7 @@ export default function Card({
         {card.tools && card.tools.length > 0 && (
           <div className='flex flex-wrap items-center text-sm font-semibold mb-2'>
             {card.tools.map(t => (
-              <TagButton key={t} type='tool' label={t} style='dark' />
+              <TagButton key={t.id} type='tool' label={t.name} style='dark' />
             ))}
           </div>
         )}

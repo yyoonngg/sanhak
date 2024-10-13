@@ -4,7 +4,7 @@ type AiCard = {
     title?: string,
     category?: string[],
     skills?: Skill[],
-    tools?: string[],
+    tools?: Toll[],
     reflection?: string,
     imageUrl?: string,
     pdfFile?: string,

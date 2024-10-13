@@ -4,6 +4,7 @@ type Skill = {
     name: string;
 };
 
+// 기본 스킬 모든 리스트
 type AllKindOfSkills = {
     category: string;
     skills: Skill[];
