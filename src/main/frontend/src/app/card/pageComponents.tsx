@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import CardExplore from './CardExplore';
+import CardRetrieve from './CardRetrieve';
 import CardEditor from './CardEditor';
 
 export default function CardPage() {
@@ -12,7 +12,7 @@ export default function CardPage() {
         {isCreatePage ? (
           <CardEditor onChangePage={()=>{setIsCreatePage(false)}}/> 
         ) : (
-          <CardExplore onChangePage={()=>{setIsCreatePage(true)}}/>
+          <CardRetrieve onChangePage={()=>{setIsCreatePage(true)}}/>
         )}
       </div>
     </div>

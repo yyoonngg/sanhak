@@ -1,15 +1,15 @@
 import React from 'react';
 import CategoryButton from './CategoryButton';
 
-type CardExploreProps = {
+type CardRetrieveProps = {
   onChangePage: () => void
 };
 
 const categories = ['frontend', 'backend', 'data', 'security', 'application'];
 
-export default function CardExplore({
+export default function CardRetrieve({
   onChangePage
-}: CardExploreProps) {
+}: CardRetrieveProps) {
 
   const handleSelectCategory = (category: string) => {
     console.log(category);
