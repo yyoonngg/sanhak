@@ -240,8 +240,8 @@ export default function CardEditor({
   }, [card]);
   
   return (
-    <div className='w-full h-full flex flex-row justify-evenly'>
-      <div className='w-3/5 h-full flex flex-col items-end'>
+    <div className='w-full h-full flex flex-row justify-between px-24'>
+      <div className='w-[65%] h-full flex flex-col items-end'>
         <CardEditorFormSection title="경험의 제목과 기간을 입력해주세요">
           <div className='flex flex-row w-full justify-around mb-2'>
             <div className='w-1/6 mr-2 text-sm rounded-xl border-gray-d9 bg-primary font-semibold text-white flex justify-center items-center'>경험 제목</div>
@@ -394,7 +394,7 @@ export default function CardEditor({
           </CardEditorFormSection>
         )}
       </div>
-      <div className='w-1/5 flex flex-col items-center'>
+      <div className='w-1/3 flex flex-col items-center'>
         <div className='fixed'>
           <Card card={card}/>
           {card.sourceUrl && card.sourceUrl.length > 0 && (

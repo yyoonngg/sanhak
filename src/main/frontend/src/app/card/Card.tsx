@@ -84,7 +84,7 @@ export default function Card({
   };
 
   return (
-    <div className='w-[25dvw] h-[75dvh] max-h-[600px] relative'>
+    <div className='w-[400px] h-[75dvh] max-h-[600px] relative'>
       <motion.div
         className='w-full h-full relative'
         initial={false}
@@ -101,7 +101,7 @@ export default function Card({
             backfaceVisibility: 'hidden'
           }}
         >
-          <div className='w-full h-1/3'>
+          <div className='w-full h-1/3 mb-2'>
             {card.imageUrl && (
               <img className='w-full h-full object-cover' src={card.imageUrl} alt='' />
             )}
@@ -112,12 +112,12 @@ export default function Card({
                 <div className='font-normal text-gray-cc'>{card.fromDate} ~ {card.toDate}</div>
               )}
               {card.title && (
-                <div className='font-semibold text-2xl mb-4'>{card.title}</div>
+                <div className='font-semibold text-2xl mb-3'>{card.title}</div>
               )}
               <div className='w-full flex justify-between items-center'>
                 <div className='flex items-center'>
                   {card.category && card.category.length > 0 && (
-                    <div ref={refs.category} className='h-[35px] flex flex-wrap overflow-hidden items-center text-sm font-semibold mb-2'>
+                    <div ref={refs.category} className='h-[35px] flex flex-wrap overflow-hidden items-center text-sm font-semibold mb-3'>
                       {card.category.map(c => (
                         <ButtonLabel key={c} type='category' label={c} />
                       ))}
@@ -131,7 +131,7 @@ export default function Card({
               <div className='w-full flex justify-between items-center'>
                 <div className='flex items-center'>
                   {card.skills && card.skills.length > 0 && (
-                    <div ref={refs.skills} className='h-auto max-h-[70px] min-h-[35px] flex flex-wrap overflow-hidden items-center text-sm font-semibold mb-2'>
+                    <div ref={refs.skills} className='h-auto max-h-[70px] min-h-[35px] flex flex-wrap overflow-hidden items-center text-sm font-semibold mb-3'>
                       {card.skills.map(s => (
                         <ButtonLabel key={s.id} type='skill' label={s.name} />
                       ))}

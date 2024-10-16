@@ -162,20 +162,22 @@ export default function MypagePage() {
 
   return (
     <div className="w-full h-full flex flex-col items-center">
-      <div className='w-full flex flex-col px-24 pb-10 border-b border-gray-cc'>
-        <div className='font-bold text-2xl mb-5'>마이페이지</div>
-        <UserProfile/>
-      </div>
-      <div className='w-full h-full flex flex-col px-24 pt-10 mb-10'>
-          <RoadmapCustomize 
-            customRoadmapList={customRoadmapList} 
-            allCategorySkills={allCategorySkills} 
-            skills={updatedRoadmap} 
-            handleUpdateRoadmap={handleUpdateRoadmap}
-            onSaveRoadmap={onSaveRoadmap}
-            getSelectDetail={getSelectDetail}
-            skillDetailData={skillDetailData}
-          />
+      <div className='x-[1400px] h-full'>
+        <div className='w-full flex flex-col px-24 pb-10 border-b border-gray-cc'>
+          <div className='font-bold text-2xl mb-5'>마이페이지</div>
+          <UserProfile/>
+        </div>
+        <div className='w-full h-full flex flex-col px-24 pt-10 mb-10'>
+            <RoadmapCustomize 
+              customRoadmapList={customRoadmapList} 
+              allCategorySkills={allCategorySkills} 
+              skills={updatedRoadmap} 
+              handleUpdateRoadmap={handleUpdateRoadmap}
+              onSaveRoadmap={onSaveRoadmap}
+              getSelectDetail={getSelectDetail}
+              skillDetailData={skillDetailData}
+            />
+        </div>
       </div>
     </div>
   );
