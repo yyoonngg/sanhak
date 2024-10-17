@@ -84,7 +84,7 @@ export default function Card({
   };
 
   return (
-    <div className='w-[400px] h-[75dvh] max-h-[600px] relative'>
+    <div className={`${style ? style : ''} w-[400px] h-[75dvh] max-h-[600px] relative mb-1`}>
       <motion.div
         className='w-full h-full relative'
         initial={false}
@@ -106,7 +106,7 @@ export default function Card({
               <img className='w-full h-full object-cover' src={card.imageUrl} alt='' />
             )}
           </div>
-          <div className='h-2/3 flex flex-col justify-around'>
+          <div className='w-full h-2/3 flex flex-col justify-around'>
             <div className='flex flex-col justify-between items-start px-4'>
               {(card.fromDate || card.toDate) && (
                 <div className='font-normal text-gray-cc'>{card.fromDate} ~ {card.toDate}</div>
