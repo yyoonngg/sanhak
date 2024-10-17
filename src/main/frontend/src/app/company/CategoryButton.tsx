@@ -1,8 +1,8 @@
+'use client';
 import React from 'react';
 
 type CategoryButtonProps = {
   category: string;
-  handleSelectCategory: (category: string) => void;
 };
 
 const categoryLabels: Record<string, string> = {
@@ -15,7 +15,6 @@ const categoryLabels: Record<string, string> = {
 
 export default function CategoryButton({
   category,
-  handleSelectCategory
 }: CategoryButtonProps) {
   const categoryName = categoryLabels[category];
   const imageName = category.toLowerCase().replace(/\s+/g, '').replace(/\./g, ''); // 소문자, 공백제거, "."제거
@@ -23,7 +22,6 @@ export default function CategoryButton({
   return (
     <div 
       className='cursor-pointer w-44 h-40 p-6 flex flex-col items-center justify-between text-sm font-semibold hover:bg-gray-dc hover:rounded-xl'
-      onClick={() => handleSelectCategory(category)}  
     >
       <div className='w-fit h-fit flex items-center justify-center bg-primary rounded-xl p-4 mb-1'>
         <img className='w-12 h-12 object-contain' src={imageSrc} alt={categoryName}/>
