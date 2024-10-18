@@ -1,7 +1,18 @@
-import React from 'react';
+"use client";
+import React, { useState } from 'react';
+import CardExplore from './CardExplore';
+import CardEditor from './CardEditor';
 
 export default function CardPage() {
-    return (
-        <div>산학프로젝트 AI경험카드 페이지입니다!</div>
-    );
+  const [isCreatePage, setIsCreatePage] = useState<Boolean>(false);
+
+  return (
+    <div className='w-full h-full flex flex-col items-center px-24'>
+      {isCreatePage ? (
+        <CardEditor onChangePage={()=>{setIsCreatePage(false)}}/> 
+      ) : (
+        <CardExplore onChangePage={()=>{setIsCreatePage(true)}}/>
+      )}
+    </div>
+  );
 }

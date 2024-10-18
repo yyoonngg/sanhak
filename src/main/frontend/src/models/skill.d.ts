@@ -1,3 +1,15 @@
+// 기본 스킬
+type Skill = {
+    id: number;
+    name: string;
+};
+
+// 기본 스킬 모든 리스트
+type AllKindOfSkills = {
+    category: string;
+    skills: Skill[];
+}
+
 // 로드맵 구성을 위한 각 스킬 노드
 type RoadmapSkill = {
     id: number;
@@ -8,7 +20,7 @@ type RoadmapSkill = {
 };
 
 // 카테고리별 모든 스킬 리스트
-type AllKindOfSkills = {
+type AllKindOfRoadmapSkills = {
     category: string;
     skills: RoadmapSkill[];
 }

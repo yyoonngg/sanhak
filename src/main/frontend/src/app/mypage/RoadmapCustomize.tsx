@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import Roadmap from '../category/Roadmap';
 import { ExitIcon } from '@/components/icon';
 
-type CustomizeRoadmapProps = {
+type RoadmapCustomizeProps = {
   customRoadmapList: CustomRoadmap[];
-  allCategorySkills: AllKindOfSkills[];
+  allCategorySkills: AllKindOfRoadmapSkills[];
   skills: RoadmapSkill[];
   handleUpdateRoadmap: (newSkill: RoadmapSkill) => void, 
   onSaveRoadmap: () => void,
@@ -20,7 +20,7 @@ const categoryList = [
   { label: '어플리케이션', value: 'application' },
 ];
 
-const CustomizeRoadmap = ({ 
+const RoadmapCustomize = ({ 
   customRoadmapList,
   allCategorySkills,
   skills, 
@@ -28,7 +28,7 @@ const CustomizeRoadmap = ({
   onSaveRoadmap,
   getSelectDetail,
   skillDetailData
-}: CustomizeRoadmapProps) => {
+}: RoadmapCustomizeProps) => {
   let newPosition: [number, number] | null = null;
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [roadmapSkills, setRoadmapSkills] = useState<RoadmapSkill[]>(skills);
@@ -103,7 +103,7 @@ const CustomizeRoadmap = ({
   const onSelectDetail = (id: number) => {
     getSelectDetail(id);
     setIsDetailVisible(true);
-    SetSelectedSkillPng(`/asset/png/frontend/${skillDetailData.name.toLowerCase().replace(/\s+/g, '').replace(/\./g, '')}_img.png`)
+    SetSelectedSkillPng(`/asset/png/skill/${skillDetailData.name.toLowerCase().replace(/\s+/g, '').replace(/\./g, '')}_img.png`)
   }
 
   return (
@@ -241,4 +241,4 @@ const CustomizeRoadmap = ({
   );
 }
 
-export default CustomizeRoadmap;
+export default RoadmapCustomize;

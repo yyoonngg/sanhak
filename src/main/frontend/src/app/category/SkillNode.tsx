@@ -17,7 +17,7 @@ const SkillNode = ({
 }: SkillNodeProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const image_skill_name = skill.name.toLowerCase().replace(/\s+/g, '').replace(/\./g, ''); // 소문자, 공백제거, "."제거
-  const image_src = `/asset/png/frontend/${image_skill_name}_img.png`;
+  const image_src = `/asset/png/skill/${image_skill_name}_img.png`;
   
   // 스킬노드를 드래그하여 위치를 옮기는 함수
   const handleMouseDown = (e: React.MouseEvent) => {
