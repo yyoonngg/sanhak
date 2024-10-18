@@ -20,7 +20,7 @@ public class categoryService {
     @Autowired
     private SkilPrequeRepository skilPrequeRepository;
 
-    public List<categoryDTO> getSkilNode(int csCate) {
+    public List<categoryDTO> getSkilNode(String csCate) {
         // 특정 CSCate 값을 가진 CodeSkil 엔티티만 호출
         List<CodeSkil> codeSkils = categoryRepository.findByCSCate(csCate);
         // 가져온 CodeSkil 엔티티들의 ID를 저장
