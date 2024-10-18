@@ -15,4 +15,6 @@ public class UserRoadmap {
     @ManyToOne
     @JoinColumn(referencedColumnName ="UId")
     private User URuid;
+
+    private String URName;
 }
