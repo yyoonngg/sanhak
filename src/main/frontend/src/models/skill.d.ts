@@ -23,6 +23,7 @@ declare type RoadmapSkill = {
     parent?: number[];
     child?: number[];
     position: [number, number];
+    tag: string;
 };
 
 
@@ -49,5 +50,6 @@ export declare const skillSelectedTags: {
     테스트: 'test';
 };
 
+//mypage 하위의 RoadmapCustomize 파일에서 재사용
 export type SkillSelectUnion=
     typeof skillSelectedTags[keyof typeof skillSelectedTags];
