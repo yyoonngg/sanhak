@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Roadmap from './Roadmap';
+import {RoadmapSkill} from "@/models/skill";
 
 const mockRoadmapSkills: RoadmapSkill[] = [
     { id: 1, name: 'HTML', child: [27, 28, 29], position: [0, 0], },

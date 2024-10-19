@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import UserProfile from './UserProfile';
 import RoadmapCustomize from './RoadmapCustomize';
+import {AllKindOfRoadmapSkills, RoadmapSkill, SkillDetail} from "@/models/skill";
 
 // 스킬 상태에 대한 enum
 enum SkillStatus {

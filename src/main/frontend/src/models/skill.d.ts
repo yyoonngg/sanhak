@@ -10,8 +10,14 @@ type AllKindOfSkills = {
     skills: Skill[];
 }
 
+// 카테고리별 모든 스킬 리스트
+declare type AllKindOfRoadmapSkills = {
+    category: string;
+    skills: RoadmapSkill[];
+}
+
 // 로드맵 구성을 위한 각 스킬 노드
-type RoadmapSkill = {
+declare type RoadmapSkill = {
     id: number;
     name: string;
     parent?: number[];
@@ -19,11 +25,7 @@ type RoadmapSkill = {
     position: [number, number];
 };
 
-// 카테고리별 모든 스킬 리스트
-type AllKindOfRoadmapSkills = {
-    category: string;
-    skills: RoadmapSkill[];
-}
+
 
 // 스킬 목차 구성
 type SkillTopic = {
@@ -33,9 +35,19 @@ type SkillTopic = {
 }
 
 // 스킬 전체 상세설명
-type SkillDetail = {
+declare type SkillDetail = {
     id: number;
     name: string;
     description: string;
     list: SkillTopic[];
 }
+export declare const skillSelectedTags: {
+    해당안됨 : 'none';
+    기본언어: 'basic';
+    프레임워크: 'framework';
+    연결과API:'connection';
+    테스트: 'test';
+};
+
+export type SkillSelectUnion=
+    typeof skillSelectedTags[keyof typeof skillSelectedTags];

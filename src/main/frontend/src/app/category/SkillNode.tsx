@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+import {RoadmapSkill} from "@/models/skill";
 
 type SkillNodeProps = {
   skill: RoadmapSkill,
