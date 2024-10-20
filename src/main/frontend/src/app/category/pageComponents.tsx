@@ -49,7 +49,7 @@ export default function CategoryPage() {
   const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/v1/category/1')
+    fetch('http://localhost:8080/api/category/frontend')
         .then((response) => response.json())
         .then((data) => {
             console.log(data);
