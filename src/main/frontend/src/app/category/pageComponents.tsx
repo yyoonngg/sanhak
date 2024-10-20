@@ -86,7 +86,7 @@ export default function CategoryPage() {
       <div className="w-full h-screen flex flex-col items-center">
         <div className="w-full h-full">
             <div>
-                <TimelineRoadmap skills={mockRoadmapSkills}/>
+                <TimelineRoadmap skills={roadmapSkills}/>
             </div>
           <div className="flex flex-col">
             <div className="font-bold">RoadMap</div>

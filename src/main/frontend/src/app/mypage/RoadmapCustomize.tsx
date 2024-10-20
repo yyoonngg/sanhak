@@ -107,7 +107,7 @@ const RoadmapCustomize = ({
   const onSelectDetail = (id: number) => {
     getSelectDetail(id);
     setIsDetailVisible(true);
-    SetSelectedSkillPng(`/asset/png/skill/${skillDetailData.name.toLowerCase().replace(/\s+/g, '').replace(/\./g, '')}_img.png`)
+    SetSelectedSkillPng(`/asset/png/skill/${skillDetailData.name.toLowerCase().replace(/\s+/g, '').replace(/\./g, '').replace(/#/g, 'sharp')}_img.png`)
   }
 
   return (
