@@ -3,6 +3,7 @@ import Card from './Card';
 import ButtonLabel from '@/components/ButtonLabel';
 import CardEditorFormSection from './CardEditorFormSection';
 import Input from '@/components/Input';
+import {AllKindOfSkills, Skill} from "@/models/skill";
 
 type CardEditorProps = {
   onChangePage: () => void
