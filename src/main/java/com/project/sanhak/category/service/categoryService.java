@@ -33,7 +33,7 @@ public class categoryService {
             dto.setId(codeSkil.getCSId());
             dto.setName(codeSkil.getCSName());
             dto.setPosition(new int[]{codeSkil.getCSX(), codeSkil.getCSY()});
-            //dto.setTag(codeSkil.getCSTag());
+            dto.setTag(codeSkil.getCSTag());
             // 부모 설정
             List<Integer> parents = skilPrequeRepository.findBySPChildcsid(codeSkil).stream()
                     .map(skilPreque -> skilPreque.getSPParentscsid().getCSId())
