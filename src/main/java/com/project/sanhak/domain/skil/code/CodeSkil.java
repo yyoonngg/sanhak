@@ -14,5 +14,5 @@ public class CodeSkil {
     private String CSCate;
     private int CSX;
     private int CSY;
-    private int CSTag;
+    private String CSTag;
 }

@@ -11,5 +11,5 @@ public class categoryDTO {
     private List<Integer> parent;
     private List<Integer> child;
     private int[] position;
-    //private int tag;
+    private String tag;
 }
