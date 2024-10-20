@@ -8,5 +8,6 @@ import java.util.List;
 
 @Repository
 public interface cardRepository extends JpaRepository<ExperienceCard, Integer> {
-    List<ExperienceCard> findByUserUid(int uid);
+    List<ExperienceCard> findByECuid_UId(int UId);
+
 }

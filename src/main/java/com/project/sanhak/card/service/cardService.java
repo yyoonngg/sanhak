@@ -17,7 +17,7 @@ public class cardService {
     private cardRepository cardRepository;
 
     public List<aiCardDTO> getAllMyCard(int uid) {
-        return cardRepository.findByUserUid(uid)
+        return cardRepository.findByECuid_UId(uid)
                 .stream()
                 .map(this::convertToAiCardDTO)
                 .collect(Collectors.toList());

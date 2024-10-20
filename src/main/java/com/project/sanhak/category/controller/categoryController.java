@@ -18,7 +18,7 @@ public class categoryController {
     @GetMapping(value = {"/{csCate}", "/"})
     public List<categoryDTO> getCategories(@PathVariable(required = false) String csCate) {
         if(csCate == null)
-            csCate = "frontend";
+            csCate = "backend";
         return categoryService.getSkilNode(csCate);
     }
 }
