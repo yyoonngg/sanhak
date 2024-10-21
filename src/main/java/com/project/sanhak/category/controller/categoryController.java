@@ -9,17 +9,16 @@ import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/category")
 public class categoryController {
 
     @Autowired
     private categoryService categoryService;
 
-    @GetMapping(value = {"/category/{csCate}", "/category"})
-    public List<categoryDTO> getCategories(@PathVariable(required = false) Integer csCate) {
+    @GetMapping(value = {"/{csCate}", "/"})
+    public List<categoryDTO> getCategories(@PathVariable(required = false) String csCate) {
         if(csCate == null)
-            csCate = 1;
-
+            csCate = "backend";
         return categoryService.getSkilNode(csCate);
     }
 }
