@@ -209,7 +209,6 @@ export default function CardEditor({
   // [저장] 버튼 클릭
   // TODO: 경험카드 저장 API 연결
   const onSaveCard = () => {
-    console.log(card);
     onChangePage(card);
   };
 
@@ -376,10 +375,16 @@ export default function CardEditor({
       <div className='w-1/3 flex flex-col items-center'>
         <div className='fixed'>
           <Card card={card}/>
-          {card.sourceUrl && card.sourceUrl.length > 0 && (
+          {card.sourceUrl && card.sourceUrl.length > 0 ? (
             <div 
               className='cursor-pointer w-full flex justify-center font-semibold bg-primary text-white border-2 border-primary hover:text-primary hover:bg-white px-4 py-2 mt-2 rounded-xl' 
               onClick={onSaveCard}>AI경험카드 제작 완료하기
+            </div>
+          ) : 
+          (
+            <div 
+              className='cursor-pointer w-full flex justify-center font-semibold bg-primary text-white border-2 border-primary hover:text-primary hover:bg-white px-4 py-2 mt-2 rounded-xl' 
+              onClick={onSaveCard}>AI경험카드 관리 돌아가기
             </div>
           )}
         </div>

@@ -84,7 +84,7 @@ export default function Card({
   };
 
   return (
-    <div className={`${style ? style : ''} w-[400px] h-[75dvh] max-h-[600px] relative mb-1`}>
+    <div className={`${style ? style : ''} w-[400px] h-[75dvh] max-h-[600px] relative mb-4`}>
       <motion.div
         className='w-full h-full relative'
         initial={false}
@@ -159,18 +159,20 @@ export default function Card({
             </div>
             <div className='h-1/3 flex flex-col justify-between px-4 pb-2'>
               {card.reflection && (
-                <div className='line-clamp-4 text-sm mt-2 font-semibold'>
-                  {card.reflection}
-                </div>
+                <>
+                  <div className='line-clamp-4 text-sm mt-2 font-semibold'>
+                    {card.reflection}
+                  </div>
+                  <div className='flex justify-end items-end'>
+                    <button
+                      onClick={handleFlip}
+                      className='text-xs text-primary font-bold'
+                    >
+                      {'자세히 보기 ->'}
+                    </button>
+                  </div>
+                </>
               )}
-              <div className='flex justify-end items-end'>
-                <button
-                  onClick={handleFlip}
-                  className='text-xs text-primary font-bold'
-                >
-                  {'자세히 보기 ->'}
-                </button>
-              </div>
             </div>
           </div>
           
