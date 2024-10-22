@@ -1,32 +1,38 @@
-//컴포넌트1 가로로 정렬된 로드맵 : 들어가야하는 직무별 사진은 href 형태로...?
-//컴포넌트 2 전체 카드 폼 형식 : 직무 카테고리 별 아이콘은 서로 다르게 짤수있도록
+'use client';
 
-//import RoadmapSkill from "@/app/categoryDTO/Roadmap";
+import React, {memo, useMemo} from 'react';
+import SkillNode from './SkillNode';
+import { RoadmapSkill } from '@/models/skill';
 
+function TimelineRoadmap({ skills }: { skills: RoadmapSkill[] }) {
+    const sortedSkills = useMemo(() => {
+        return [...skills].sort((a, b) => {
+            if (a.tag < b.tag) return -1;
+            if (a.tag > b.tag) return 1;
+            return a.id - b.id;
+        });
+    }, [skills]);
 
-// export enum TimeLineTag{
-//     0="None",
-//     1="기본언어",
-//     2="확장프레임워크",
-//     3="통신및api",
-//     4="테스트",
-//
-// }
+    return (
+        <div className="w-full h-screen flex flex-col items-center">
+            <div className="font-bold">Timeline Roadmap</div>
+            <div className="font-semibold text-category-front">Web_FrontEnd</div>
+            <div className="w-full flex flex-wrap gap-4 justify-center mt-4">
+                {sortedSkills.map((skill) => (
+                    <div key={skill.id} className="p-2">
+                        <SkillNode
+                            skill={skill}
+                            scale={1}
+                            isSelected={false}
+                            onSelect={undefined}
+                            onDrag={undefined}
+                        />
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
 
-//export function timeLineSkills(skillParams: RoadmapSkill[]) {
-//    const selectedSkills = skillParams.filter((skill) => skill.tag !== 0 && skill.tag !== undefined);
-//    const groupedSkills = selectedSkills.reduce((group, skill) => {
-//        const tagIndex = skill.tag!;
-//        if (!group[tagIndex]) {
-//            group[tagIndex] = [];
-//        }
-//        group[tagIndex].push(skill);
-//        return group;
-//    }, {} as { [key: number]: RoadmapSkill[] });
+export default TimelineRoadmap;
 
-//    for (const tagIndex in groupedSkills) {
-//        groupedSkills[tagIndex].sort((a, b) => a.id - b.id);
-//    }
-//
-//    return groupedSkills;
-//}

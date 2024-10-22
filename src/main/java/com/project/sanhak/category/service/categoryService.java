@@ -20,7 +20,7 @@ public class categoryService {
     @Autowired
     private SkilPrequeRepository skilPrequeRepository;
 
-    public List<categoryDTO> getSkilNode(int csCate) {
+    public List<categoryDTO> getSkilNode(String csCate) {
         // 특정 CSCate 값을 가진 CodeSkil 엔티티만 호출
         List<CodeSkil> codeSkils = categoryRepository.findByCSCate(csCate);
         // 가져온 CodeSkil 엔티티들의 ID를 저장
@@ -33,7 +33,7 @@ public class categoryService {
             dto.setId(codeSkil.getCSId());
             dto.setName(codeSkil.getCSName());
             dto.setPosition(new int[]{codeSkil.getCSX(), codeSkil.getCSY()});
-            //dto.setTag(codeSkil.getCSTag());
+            dto.setTag(codeSkil.getCSTag());
             // 부모 설정
             List<Integer> parents = skilPrequeRepository.findBySPChildcsid(codeSkil).stream()
                     .map(skilPreque -> skilPreque.getSPParentscsid().getCSId())

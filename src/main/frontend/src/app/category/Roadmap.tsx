@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import SkillNode from './SkillNode';
+import {RoadmapSkill, SkillDetail} from "@/models/skill";
 
 const ROADMAP_SCALE = 200;
 const DRAG_SENSITIVITY = 0.01; // 드래그 이동 감도 값

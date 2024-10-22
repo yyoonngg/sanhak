@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Roadmap from '../category/Roadmap';
 import { ExitIcon } from '@/components/icon';
+import {AllKindOfRoadmapSkills, RoadmapSkill, SkillDetail, SkillSelectUnion} from "@/models/skill";
 
 type RoadmapCustomizeProps = {
   customRoadmapList: CustomRoadmap[];
@@ -9,7 +10,8 @@ type RoadmapCustomizeProps = {
   handleUpdateRoadmap: (newSkill: RoadmapSkill) => void, 
   onSaveRoadmap: () => void,
   getSelectDetail: (id: number) => void,
-  skillDetailData: SkillDetail
+  skillDetailData: SkillDetail,
+  defaultTag: SkillSelectUnion
 };
 
 const categoryList = [
@@ -27,7 +29,8 @@ const RoadmapCustomize = ({
   handleUpdateRoadmap, 
   onSaveRoadmap,
   getSelectDetail,
-  skillDetailData
+  skillDetailData,
+    defaultTag
 }: RoadmapCustomizeProps) => {
   let newPosition: [number, number] | null = null;
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
@@ -81,7 +84,8 @@ const RoadmapCustomize = ({
         id: newId, 
         name: skillName,
         child: [],
-        position: newPosition, 
+        position: newPosition,
+        tag:defaultTag
       };
       handleUpdateRoadmap(newSkill);
     };

@@ -11,8 +11,8 @@ public class CodeSkil {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int CSId;
     private String CSName;
-    private int CSCate;
+    private String CSCate;
     private int CSX;
     private int CSY;
-    private int CSTag;
+    private String CSTag;
 }

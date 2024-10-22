@@ -1,15 +1,17 @@
 import ButtonLabel from '@/components/ButtonLabel';
 import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion'; 
+import { motion } from 'framer-motion';
+import axios from 'axios';
 
 export default function Card({
   style,
-  card
+  card : initialCard
 }: {
-  card: AiCard,
+  card?: AiCard,
   style?: string
 }) {
   const [isFlipped, setIsFlipped] = useState(false);
+  const [card, setCard] = useState<AiCard | null>(initialCard || null);  // 서버에서 가져올 카드 상태
   const [hiddenCounts, setHiddenCounts] = useState({
     skills: 0,
     category: 0,
@@ -27,9 +29,9 @@ export default function Card({
   const calculateHiddenCount = (type: 'skills' | 'category' | 'tools') => {
     const currentRef = refs[type].current;
 
-    if (currentRef) {
+    if (currentRef && card) {
       const items = currentRef.children;
-      const containerWidth = type==='skills' ? currentRef.offsetWidth*2 : currentRef.offsetWidth; // 스킬은 2줄, 카테고리와 툴은 1줄
+      const containerWidth = type === 'skills' ? currentRef.offsetWidth * 2 : currentRef.offsetWidth; // 스킬은 2줄, 카테고리와 툴은 1줄
       let totalWidth = 0;
       let visibleCount = 0;
 
@@ -38,7 +40,7 @@ export default function Card({
         if (totalWidth <= containerWidth) {
           visibleCount++;
         } else {
-          break; 
+          break;
         }
       }
 
@@ -52,6 +54,21 @@ export default function Card({
 
   // card의 각 항목이 변경될 때마다 실행
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('/api/card', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        setCard(response.data);
+      } catch (error) {
+        console.error('데이터 가져오기 실패:', error);
+      }
+    };
+
+    fetchData();
+
     calculateHiddenCount('skills');
     calculateHiddenCount('category');
     calculateHiddenCount('tools');
@@ -76,23 +93,27 @@ export default function Card({
       });
       observer.disconnect();
     };
-  }, [card.skills, card.category, card.tools]);
+  }, [card?.skills, card?.category, card?.tools]);
 
   // 카드 뒤집기
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
   };
 
+  if (!card) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className={`${style ? style : ''} w-[400px] h-[75dvh] max-h-[600px] relative mb-4`}>
       <motion.div
         className='w-full h-full relative'
         initial={false}
-        animate={{ rotateY: isFlipped ? 180 : 0 }} 
+        animate={{ rotateY: isFlipped ? 180 : 0 }}
         transition={{ duration: 0.7 }}
         style={{
-          transformStyle: 'preserve-3d', 
-          perspective: 1000 
+          transformStyle: 'preserve-3d',
+          perspective: 1000
         }}
       >
         <motion.div
@@ -175,7 +196,7 @@ export default function Card({
               )}
             </div>
           </div>
-          
+
         </motion.div>
         <motion.div
           className={`absolute overflow-y-auto scrollbar w-full h-full flex flex-col justify-between items-start bg-white shadow-[4px_4px_8px_rgba(0,0,0,0.3)] ${!isFlipped ? 'rotate-y-180' : ''}`}
@@ -222,7 +243,7 @@ export default function Card({
               </div>
             )}
           </div>
-          
+
           <div className='w-full flex justify-end items-end px-4 pb-4'>
             <button
               onClick={handleFlip}
