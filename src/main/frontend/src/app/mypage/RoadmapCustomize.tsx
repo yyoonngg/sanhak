@@ -116,7 +116,7 @@ const RoadmapCustomize = ({
       {/* 보기모드, 편집모드에 따른 로드맵 측면 사이드창*/}
       {isEditMode ? (
         <div className="w-1/4 h-auto bg-primary border-r border-gray-300 rounded-l-xl">
-          <div className="w-full p-5 bg-white font-bold text-lg rounded-l-xl flex items-center justify-between">
+          <div className="w-full p-5 bg-white font-bold rounded-l-xl flex items-center justify-between">
             <span className="w-2/3 flex-1 mr-2 overflow-hidden whitespace-normal text-ellipsis">
               {selectedRoadmap}
             </span>
@@ -131,7 +131,7 @@ const RoadmapCustomize = ({
               <React.Fragment key={category.value}>
                 <li
                   onClick={() => setSelectedCategory(category.value === selectedCategory ? null : category.value)}
-                  className={`cursor-pointer py-2 hover:text-black rounded ${category.value === selectedCategory && 'text-black text-lg'}`}
+                  className={`cursor-pointer py-2 hover:text-black rounded ${category.value === selectedCategory && 'text-black'}`}
                 >
                   {category.label}  
                 </li>
@@ -158,7 +158,7 @@ const RoadmapCustomize = ({
               <React.Fragment key={roadmap.id}>
                 <li
                   onClick={() => setSelectedRoadmap(roadmap.name)}
-                  className={`flex items-center justify-between cursor-pointer p-5 hover:text-black rounded-l-xl ${roadmap.name === selectedRoadmap && 'bg-white text-black text-lg'}`}
+                  className={`flex items-center justify-between cursor-pointer p-5 hover:text-black rounded-l-xl ${roadmap.name === selectedRoadmap && 'bg-white text-black'}`}
                 >
                   <span className="w-2/3 flex-1 mr-2 overflow-hidden whitespace-normal text-ellipsis">
                     {roadmap.name}
