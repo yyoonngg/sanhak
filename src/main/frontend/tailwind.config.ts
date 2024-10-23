@@ -46,6 +46,9 @@ const config: Config = {
       'custom-min': '723px',
     },
     extend: {
+      maxWidth: {
+        'custom': '1400px',
+      },
       fontFamily: {
         pretendard: ["pretendard",'sans-serif'],
         dsdigi: ["DS-DIGI"],

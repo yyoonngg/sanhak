@@ -6,31 +6,9 @@ import Input from '@/components/Input';
 import {AllKindOfSkills, Skill} from "@/models/skill";
 
 type CardEditorProps = {
-  onChangePage: () => void
+  selectedCard: AiCard | null,
+  onChangePage: (card: AiCard) => void
 };
-
-// TODO: API연결 -> '수정하기'라면 필요
-const cardInfo: AiCard = {
-  fromDate: '2024-10-01',
-  toDate: '2024-12-01',
-  title: '산학 프로젝트',
-  category: ['frontend', 'application'],
-  skills: [
-    { id: 1, name: "HTML"},
-    { id: 2, name: "CSS"},
-    { id: 3, name: "JavaScript"},
-    { id: 4, name: "TypeScript"},
-  ],
-  tools: [
-    { id: 1, name: 'GitHub' }, 
-    { id: 2, name: 'Figma' }
-  ],
-  reflection: '이번 프로젝트를 통해 웹/프론트엔드 개발에서 JavaScript와 React를 활용한 실무 경험을 쌓을 수 있었습니다. 협업 도구를 효과적으로 사용하고, 팀원들과의 소통을 통해 문제를 해결하며 더 나은 결과물을 만들어낼 수 있었습니다. 앞으로도 이러한 경험을 바탕으로 성장하고 싶습니다. 성장하는 개발자가 되겠습니다.',
-  // TODO -> 사진 어떻게 처리할지 논의 -> 임시로 넣어둠
-  imageUrl: '/asset/png/card_example_image.png', 
-  pdfFile: '프로젝트 최종제안서.pdf',
-  sourceUrl: ['https://github.com/KAU-2024-Sanhak/sanhak']
-}
 
 // '생성하기'일때 mock data
 // const cardInfo: AiCard = {
@@ -85,9 +63,10 @@ const allTools: Tool[] = [
 
 const categories = ['frontend', 'backend', 'data', 'security', 'application'];
 export default function CardEditor({
-  onChangePage
+  onChangePage,
+  selectedCard
 }: CardEditorProps) {
-  const [card, setCard] = useState<AiCard>(cardInfo);
+  const [card, setCard] = useState<AiCard>(selectedCard as AiCard);
   const [buttonStyles, setButtonStyles] = useState(Array(categories.length).fill('border-primary'));
   const [selectedSkills, setSelectedSkills] = useState<Skill[]>([]);
 
@@ -231,8 +210,7 @@ export default function CardEditor({
   // [저장] 버튼 클릭
   // TODO: 경험카드 저장 API 연결
   const onSaveCard = () => {
-    console.log(card);
-    onChangePage();
+    onChangePage(card);
   };
 
   // 디버깅용
@@ -241,8 +219,8 @@ export default function CardEditor({
   }, [card]);
   
   return (
-    <div className='w-full h-full flex flex-row justify-evenly'>
-      <div className='w-3/5 h-full flex flex-col items-end'>
+    <div className='w-full h-full flex flex-row justify-between px-24'>
+      <div className='w-[65%] h-full flex flex-col items-end'>
         <CardEditorFormSection title="경험의 제목과 기간을 입력해주세요">
           <div className='flex flex-row w-full justify-around mb-2'>
             <div className='w-1/6 mr-2 text-sm rounded-xl border-gray-d9 bg-primary font-semibold text-white flex justify-center items-center'>경험 제목</div>
@@ -395,13 +373,19 @@ export default function CardEditor({
           </CardEditorFormSection>
         )}
       </div>
-      <div className='w-1/5 flex flex-col items-center'>
+      <div className='w-1/3 flex flex-col items-center'>
         <div className='fixed'>
           <Card card={card}/>
-          {card.sourceUrl && card.sourceUrl.length > 0 && (
+          {card.sourceUrl && card.sourceUrl.length > 0 ? (
             <div 
               className='cursor-pointer w-full flex justify-center font-semibold bg-primary text-white border-2 border-primary hover:text-primary hover:bg-white px-4 py-2 mt-2 rounded-xl' 
               onClick={onSaveCard}>AI경험카드 제작 완료하기
+            </div>
+          ) : 
+          (
+            <div 
+              className='cursor-pointer w-full flex justify-center font-semibold bg-primary text-white border-2 border-primary hover:text-primary hover:bg-white px-4 py-2 mt-2 rounded-xl' 
+              onClick={onSaveCard}>AI경험카드 관리 돌아가기
             </div>
           )}
         </div>
