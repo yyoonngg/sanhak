@@ -23,7 +23,7 @@ export default function UserProfile() {
   const profile_img_src = `/asset/png/profile/${user_info.profile}.png`;
 
   return (
-    <div className='w-full h-[400px] flex border rounded-xl'>
+    <div className='w-full h-[300px] flex border rounded-xl'>
         <div className="w-1/4 rounded-l-xl flex flex-col items-center justify-between">
             <div className="w-full text-left h-1/6 pt-8 pl-8">
                 <div className='flex items-end'>
