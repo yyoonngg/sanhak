@@ -13,6 +13,8 @@ public enum OAuthAttributes {
         userProfile.setUserName((String)attribute.get("name"));
         userProfile.setEmail((String)attribute.get("email"));
 
+
+
         return userProfile;
     }),
 
@@ -23,6 +25,9 @@ public enum OAuthAttributes {
 
         userProfile.setUserName(responseValue.get("name"));
         userProfile.setEmail(responseValue.get("email"));
+        userProfile.setAccessToken((String) attribute.get("access_token"));
+        userProfile.setRefreshToken((String) attribute.get("refresh_token"));
+
 
         return userProfile;
     }),
@@ -35,6 +40,8 @@ public enum OAuthAttributes {
         UserProfile userProfile = new UserProfile();
         userProfile.setUserName(profile.get("nickname"));
         userProfile.setEmail((String)account.get("email"));
+        userProfile.setAccessToken((String) attribute.get("access_token"));
+        userProfile.setRefreshToken((String) attribute.get("refresh_token"));
 
         return userProfile;
     }),

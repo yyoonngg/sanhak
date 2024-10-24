@@ -26,6 +26,7 @@ const config: Config = {
         d2: '#D2D2D2',
         da: '#DADADA',
         dc: '#DCDCDC',
+        ec: '#ECECEC',
         dark: '#262626',
       },
       red: {
@@ -46,6 +47,9 @@ const config: Config = {
       'custom-min': '723px',
     },
     extend: {
+      maxWidth: {
+        'custom': '1400px',
+      },
       fontFamily: {
         pretendard: ["pretendard",'sans-serif'],
         dsdigi: ["DS-DIGI"],

@@ -1,50 +1,38 @@
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
-  jpa:
-    database: mysql
-    database-platform: org.hibernate.dialect.MySQLDialect
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
   security:
     oauth2:
       client:
         registration:
           google:
-            client-id: 구글 클라이언트 키
-            client-secret: 구글 클라이언트 비밀번호
+            client-id:
+            client-secret:
             scope: email, profile
 
+
           naver:
-            client-id: 네이버 클라이언트 키
-            client-secret: 네이버 클라이언트 비밀번호
+            client-id:
+            client-secret:
             redirect-uri: http://localhost:8080/login/oauth2/code/naver
             authorization-grant-type: authorization_code
             client-name: Naver
             scope: name, email
 
           kakao:
-            client-id: 카카오 클라이언트 아이디
+            client-id:
             redirect-uri: http://localhost:8080/login/oauth2/code/kakao
             client-authentication-method: POST
             authorization-grant-type: authorization_code
-            scope: profile_nickname, profile_image, account_email
+            scope: profile_nickname, profile_image
             client-name: Kakao
 
           github:
-            client-id: 깃허브
-            client-secret: 비밀번호
+            client-id:
+            client-secret:
             redirect-uri: http://localhost:8080/login/oauth2/code/github
             authorization-grant-type: authorization_code
             scope: read:user, user:email
             client-name: GitHub
+
 
         provider:
           naver:

@@ -44,6 +44,10 @@
       scrollbar-width: thin; 
       scrollbar-color: rgba(255, 255, 255, 0.5) rgba(0, 0, 0, 0.1); 
     }
+
+    .scrollbar-none {
+      scrollbar-width: none; 
+    }
   
     /* Webkit 기반 브라우저 (Chrome, Safari) */
     .scrollbar::-webkit-scrollbar {
@@ -62,4 +66,18 @@
     .scrollbar::-webkit-scrollbar-track {
       background: rgba(0, 0, 0, 0.1);
     }
+}
+
+/* slick-carousel 라이브러리 관련 커스텀 css */
+@import '~slick-carousel/slick/slick.css';
+@import '~slick-carousel/slick/slick-theme.css';
+.slick-slide > div {
+  /* cursor: pointer; */
+  display: flex !important;
+  justify-content: center;
+}
+
+.slick-prev:before, .slick-next:before { 
+  color: #3D3D4E;
+  font-size: 30px;
 }

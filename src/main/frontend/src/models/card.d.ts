@@ -1,4 +1,5 @@
 type AiCard = {
+    id?: number;
     fromDate?: string,
     toDate?: string,
     title?: string,
@@ -9,4 +10,10 @@ type AiCard = {
     imageUrl?: string,
     pdfFile?: string,
     sourceUrl?: string[]
+}
+
+type AiCardChat = {
+    id: number;
+    sender: string;
+    message: string;
 }
