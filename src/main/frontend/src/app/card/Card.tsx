@@ -18,6 +18,11 @@ export default function Card({
     tools: 0,
   });
 
+  useEffect(()=>{
+    initialCard &&
+    setCard(initialCard);
+  },[initialCard]);
+  
   // 각 항목들의 overflow되는 갯수를 파악하기 위한 ref
   const refs = {
     skills: useRef<HTMLDivElement>(null),
@@ -117,14 +122,14 @@ export default function Card({
         }}
       >
         <motion.div
-          className={`absolute w-full h-full flex flex-col items-start bg-white shadow-[4px_4px_8px_rgba(0,0,0,0.3)] ${isFlipped ? 'rotate-y-180' : ''}`}
+          className={`absolute w-full h-full flex flex-col items-start bg-white rounded-xl shadow-[4px_4px_8px_rgba(0,0,0,0.3)] ${isFlipped ? 'rotate-y-180' : ''}`}
           style={{
             backfaceVisibility: 'hidden'
           }}
         >
           <div className='w-full h-1/3 mb-2'>
             {card.imageUrl && (
-              <img className='w-full h-full object-cover' src={card.imageUrl} alt='' />
+              <img className='w-full h-full object-cover rounded-t-xl' src={card.imageUrl} alt='' />
             )}
           </div>
           <div className='w-full h-2/3 flex flex-col justify-around'>
@@ -199,7 +204,7 @@ export default function Card({
 
         </motion.div>
         <motion.div
-          className={`absolute overflow-y-auto scrollbar w-full h-full flex flex-col justify-between items-start bg-white shadow-[4px_4px_8px_rgba(0,0,0,0.3)] ${!isFlipped ? 'rotate-y-180' : ''}`}
+          className={`absolute overflow-y-auto scrollbar w-full h-full flex flex-col justify-between items-start bg-white rounded-xl shadow-[4px_4px_8px_rgba(0,0,0,0.3)] ${!isFlipped ? 'rotate-y-180' : ''}`}
           style={{
             backfaceVisibility: 'hidden',
             transform: 'rotateY(180deg)'
