@@ -26,6 +26,7 @@ const config: Config = {
         d2: '#D2D2D2',
         da: '#DADADA',
         dc: '#DCDCDC',
+        ec: '#ECECEC',
         dark: '#262626',
       },
       red: {
