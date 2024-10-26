@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# Ignore specific properties file
+src/main/resources/application-private.properties
