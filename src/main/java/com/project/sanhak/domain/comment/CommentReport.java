@@ -15,7 +15,7 @@ public class CommentReport {
     @JoinColumn(referencedColumnName = "CId")
     @ManyToOne
     private Comments CRcid;
-    @JoinColumn(referencedColumnName ="UId")
+    @JoinColumn(referencedColumnName = "UId")
     @ManyToOne
     private User CRuid;
 }

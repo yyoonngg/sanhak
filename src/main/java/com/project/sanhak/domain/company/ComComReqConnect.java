@@ -2,6 +2,7 @@ package com.project.sanhak.domain.company;
 
 import jakarta.persistence.*;
 import lombok.Data;
+
 @Data
 @Entity
 public class ComComReqConnect {
@@ -14,7 +15,7 @@ public class ComComReqConnect {
     private Company CCRCcomid;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName ="ComRId")
+    @JoinColumn(referencedColumnName = "ComRId")
     private CompanyReq CCRCcomrid;
 
 }

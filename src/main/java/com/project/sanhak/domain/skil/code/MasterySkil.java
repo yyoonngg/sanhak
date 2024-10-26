@@ -1,6 +1,5 @@
 package com.project.sanhak.domain.skil.code;
 
-import com.project.sanhak.domain.skil.code.CodeSkil;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,7 +15,7 @@ public class MasterySkil {
     private String MSInfo2;
     private String MSInfo3;
 
-    @JoinColumn(referencedColumnName ="CSId")
+    @JoinColumn(referencedColumnName = "CSId")
     @ManyToOne
     private CodeSkil MS_csid;
 }

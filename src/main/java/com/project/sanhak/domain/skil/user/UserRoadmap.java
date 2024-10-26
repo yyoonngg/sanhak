@@ -1,6 +1,5 @@
 package com.project.sanhak.domain.skil.user;
 
-import com.project.sanhak.domain.skil.code.CodeSkil;
 import com.project.sanhak.domain.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -13,7 +12,7 @@ public class UserRoadmap {
     private int URId;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName ="UId")
+    @JoinColumn(referencedColumnName = "UId")
     private User URuid;
 
     private String URName;

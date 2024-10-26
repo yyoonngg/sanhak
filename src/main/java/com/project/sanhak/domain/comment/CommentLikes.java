@@ -12,11 +12,11 @@ public class CommentLikes {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int CLId;
 
-    @JoinColumn(referencedColumnName ="CId")
+    @JoinColumn(referencedColumnName = "CId")
     @ManyToOne
     private Comments CLcid;
 
-    @JoinColumn(referencedColumnName ="UId")
+    @JoinColumn(referencedColumnName = "UId")
     @ManyToOne
     private User CLuid;
 }
