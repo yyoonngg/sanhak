@@ -1,14 +1,14 @@
 package com.project.sanhak.category.service;
 
+import com.project.sanhak.category.dto.categoryDTO;
 import com.project.sanhak.category.repository.SkilPrequeRepository;
 import com.project.sanhak.category.repository.categoryRepository;
 import com.project.sanhak.domain.skil.code.CodeSkil;
-import com.project.sanhak.domain.skil.code.SkilPreque;
-import com.project.sanhak.category.dto.categoryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service

@@ -82,7 +82,7 @@ export default function CardRetrieve({
           </div>
         ))}
         <div 
-          className='w-[400px] h-[75dvh] max-h-[600px] cursor-pointer flex justify-center items-center mb-4 border-2 border-dashed border-gray-d9'
+          className='w-[400px] h-[75dvh] max-h-[780px] cursor-pointer flex justify-center items-center mb-4 border-2 border-dashed border-gray-d9'
           onClick={()=>onChangePage({})}
           >
           <div className='text-3xl font-bold text-gray-d9'>+</div>

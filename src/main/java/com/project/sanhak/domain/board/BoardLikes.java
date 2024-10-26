@@ -12,11 +12,11 @@ public class BoardLikes {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int BLId;
 
-    @JoinColumn(referencedColumnName ="BId")
+    @JoinColumn(referencedColumnName = "BId")
     @ManyToOne
     private Boards BLbid;
 
-    @JoinColumn(referencedColumnName ="UId")
+    @JoinColumn(referencedColumnName = "UId")
     @ManyToOne
     private User BLuid;
 }

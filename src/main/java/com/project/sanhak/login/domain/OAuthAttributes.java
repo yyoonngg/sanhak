@@ -1,72 +1,61 @@
 package com.project.sanhak.login.domain;
 
-import com.project.sanhak.login.dto.UserProfile;
+import com.project.sanhak.login.dto.UserProfileDTO;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 
 public enum OAuthAttributes {
-
     GOOGLE("google", (attribute) -> {
-        UserProfile userProfile = new UserProfile();
-        userProfile.setUserName((String)attribute.get("name"));
-        userProfile.setEmail((String)attribute.get("email"));
-
-
-
-        return userProfile;
+        UserProfileDTO userProfileDTO = new UserProfileDTO();
+        userProfileDTO.setUsername((String) attribute.get("name"));
+        userProfileDTO.setEmail((String) attribute.get("email"));
+        return userProfileDTO;
     }),
 
     NAVER("naver", (attribute) -> {
-        UserProfile userProfile = new UserProfile();
-
-        Map<String, String> responseValue = (Map)attribute.get("response");
-
-        userProfile.setUserName(responseValue.get("name"));
-        userProfile.setEmail(responseValue.get("email"));
-        userProfile.setAccessToken((String) attribute.get("access_token"));
-        userProfile.setRefreshToken((String) attribute.get("refresh_token"));
+        UserProfileDTO userProfileDTO = new UserProfileDTO();
+        Map responseValue = (Map) attribute.get("response");
+        userProfileDTO.setUsername((String) responseValue.get("name"));
+        userProfileDTO.setEmail((String) responseValue.get("email"));
+        userProfileDTO.setAccessToken((String) attribute.get("access_token"));
+        userProfileDTO.setRefreshToken((String) attribute.get("refresh_token"));
 
 
-        return userProfile;
+        return userProfileDTO;
     }),
 
     KAKAO("kakao", (attribute) -> {
-
-        Map<String, Object> account = (Map)attribute.get("kakao_account");
-        Map<String, String> profile = (Map)account.get("profile");
-
-        UserProfile userProfile = new UserProfile();
-        userProfile.setUserName(profile.get("nickname"));
-        userProfile.setEmail((String)account.get("email"));
-        userProfile.setAccessToken((String) attribute.get("access_token"));
-        userProfile.setRefreshToken((String) attribute.get("refresh_token"));
-
-        return userProfile;
+        Map account = (Map) attribute.get("kakao_account");
+        Map profile = (Map) account.get("profile");
+        UserProfileDTO userProfileDTO = new UserProfileDTO();
+        userProfileDTO.setUsername((String) profile.get("nickname"));
+        userProfileDTO.setEmail((String) account.get("email"));
+        userProfileDTO.setAccessToken((String) attribute.get("access_token"));
+        userProfileDTO.setRefreshToken((String) attribute.get("refresh_token"));
+        return userProfileDTO;
     }),
 
     GITHUB("github", (attribute) -> {
+        Map account = (Map) attribute.get("kakao_account");
+        Map profile = (Map) account.get("profile");
+        UserProfileDTO userProfileDTO = new UserProfileDTO();
+        userProfileDTO.setUsername((String) profile.get("nickname"));
+        userProfileDTO.setEmail((String) account.get("email"));
 
-        Map<String, Object> account = (Map)attribute.get("kakao_account");
-        Map<String, String> profile = (Map)account.get("profile");
-
-        UserProfile userProfile = new UserProfile();
-        userProfile.setUserName(profile.get("nickname"));
-        userProfile.setEmail((String)account.get("email"));
-
-        return userProfile;
+        return userProfileDTO;
     });
 
     private final String registrationId; // 로그인한 서비스(ex) google, naver..)
-    private final Function<Map<String, Object>, UserProfile> of; // 로그인한 사용자의 정보를 통하여 UserProfile을 가져옴
+    private final Function<Map<String, Object>, UserProfileDTO> of; // 로그인한 사용자의 정보를 통하여 UserProfile을 가져옴
 
-    OAuthAttributes(String registrationId, Function<Map<String, Object>, UserProfile> of) {
+    OAuthAttributes(String registrationId, Function<Map<String, Object>, UserProfileDTO> of) {
         this.registrationId = registrationId;
         this.of = of;
     }
 
-    public static UserProfile extract(String registrationId, Map<String, Object> attributes) {
+    public static UserProfileDTO extract(String registrationId, Map<String, Object> attributes) {
         return Arrays.stream(values())
                 .filter(value -> registrationId.equals(value.registrationId))
                 .findFirst()

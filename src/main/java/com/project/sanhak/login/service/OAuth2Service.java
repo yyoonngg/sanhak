@@ -1,24 +1,21 @@
 package com.project.sanhak.login.service;
 
-import com.project.sanhak.login.domain.OAuthAttributes;
 import com.project.sanhak.domain.user.OAuthToken;
-import com.project.sanhak.login.dto.UserProfile;
+import com.project.sanhak.login.domain.OAuthAttributes;
+import com.project.sanhak.login.dto.UserProfileDTO;
 import com.project.sanhak.login.repository.LoginUserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -38,8 +35,8 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
         // 사용자 프로필 생성
-        UserProfile userProfile = OAuthAttributes.extract(registrationId, attributes);
-        userProfile.setProvider(registrationId);
+        UserProfileDTO userProfileDTO = OAuthAttributes.extract(registrationId, attributes);
+        userProfileDTO.setProvider(registrationId);
 
         // accessToken 가져오기
         String accessToken = userRequest.getAccessToken().getTokenValue();
@@ -64,12 +61,12 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
         }
 
         // UserProfile에 토큰 정보 설정
-        userProfile.setAccessToken(accessToken);
-        userProfile.setRefreshToken(refreshToken);
-        userProfile.setExpireDate(expireDate);  // 만료 시간 설정
+        userProfileDTO.setAccessToken(accessToken);
+        userProfileDTO.setRefreshToken(refreshToken);
+        userProfileDTO.setExpireDate(expireDate);  // 만료 시간 설정
 
         // 사용자 정보를 DB에 업데이트하거나 저장
-        updateOrSaveUser(userProfile);
+        updateOrSaveUser(userProfileDTO);
 
         // 사용자 정보를 반환
         return oAuth2User;
@@ -90,31 +87,31 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
     public Map<String, Object> getCustomAttribute(String registrationId,
                                                   String userNameAttributeName,
                                                   Map<String, Object> attributes,
-                                                  UserProfile userProfile) {
+                                                  UserProfileDTO userProfileDTO) {
         Map<String, Object> customAttribute = new ConcurrentHashMap<>();
 
         customAttribute.put(userNameAttributeName, attributes.get(userNameAttributeName));
         customAttribute.put("provider", registrationId);
-        customAttribute.put("name", userProfile.getUsername());
-        customAttribute.put("email", userProfile.getEmail());
+        customAttribute.put("name", userProfileDTO.getUsername());
+        customAttribute.put("email", userProfileDTO.getEmail());
 
         return customAttribute;
     }
 
     // OAuthToken 저장 또는 업데이트하는 로직
-    public OAuthToken updateOrSaveUser(UserProfile userProfile) {
+    public OAuthToken updateOrSaveUser(UserProfileDTO userProfileDTO) {
         // 사용자가 이미 존재하면 정보를 업데이트하고, 없으면 새로 생성
         OAuthToken user = userRepository
-                .findUserByEmailAndProvider(userProfile.getEmail(), userProfile.getProvider())
+                .findUserByEmailAndProvider(userProfileDTO.getEmail(), userProfileDTO.getProvider())
                 .map(value -> value.updateUser(
-                        userProfile.getUsername(),
-                        userProfile.getEmail(),
-                        userProfile.getProvider(),
-                        userProfile.getAccessToken(),
-                        userProfile.getRefreshToken(),
-                        String.valueOf(userProfile.getExpireDate())  // 토큰 만료 시간 계산
+                        userProfileDTO.getUsername(),
+                        userProfileDTO.getEmail(),
+                        userProfileDTO.getProvider(),
+                        userProfileDTO.getAccessToken(),
+                        userProfileDTO.getRefreshToken(),
+                        String.valueOf(userProfileDTO.getExpireDate())  // 토큰 만료 시간 계산
                 ))
-                .orElse(userProfile.toEntity());  // 새로운 OAuthToken 엔티티 생성
+                .orElse(userProfileDTO.toEntity());  // 새로운 OAuthToken 엔티티 생성
 
         return userRepository.save(user);  // DB에 저장
     }

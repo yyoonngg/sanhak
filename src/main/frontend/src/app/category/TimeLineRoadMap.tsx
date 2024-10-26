@@ -18,17 +18,20 @@ function TimelineRoadmap({ skills }: { skills: RoadmapSkill[] }) {
             <div className="font-bold">Timeline Roadmap</div>
             <div className="font-semibold text-category-front">Web_FrontEnd</div>
             <div className="w-full flex flex-wrap gap-4 justify-center mt-4">
-                {sortedSkills.map((skill) => (
-                    <div key={skill.id} className="p-2">
+
+                <svg width="100%" height="40%">
+                    {sortedSkills.map((skill) => (
                         <SkillNode
+                            key={skill.id}
                             skill={skill}
-                            scale={1}
+                            scale={20}
                             isSelected={false}
                             onSelect={undefined}
                             onDrag={undefined}
                         />
-                    </div>
-                ))}
+
+                    ))}
+                </svg>
             </div>
         </div>
     );
