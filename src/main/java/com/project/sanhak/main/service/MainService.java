@@ -1,5 +1,6 @@
 package com.project.sanhak.main.service;
 
+import com.project.sanhak.domain.user.User;
 import com.project.sanhak.main.repository.*;
 import com.project.sanhak.mypage.repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,4 +19,9 @@ public class MainService {
 
     @Autowired
     private NotificationRepository notificationRepository;
+
+    public User getUserFromToken(String token) {
+        User user = null;
+        return user;
+    }
 }

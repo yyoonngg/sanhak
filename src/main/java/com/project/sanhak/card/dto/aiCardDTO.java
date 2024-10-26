@@ -15,9 +15,12 @@ public class aiCardDTO {
     private String toDate;
     private String title;
     private List<String> category;
+    private List<String> skills;
     private List<String> tools;
     private String reflection;
     private String imageUrl;
-    private String pdfFile;
-    private String sourceUrl;
+    private String pdfName;
+    private String pdfUrl;
+    private List<String> sourceUrl;
+    private String summary;
 }
