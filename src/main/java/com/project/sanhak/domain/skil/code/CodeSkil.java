@@ -15,4 +15,5 @@ public class CodeSkil {
     private int CSX;
     private int CSY;
     private String CSTag;
+    private String CSDetail;
 }

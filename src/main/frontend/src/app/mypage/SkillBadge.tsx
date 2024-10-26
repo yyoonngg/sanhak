@@ -6,7 +6,7 @@ type SkillBadgeProps = {
 const SkillBadge = ({
  skill
 }: SkillBadgeProps) => {
-  const image_skill_name = skill.name.toLowerCase().replace(/\s+/g, '').replace(/\./g, ''); // 소문자, 공백제거, "."제거
+  const image_skill_name = skill.name.toLowerCase().replace(/\s+/g, '').replace(/\./g, '').replace(/#/g, 'sharp'); // 소문자, 공백제거, "."제거
   const image_src = `/asset/png/skill/${image_skill_name}_img.png`;
   const bg_shadow = 'shadow-[4px_4px_10px_#8247FF,4px_4px_20px_#EF39FF,4px_4px_30px_#FFC839]';
   

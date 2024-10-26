@@ -2,13 +2,17 @@ package com.project.sanhak.domain.card;
 
 import com.project.sanhak.domain.user.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
 @Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class ExperienceCard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,12 +25,13 @@ public class ExperienceCard {
     private LocalDateTime ECToDate;
     private String ECTitle;
     private String ECPosition;
-    private String ECSkil;
+    private String ECSkill;
     private String ECTool;
     private String ECReflection;
-    private String ECPdf;
     private String ECSummary;
     private String ECImageUrl;
+    private String ECPdfName;
     private String ECPdfUrl;
+    @Lob
     private String ECLink;
 }

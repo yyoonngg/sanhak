@@ -12,7 +12,9 @@ public class MasterySkil {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int MSId;
     private String MSName;
-    private String MSInfo;
+    private String MSInfo1;
+    private String MSInfo2;
+    private String MSInfo3;
 
     @JoinColumn(referencedColumnName ="CSId")
     @ManyToOne
