@@ -1,8 +1,10 @@
 package com.project.sanhak.card.service;
 
 import com.project.sanhak.card.dto.aiCardDTO;
+import com.project.sanhak.card.mapper.CardMapper;
 import com.project.sanhak.card.repository.cardRepository;
 import com.project.sanhak.domain.card.ExperienceCard;
+import com.project.sanhak.domain.user.User;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.io.RandomAccessRead;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -10,12 +12,10 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import com.project.sanhak.card.mapper.CardMapper;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -23,11 +23,10 @@ import java.util.Map;
 
 @Service
 public class cardService {
-    @Autowired
-    private cardRepository cardRepository;
-
     private final CardMapper cardMapper;
     private final WebClient webClient;
+    @Autowired
+    private cardRepository cardRepository;
 
     public cardService(CardMapper cardMapper, WebClient webClient) {
         this.cardMapper = cardMapper;
@@ -83,13 +82,37 @@ public class cardService {
         }
     }
 
-    public String updateAiCard(int uid, String cardId) {
-        return null;
+    public Mono<String> updateAiCard(User user, int cardId, ExperienceCard card, MultipartFile imageFile, MultipartFile pdfFile) {
+        String pdfText = extractTextFromPDF(pdfFile);
+        // 외부 API 요청으로 요약 생성
+        String url = "http://api/createCard";
+        Map<String, Object> requestData = new HashMap<>();
+        requestData.put("title", card.getECTitle());
+        requestData.put("position", card.getECPosition());
+        requestData.put("tool", card.getECTool());
+        requestData.put("reflection", card.getECReflection());
+        requestData.put("pdfText", pdfText);
+
+        return webClient.post()
+                .uri(url)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .bodyValue(requestData)
+                .retrieve()
+                .bodyToMono(Map.class)
+                .map(response -> {
+                    if (response.containsKey("summary")) {
+                        String summary = (String) response.get("summary");
+                        card.setECSummary(summary);
+                        cardRepository.save(card);
+                        return "success";
+                    } else {
+                        return "error: summary not found";
+                    }
+                });
     }
 
-    public String deleteAiCard(int uid, String cardId) {
-
-        return null;
+    public String deleteAiCard(ExperienceCard card) {
+        cardRepository.delete(card);
+        return "success";
     }
-
 }

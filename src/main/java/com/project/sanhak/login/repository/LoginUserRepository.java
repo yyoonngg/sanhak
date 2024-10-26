@@ -2,9 +2,11 @@ package com.project.sanhak.login.repository;
 
 import com.project.sanhak.domain.user.OAuthToken;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.Optional;  // 추가 필요
+import java.util.Optional;
 
+@Repository
 public interface LoginUserRepository extends JpaRepository<OAuthToken, Integer> {
     Optional<OAuthToken> findUserByEmailAndProvider(String email, String provider);
 }

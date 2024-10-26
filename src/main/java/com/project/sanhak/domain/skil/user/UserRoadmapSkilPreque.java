@@ -11,11 +11,11 @@ public class UserRoadmapSkilPreque {
     private int URSPId;
 
     @ManyToOne
-    @JoinColumn(name="URSPparentscsid", referencedColumnName = "URSid")
+    @JoinColumn(name = "URSPparentscsid", referencedColumnName = "URSid")
     private UserRoadmapSkil URSPparentscsid;
 
     @ManyToOne
-    @JoinColumn(name="URSPchildcsid", referencedColumnName = "URSid")
+    @JoinColumn(name = "URSPchildcsid", referencedColumnName = "URSid")
     private UserRoadmapSkil URSPchildcsid;
 
 }
