@@ -12,8 +12,21 @@ type AiCard = {
     sourceUrl?: string[]
 }
 
+type AiCardChatRoom = {
+    id: number;
+    cardId: number;
+    title: string;
+    role: string;
+};
+
 type AiCardChat = {
     id: number;
-    sender: string;
-    message: string;
+    isUser: number; // 0: AI, 1: User
+    content: string;
+}
+
+type ChatRoleOption = {
+    label: string;
+    description: string;
+    guideNotice: string;
 }
