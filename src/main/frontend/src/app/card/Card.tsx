@@ -36,7 +36,7 @@ export default function Card({
 
     if (currentRef && card) {
       const items = currentRef.children;
-      const containerWidth = type === 'skills' ? currentRef.offsetWidth * 2 : currentRef.offsetWidth; // 스킬은 2줄, 카테고리와 툴은 1줄
+      const containerWidth = currentRef.offsetWidth; 
       let totalWidth = 0;
       let visibleCount = 0;
 
@@ -110,7 +110,7 @@ export default function Card({
   }
 
   return (
-    <div className={`${style ? style : ''} w-[390px] h-[80dvh] max-h-[770px] relative mb-4`}>
+    <div className={`${style ? style : ''} w-[390px] h-[580px] relative mb-4`}>
       <motion.div
         className='w-full h-full relative'
         initial={false}
@@ -127,7 +127,7 @@ export default function Card({
             backfaceVisibility: 'hidden'
           }}
         >
-          <div className='w-full h-2/3 px-6 py-6'>
+          <div className='w-full h-2/3 px-5 pt-5 pb-2'>
             {card.imageUrl && (
               <img className='w-full h-full object-cover rounded-xl' src={card.imageUrl} alt='' />
             )}
@@ -138,20 +138,12 @@ export default function Card({
                 <div className='font-normal text-black text-sm'>{card.fromDate} ~ {card.toDate}</div>
               )}
               {card.title && (
-                <div className='font-semibold text-3xl mb-3'>{card.title}</div>
-              )}
-              {card.reflection && (
-                  <>
-                    <div className='line-clamp-4 text-sm mb-2'>
-                      {card.reflection}
-                    </div>
-                    <div className='mb-4 w-full border-t border-gray-d9'/>
-                  </>
+                <div className='font-semibold text-3xl mb-2'>{card.title}</div>
               )}
               <div className='w-full flex justify-between items-center'>
                 <div className='flex items-center'>
                   {card.category && card.category.length > 0 && (
-                    <div ref={refs.category} className='h-[35px] flex flex-wrap overflow-hidden items-center text-sm font-semibold mb-3'>
+                    <div ref={refs.category} className='h-[35px] flex flex-wrap overflow-hidden items-center text-sm font-semibold mb-1'>
                       {card.category.map(c => (
                         <ButtonLabel key={c} type='category' label={c} />
                       ))}
@@ -165,7 +157,7 @@ export default function Card({
               <div className='w-full flex justify-between items-center'>
                 <div className='flex items-center'>
                   {card.skills && card.skills.length > 0 && (
-                    <div ref={refs.skills} className='h-auto max-h-[70px] min-h-[35px] flex flex-wrap overflow-hidden items-center text-sm font-semibold mb-3'>
+                    <div ref={refs.skills} className='h-auto max-h-[35px] min-h-[35px] flex flex-wrap overflow-hidden items-center text-sm font-semibold mb-1'>
                       {card.skills.map(s => (
                         <ButtonLabel key={s.id} type='skill' label={s.name} />
                       ))}
@@ -179,7 +171,7 @@ export default function Card({
               <div className='w-full flex justify-between items-center'>
                 <div>
                   {card.tools && card.tools.length > 0 && (
-                    <div ref={refs.tools} className='h-[35px] flex flex-wrap overflow-hidden items-center text-sm font-semibold mb-2'>
+                    <div ref={refs.tools} className='h-[35px] flex flex-wrap overflow-hidden items-center text-sm font-semibold mb-1'>
                       {card.tools.map(t => (
                         <ButtonLabel key={t.id} type='tool' label={t.name} />
                       ))}
