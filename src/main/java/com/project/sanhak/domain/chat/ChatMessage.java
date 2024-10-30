@@ -12,7 +12,7 @@ public class ChatMessage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int CMId;
 
-    @JoinColumn(referencedColumnName = "CRId")
+    @JoinColumn(name = "CMcrid", referencedColumnName = "CRId")
     @ManyToOne
     private ChatRooms CMcrid;
 

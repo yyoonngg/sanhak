@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface messageRepository extends JpaRepository<ChatMessage, Integer> {
-    void deleteByChatRoom(ChatRooms chatRoom);
+    void deleteByCMcrid(ChatRooms CMcrid);
 
     List<ChatMessage> findByCMcrid_CRIdOrderByCMTimeAsc(int chat_id);
 }
