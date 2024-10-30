@@ -20,6 +20,6 @@ public class ChatRooms {
     @ManyToOne
     private User CRuid;
 
-    private String CRRole;
+    private int CRType;
     private String CRLastmessage;
 }

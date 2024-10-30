@@ -3,7 +3,10 @@ package com.project.sanhak.card.service;
 import com.project.sanhak.card.dto.aiCardDTO;
 import com.project.sanhak.card.mapper.CardMapper;
 import com.project.sanhak.card.repository.cardRepository;
+import com.project.sanhak.aiChatbot.repository.chatRepository;
+import com.project.sanhak.aiChatbot.repository.messageRepository;
 import com.project.sanhak.domain.card.ExperienceCard;
+import com.project.sanhak.domain.chat.ChatRooms;
 import com.project.sanhak.domain.user.User;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.io.RandomAccessRead;
@@ -28,7 +31,10 @@ public class cardService {
     private final WebClient webClient;
     @Autowired
     private cardRepository cardRepository;
-
+    @Autowired
+    private chatRepository chatRepository;
+    @Autowired
+    private messageRepository messageRepository;
     public cardService(CardMapper cardMapper, WebClient webClient) {
         this.cardMapper = cardMapper;
         this.webClient = webClient;
@@ -61,11 +67,20 @@ public class cardService {
                 .bodyValue(requestData)
                 .retrieve()
                 .bodyToMono(Map.class)
+                .publishOn(Schedulers.boundedElastic())
                 .map(response -> {
                     if (response.containsKey("summary")) {
                         String summary = (String) response.get("summary");
                         card.setECSummary(summary);
                         cardRepository.save(card);
+                        for (int type = 0; type < 3; type++) {
+                            ChatRooms chatRoom = new ChatRooms();
+                            chatRoom.setCRType(type);
+                            chatRoom.setCRuid(card.getECuid());
+                            chatRoom.setCRecid(card);
+                            chatRoom.setCRLastmessage("채팅방이 개설되었습니다.");
+                            chatRepository.save(chatRoom);
+                        }
                         return "success";
                     } else {
                         return "error: summary not found";
@@ -114,6 +129,12 @@ public class cardService {
     }
 
     public String deleteAiCard(ExperienceCard card) {
+        List<ChatRooms> chatRooms = chatRepository.findByCRecid(card);
+
+        for (ChatRooms chatRoom : chatRooms) {
+            messageRepository.deleteByChatRoom(chatRoom);
+            chatRepository.delete(chatRoom);
+        }
         cardRepository.delete(card);
         return "success";
     }
