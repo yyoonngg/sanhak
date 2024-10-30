@@ -162,7 +162,7 @@ export default function MypagePage() {
   } 
 
   return (
-    <div className="w-full h-full flex flex-col items-center">
+    <div className="w-full h-full flex flex-col items-center mt-5">
       <div className='w-[1400px] h-full'>
         <div className='w-full flex flex-col px-24 pb-10 border-b border-gray-cc'>
           <div className='font-bold text-2xl mb-5'>마이페이지</div>
