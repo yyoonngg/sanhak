@@ -1,12 +1,10 @@
 package com.project.sanhak.aiChatbot.controller;
 
-import com.project.sanhak.card.repository.cardRepository;
 import com.project.sanhak.aiChatbot.service.chatService;
 import com.project.sanhak.domain.chat.ChatMessage;
 import com.project.sanhak.domain.chat.ChatRooms;
 import com.project.sanhak.domain.user.User;
 import com.project.sanhak.main.service.MainService;
-import com.project.sanhak.util.s3.S3FileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -133,7 +131,6 @@ public class chatController {
                 return ResponseEntity.badRequest().body("질문이 비어 있습니다.");
             }
 
-            // Service 계층에 메시지를 전송하고 저장하도록 요청
             String response = chatService.sendMessageToBot(uid, chat_id, chat_type, question);
             return ResponseEntity.ok(response);
 
