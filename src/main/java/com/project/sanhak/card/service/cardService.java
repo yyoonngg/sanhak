@@ -132,7 +132,7 @@ public class cardService {
         List<ChatRooms> chatRooms = chatRepository.findByCRecid(card);
 
         for (ChatRooms chatRoom : chatRooms) {
-            messageRepository.deleteByChatRoom(chatRoom);
+            messageRepository.deleteByCMcrid(chatRoom);
             chatRepository.delete(chatRoom);
         }
         cardRepository.delete(card);
