@@ -1,14 +1,12 @@
 package com.project.sanhak.util.s3;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -117,6 +115,24 @@ public class S3FileService {
             return decodingKey.substring(1); // 맨 앞의 '/' 제거
         } catch (MalformedURLException | UnsupportedEncodingException e) {
             throw new S3Exception(ErrorCode.IO_EXCEPTION_ON_FILE_DELETE);
+        }
+    }
+
+    public MultipartFile downloadFileAsMultipartFile(String fileUrl) {
+        try {
+            String key = getKeyFromFileAddress(fileUrl); // 파일 경로로부터 S3 키를 추출
+            S3Object s3Object = amazonS3.getObject(bucketName, key); // S3에서 파일 다운로드
+            InputStream inputStream = s3Object.getObjectContent();
+
+            return new MockMultipartFile(
+                    key,                          // 파일 이름
+                    key,                          // 원본 파일 이름
+                    s3Object.getObjectMetadata().getContentType(), // 파일 유형
+                    inputStream                   // 파일 내용
+            );
+        } catch (Exception e) {
+            log.error("파일 다운로드 실패: {}", e.getMessage());
+            throw new S3Exception(ErrorCode.IO_EXCEPTION_ON_FILE_DOWNLOAD);
         }
     }
 }
