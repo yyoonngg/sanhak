@@ -153,6 +153,13 @@ public class cardController {
                     return Mono.just(ResponseEntity.badRequest().body("PDF 파일 업로드에 실패했습니다."));
                 }
                 card.setECPdfUrl(pdfUrl);
+            } else {
+                try {
+                    MultipartFile existingPdfFile = S3FileService.downloadFileAsMultipartFile(updatedCardDTO.getPdfUrl());
+                } catch (Exception e) {
+                    log.error("PDF 파일 다운로드 실패: {}", e.getMessage());
+                    return Mono.just(ResponseEntity.internalServerError().body("PDF 파일 다운로드에 실패했습니다."));
+                }
             }
             return cardService.updateAiCard(user, card_id, card, imageFile, pdfFile)
                     .map(result -> {

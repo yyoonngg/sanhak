@@ -8,7 +8,7 @@ public enum ErrorCode {
     IO_EXCEPTION_ON_FILE_DELETE("I/O exception occurred while deleting file", 500),
     NO_FILE_EXTENSION("File has no extension", 400),
     INVALID_FILE_EXTENSION("Invalid file extension", 400),
-    PUT_OBJECT_EXCEPTION("Exception occurred while putting object to S3", 500);
+    PUT_OBJECT_EXCEPTION("Exception occurred while putting object to S3", 500), IO_EXCEPTION_ON_FILE_DOWNLOAD("download error", 500);
     private final String message;
     private final int statusCode;
 
