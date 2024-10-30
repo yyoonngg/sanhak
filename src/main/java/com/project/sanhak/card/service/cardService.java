@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -99,6 +100,7 @@ public class cardService {
                 .bodyValue(requestData)
                 .retrieve()
                 .bodyToMono(Map.class)
+                .publishOn(Schedulers.boundedElastic())
                 .map(response -> {
                     if (response.containsKey("summary")) {
                         String summary = (String) response.get("summary");
