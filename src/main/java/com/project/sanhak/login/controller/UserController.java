@@ -18,7 +18,11 @@ public class UserController {
     @GetMapping("/loginInfo")
     public String getJson(Authentication authentication) {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+        System.out.println(oAuth2User.toString());
+        System.out.println("\n");
         Map<String, Object> attributes = oAuth2User.getAttributes();
+        System.out.println(attributes);
+        System.out.println("\n");
         return attributes.toString();
     }
 

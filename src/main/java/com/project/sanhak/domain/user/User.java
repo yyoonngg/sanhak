@@ -1,10 +1,8 @@
 package com.project.sanhak.domain.user;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
@@ -15,8 +13,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int UId;
-    private String UGitId;
+    private String UEmailId;
+    @CreatedDate
+    @Column(updatable = false)
     private LocalDateTime UCreate;
     private LocalDateTime ULastLog;
-
 }

@@ -69,6 +69,7 @@ export default function CardEditor({
   const [card, setCard] = useState<AiCard>(selectedCard as AiCard);
   const [buttonStyles, setButtonStyles] = useState(Array(categories.length).fill('border-primary'));
   const [selectedSkills, setSelectedSkills] = useState<Skill[]>([]);
+  const [isLoading, setIsLoading] = useState(false); // 로딩
 
   // 1. 제목과 기간
   const handlerTitleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,14 +100,14 @@ export default function CardEditor({
       setButtonStyles(newStyles);
     }
   }, [card.category, categories]);
-  
+
   const handleCategoryClick = (index: number) => {
     const newStyles = [...buttonStyles];
     newStyles[index] = newStyles[index] === '' ? 'border-primary' : '';
     setButtonStyles(newStyles);
-  
+
     const category = categories[index];
-  
+
     setCard(prevCard => {
       const currentCategories = prevCard.category || [];
       const updatedCategories = currentCategories.includes(category)
@@ -207,10 +208,60 @@ export default function CardEditor({
     });
   };
 
-  // [저장] 버튼 클릭
-  // TODO: 경험카드 저장 API 연결
-  const onSaveCard = () => {
-    onChangePage(card);
+  const createAiCard = async () => {
+    setIsLoading(true);
+    const formData = new FormData();
+    formData.append("cardInfo", JSON.stringify(card));
+
+    try {
+      const response = await fetch('http://localhost:8080/api/card/create', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include'
+      } as RequestInit);
+      if (response.ok) {
+        const result = await response.json();
+        onChangePage(result);
+      } else {
+        console.error("카드 생성에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("오류 발생:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updateAiCard = async () => {
+    setIsLoading(true);
+    const formData = new FormData();
+    formData.append("cardInfo", JSON.stringify(card));
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/card/update/${card.id}`, {
+        method: 'POST',
+        body: formData,
+        credentials: 'include'
+      } as RequestInit);
+      if (response.ok) {
+        const result = await response.json();
+        onChangePage(result);
+      } else {
+        console.error("카드 수정에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("오류 발생:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSaveClick = () => {
+    if (selectedCard) {
+      updateAiCard();
+    } else {
+      createAiCard();
+    }
   };
 
   // 디버깅용
@@ -377,15 +428,17 @@ export default function CardEditor({
         <div className='fixed'>
           <Card card={card}/>
           {card.sourceUrl && card.sourceUrl.length > 0 ? (
-            <div 
-              className='cursor-pointer w-full flex justify-center font-semibold bg-primary text-white border-2 border-primary hover:text-primary hover:bg-white px-4 py-2 mt-2 rounded-xl' 
-              onClick={onSaveCard}>AI경험카드 제작 완료하기
-            </div>
-          ) : 
+              <div
+                  className='cursor-pointer w-full flex justify-center font-semibold bg-primary text-white border-2 border-primary hover:text-primary hover:bg-white px-4 py-2 mt-2 rounded-xl'
+                  onClick={handleSaveClick}>
+                {selectedCard ? 'AI경험카드 수정하기' : 'AI경험카드 생성하기'}
+              </div>
+          ) :
           (
-            <div 
-              className='cursor-pointer w-full flex justify-center font-semibold bg-primary text-white border-2 border-primary hover:text-primary hover:bg-white px-4 py-2 mt-2 rounded-xl' 
-              onClick={onSaveCard}>AI경험카드 관리 돌아가기
+            <div
+              className='cursor-pointer w-full flex justify-center font-semibold bg-primary text-white border-2 border-primary hover:text-primary hover:bg-white px-4 py-2 mt-2 rounded-xl'
+              onClick={handleSaveClick}>
+              {selectedCard ? 'AI경험카드 관리 돌아가기': 'AI경험카드 관리 돌아가기'}
             </div>
           )}
         </div>

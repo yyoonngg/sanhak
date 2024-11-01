@@ -16,7 +16,7 @@ export default function CardRetrieve({ onChangePage }: CardRetrieveProps) {
     const fetchCards = async () => {
       try {
         const response = await fetch("http://localhost:8080/api/card/", {
-          credentials: 'include', // 세션 정보를 포함하여 요청
+          credentials: 'include',
         });
         if (!response.ok) {
           throw new Error('Failed to fetch cards');
