@@ -9,9 +9,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.reactive.config.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
