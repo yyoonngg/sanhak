@@ -30,5 +30,4 @@ public class UserController {
         return ResponseEntity.ok().body(Map.of("authenticated", false));
     }
 
-
 }

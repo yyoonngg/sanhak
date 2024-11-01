@@ -18,4 +18,7 @@ public class UserRoadmapSkil {
     @ManyToOne
     @JoinColumn(referencedColumnName = "CSID")
     private CodeSkil URScsid;
+
+    private int x;
+    private int y;
 }
