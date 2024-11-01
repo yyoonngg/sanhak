@@ -8,17 +8,28 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.reactive.config.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
 @Configuration
-public class SecurityConfig {
+public class SecurityConfig{
 
     private final OAuth2Service oAuth2Service;
-
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         return http
+                .cors(cors -> cors.configurationSource(request -> {
+                    var config = new org.springframework.web.cors.CorsConfiguration();
+                    config.setAllowedOrigins(List.of("http://localhost:3000"));
+                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+                    config.setAllowCredentials(true);
+                    return config;
+                }))
                 .csrf(csrf -> csrf.disable()) // CSRF 보호 설정 비활성화
                 .authorizeHttpRequests(authorize -> authorize // 권한 설정
                         .requestMatchers("/", "/oauth2/authorization/**").permitAll() // 로그인 관련 URL 접근 허용
@@ -81,7 +92,7 @@ public class SecurityConfig {
             String provider = authentication.getPrincipal().toString().toLowerCase(); // 필요에 따라 수정
             request.getSession().setAttribute("provider", provider);
 
-            response.sendRedirect("/"); // 로그인 성공 후 리다이렉트
+            response.sendRedirect("http://localhost:3000/category"); // 로그인 성공 후 리다이렉트
         };
     }
 }
