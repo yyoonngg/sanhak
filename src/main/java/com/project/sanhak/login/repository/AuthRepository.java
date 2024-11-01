@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface LoginUserRepository extends JpaRepository<OAuthToken, Integer> {
+public interface AuthRepository extends JpaRepository<OAuthToken, Integer> {
     Optional<OAuthToken> findUserByEmailAndProvider(String email, String provider);
 }

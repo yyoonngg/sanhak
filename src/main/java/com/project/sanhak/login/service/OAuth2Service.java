@@ -1,10 +1,14 @@
 package com.project.sanhak.login.service;
 
 import com.project.sanhak.domain.user.OAuthToken;
+import com.project.sanhak.domain.user.User;
 import com.project.sanhak.login.domain.OAuthAttributes;
 import com.project.sanhak.login.dto.UserProfileDTO;
-import com.project.sanhak.login.repository.LoginUserRepository;
+import com.project.sanhak.login.repository.AuthRepository;
+import com.project.sanhak.main.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -13,6 +17,8 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -23,8 +29,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    private final LoginUserRepository userRepository;
-    private final OAuth2AuthorizedClientService authorizedClientService;  // OAuth2AuthorizedClientService 주입
+    @Autowired
+    private UserRepository userRepository;
+
+    private final AuthRepository userAuthRepository;
+    private final OAuth2AuthorizedClientService authorizedClientService;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -42,42 +51,31 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
         String accessToken = userRequest.getAccessToken().getTokenValue();
 
         // refreshToken 가져오기
-        String refreshToken = null;
-        Map<String, Object> additionalParameters = userRequest.getAdditionalParameters();
-        if (additionalParameters.containsKey("refresh_token")) {
-            refreshToken = (String) additionalParameters.get("refresh_token");
-        }
+        String refreshToken = getRefreshToken(userRequest, oAuth2User.getName());
 
         // expireDate 가져오기
-        LocalDateTime expireDate = null;
-        if (userRequest.getAccessToken().getExpiresAt() != null) {
-            expireDate = LocalDateTime.ofInstant(
-                    userRequest.getAccessToken().getExpiresAt(),
-                    ZoneId.systemDefault()
-            );
-        } else if (additionalParameters.containsKey("expires_in")) {
-            int expiresIn = Integer.parseInt(additionalParameters.get("expires_in").toString());
-            expireDate = LocalDateTime.now().plusSeconds(expiresIn);
-        }
+        LocalDateTime expireDate = getExpireDate(userRequest);
 
         // UserProfile에 토큰 정보 설정
         userProfileDTO.setAccessToken(accessToken);
         userProfileDTO.setRefreshToken(refreshToken);
-        userProfileDTO.setExpireDate(expireDate);  // 만료 시간 설정
+        userProfileDTO.setExpireDate(expireDate);
 
         // 사용자 정보를 DB에 업데이트하거나 저장
-        updateOrSaveUser(userProfileDTO);
+        int uid = updateOrSaveUser(userProfileDTO);
 
-        // 사용자 정보를 반환
+        HttpSession session = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getSession();
+        session.setAttribute("uid", uid);
+
         return oAuth2User;
     }
-
 
     // refreshToken을 OAuth2AuthorizedClient에서 가져오는 메서드
     private String getRefreshToken(OAuth2UserRequest userRequest, String principalName) {
         OAuth2AuthorizedClient authorizedClient = authorizedClientService.loadAuthorizedClient(
                 userRequest.getClientRegistration().getRegistrationId(),
-                principalName); // OAuth2User의 이름을 사용
+                principalName
+        );
 
         return authorizedClient != null && authorizedClient.getRefreshToken() != null
                 ? authorizedClient.getRefreshToken().getTokenValue()
@@ -89,19 +87,16 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
                                                   Map<String, Object> attributes,
                                                   UserProfileDTO userProfileDTO) {
         Map<String, Object> customAttribute = new ConcurrentHashMap<>();
-
         customAttribute.put(userNameAttributeName, attributes.get(userNameAttributeName));
         customAttribute.put("provider", registrationId);
         customAttribute.put("name", userProfileDTO.getUsername());
         customAttribute.put("email", userProfileDTO.getEmail());
-
         return customAttribute;
     }
 
     // OAuthToken 저장 또는 업데이트하는 로직
-    public OAuthToken updateOrSaveUser(UserProfileDTO userProfileDTO) {
-        // 사용자가 이미 존재하면 정보를 업데이트하고, 없으면 새로 생성
-        OAuthToken user = userRepository
+    private int updateOrSaveUser(UserProfileDTO userProfileDTO) {
+        OAuthToken user = userAuthRepository
                 .findUserByEmailAndProvider(userProfileDTO.getEmail(), userProfileDTO.getProvider())
                 .map(value -> value.updateUser(
                         userProfileDTO.getUsername(),
@@ -109,11 +104,31 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
                         userProfileDTO.getProvider(),
                         userProfileDTO.getAccessToken(),
                         userProfileDTO.getRefreshToken(),
-                        String.valueOf(userProfileDTO.getExpireDate())  // 토큰 만료 시간 계산
+                        String.valueOf(userProfileDTO.getExpireDate())
                 ))
-                .orElse(userProfileDTO.toEntity());  // 새로운 OAuthToken 엔티티 생성
+                .orElseGet(userProfileDTO::toEntity);
 
-        return userRepository.save(user);  // DB에 저장
+        userAuthRepository.save(user);
+
+        // User 엔티티에도 사용자 정보 저장 및 uid 반환
+        User userInfo = userRepository.findByUEmailId(userProfileDTO.getEmail())
+                .orElseGet(() -> {
+                    User newUser = new User();
+                    newUser.setULastLog(LocalDateTime.now());
+                    newUser.setUEmailId(userProfileDTO.getEmail());
+                    newUser.setUCreate(LocalDateTime.now());
+                    return userRepository.save(newUser);
+                });
+
+        return userInfo.getUId(); // User의 uid 반환
     }
 
+    private LocalDateTime getExpireDate(OAuth2UserRequest userRequest) {
+        if (userRequest.getAccessToken().getExpiresAt() != null) {
+            return LocalDateTime.ofInstant(userRequest.getAccessToken().getExpiresAt(), ZoneId.systemDefault());
+        }
+        return LocalDateTime.now().plusSeconds(
+                Integer.parseInt(userRequest.getAdditionalParameters().getOrDefault("expires_in", "3600").toString())
+        );
+    }
 }

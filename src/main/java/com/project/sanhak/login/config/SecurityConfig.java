@@ -1,6 +1,7 @@
 package com.project.sanhak.login.config;
 
 import com.project.sanhak.login.service.OAuth2Service;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,9 +9,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.reactive.config.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
@@ -21,7 +19,7 @@ public class SecurityConfig{
 
     private final OAuth2Service oAuth2Service;
     @Bean
-    public SecurityFilterChain configure(HttpSecurity http) throws Exception {
+    public SecurityFilterChain configure(HttpSecurity http, HttpSession session) throws Exception {
         return http
                 .cors(cors -> cors.configurationSource(request -> {
                     var config = new org.springframework.web.cors.CorsConfiguration();
@@ -91,7 +89,6 @@ public class SecurityConfig{
             // 사용자가 로그인한 소셜 로그인 제공자를 세션에 저장 (예: provider)
             String provider = authentication.getPrincipal().toString().toLowerCase(); // 필요에 따라 수정
             request.getSession().setAttribute("provider", provider);
-
             response.sendRedirect("http://localhost:3000/category"); // 로그인 성공 후 리다이렉트
         };
     }
