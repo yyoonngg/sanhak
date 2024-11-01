@@ -10,6 +10,7 @@ import com.project.sanhak.main.service.MainService;
 import com.project.sanhak.util.s3.S3FileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -37,16 +38,18 @@ public class cardController {
     @GetMapping("/")
     public ResponseEntity<?> getAiCard(Authentication authentication) {
         try {
+            if (authentication == null || !(authentication.getPrincipal() instanceof OAuth2User)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 정보가 없습니다.");
+            }
             OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-            Integer uidAttribute = oAuth2User.getAttribute("uid");
-            if (uidAttribute == null) {
+            Integer uid = oAuth2User.getAttribute("uid");
+            if (uid == null) {
                 throw new NullPointerException("UID is null");
             }
-            int uid = uidAttribute;
             List<aiCardDTO> cardList = cardService.getAllMyCard(uid);
             return ResponseEntity.ok(cardList);
-        } catch (NullPointerException e) {
-            return ResponseEntity.badRequest().body("오류가 발생했습니다: UID를 가져올 수 없습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("오류가 발생했습니다: " + e.getMessage());
         }
     }
 
