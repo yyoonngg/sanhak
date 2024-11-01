@@ -38,11 +38,9 @@ public enum OAuthAttributes {
     }),
 
     GITHUB("github", (attribute) -> {
-        Map account = (Map) attribute.get("kakao_account");
-        Map profile = (Map) account.get("profile");
         UserProfileDTO userProfileDTO = new UserProfileDTO();
-        userProfileDTO.setUsername((String) profile.get("nickname"));
-        userProfileDTO.setEmail((String) account.get("email"));
+        userProfileDTO.setUsername((String) attribute.get("login"));
+        userProfileDTO.setEmail((String) attribute.get("email"));
 
         return userProfileDTO;
     });
