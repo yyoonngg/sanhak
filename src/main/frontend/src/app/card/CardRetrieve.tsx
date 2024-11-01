@@ -73,9 +73,9 @@ export default function CardRetrieve({
   onChangePage
 }: CardRetrieveProps) {
   return (
-    <div className='w-full h-full flex flex-col items-center justify-center'>
-      <div className='w-full text-2xl font-gmarketsansMedium mb-4 ml-8'>AI경험카드 관리</div>
-      <div className='w-full h-full grid grid-cols-3 gap-4 ml-8'>
+    <div className='w-full h-full flex flex-col items-center justify-center px-24'>
+      <div className='w-full text-2xl font-gmarketsansMedium mb-4'>AI경험카드 관리</div>
+      <div className='w-full h-full grid grid-cols-3 gap-4'>
         {cardInfos.map((card, index) => (
           <div className='cursor-pointer' key={index} onClick={()=>onChangePage(card)}>
             <Card card={card} />

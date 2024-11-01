@@ -16,7 +16,7 @@ export default function CardPage() {
   }
 
   return (
-    <div className='w-full h-full flex flex-col items-center'>
+    <div className='w-full h-full flex flex-col items-center mt-5'>
       <div className='w-[1400px] h-full'>
         {isCreatePage ? (
           <CardEditor selectedCard={selectedCard} onChangePage={onSaveCard}/> 
