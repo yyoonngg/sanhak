@@ -5,12 +5,11 @@ import com.project.sanhak.domain.chat.ChatMessage;
 import com.project.sanhak.domain.chat.ChatRooms;
 import com.project.sanhak.domain.user.User;
 import com.project.sanhak.main.service.MainService;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,12 +27,11 @@ public class chatController {
     private chatService chatService;
 
     @GetMapping("initialize/{chat_id}/{chat_type}")
-    public ResponseEntity<?> handshake(Authentication authentication,
+    public ResponseEntity<?> handshake(HttpSession session,
                                        @PathVariable(required = false) Integer chat_id,
                                        @PathVariable(required = false) Integer chat_type) {
         try {
-            OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-            Integer uidAttribute = oAuth2User.getAttribute("uid");
+            Integer uidAttribute = (Integer) session.getAttribute("uid");
             if (uidAttribute == null) {
                 throw new NullPointerException("UID is null");
             }
@@ -67,10 +65,9 @@ public class chatController {
 
     // 사용자의 채팅방 목록을 가져오는 메서드
     @GetMapping("/list")
-    public ResponseEntity<?> callChatList(Authentication authentication) {
+    public ResponseEntity<?> callChatList(HttpSession session) {
         try {
-            OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-            Integer uidAttribute = oAuth2User.getAttribute("uid");
+            Integer uidAttribute = (Integer) session.getAttribute("uid");
             if (uidAttribute == null) {
                 throw new NullPointerException("UID is null");
             }
@@ -90,11 +87,10 @@ public class chatController {
 
     // 특정 채팅방의 과거 메시지를 가져오는 메서드
     @GetMapping("/message/{chat_id}")
-    public ResponseEntity<?> callChatMessage(Authentication authentication,
+    public ResponseEntity<?> callChatMessage(HttpSession session,
                                              @PathVariable(required = false) Integer chat_id) {
         try {
-            OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-            Integer uidAttribute = oAuth2User.getAttribute("uid");
+            Integer uidAttribute = (Integer) session.getAttribute("uid");
             if (uidAttribute == null) {
                 throw new NullPointerException("UID is null");
             }
@@ -114,13 +110,12 @@ public class chatController {
 
     @Transactional
     @PostMapping("/{chat_id}/send/{chat_type}")
-    public ResponseEntity<?> chatToBot(Authentication authentication,
+    public ResponseEntity<?> chatToBot(HttpSession session,
                                        @PathVariable int chat_id,
                                        @PathVariable int chat_type,
                                        @RequestBody Map<String, String> requestData) {
         try {
-            OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-            Integer uidAttribute = oAuth2User.getAttribute("uid");
+            Integer uidAttribute = (Integer) session.getAttribute("uid");
             if (uidAttribute == null) {
                 throw new NullPointerException("UID is null");
             }
@@ -141,6 +136,4 @@ public class chatController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다. 다시 시도해주세요.");
         }
     }
-
-
 }

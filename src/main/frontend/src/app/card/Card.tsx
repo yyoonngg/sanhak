@@ -1,7 +1,8 @@
 import ButtonLabel from '@/components/ButtonLabel';
-import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, {useEffect, useRef, useState} from 'react';
+import {motion} from 'framer-motion';
 import axios from 'axios';
+import {AiCard} from "@/models/card";
 
 export default function Card({
   style,
@@ -61,7 +62,7 @@ export default function Card({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('/api/card', {
+        const response = await axios.get('http://localhost:8080/api/card', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -244,7 +245,7 @@ export default function Card({
             {card.reflection && (
               <div className='w-full flex-col'>
                 <div className='text-md font-bold mb-1'>경험 요약</div>
-                <div className='text-sm mt-2 font-semibold'>{card.reflection}</div>
+                <div className='text-sm mt-2 font-semibold'>{card.summary}</div>
               </div>
             )}
           </div>

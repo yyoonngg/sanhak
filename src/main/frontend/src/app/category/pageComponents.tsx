@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import Roadmap from './Roadmap';
 import {RoadmapSkill} from "@/models/skill";
 import TimelineRoadmap from "@/app/category/TimeLineRoadMap";

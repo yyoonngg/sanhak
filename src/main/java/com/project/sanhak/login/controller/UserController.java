@@ -1,5 +1,6 @@
 package com.project.sanhak.login.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,7 +17,21 @@ public class UserController {
     @GetMapping("/loginInfo")
     public String getJson(Authentication authentication) {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+        System.out.println(oAuth2User.toString());
+        System.out.println("\n");
         Map<String, Object> attributes = oAuth2User.getAttributes();
+        System.out.println(attributes);
+        System.out.println("\n");
         return attributes.toString();
     }
+
+    @GetMapping("/status")
+    public ResponseEntity<?> getAuthStatus(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            return ResponseEntity.ok().body(Map.of("authenticated", true));
+        }
+        return ResponseEntity.ok().body(Map.of("authenticated", false));
+    }
+
+
 }
