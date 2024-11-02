@@ -23,7 +23,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -39,14 +39,15 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
-
+        Set scope = userRequest.getClientRegistration().getScopes();
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         Map<String, Object> attributes = oAuth2User.getAttributes();
-
         // 사용자 프로필 생성
         UserProfileDTO userProfileDTO = OAuthAttributes.extract(registrationId, attributes);
         userProfileDTO.setProvider(registrationId);
-
+        if ("kakao".equals(userProfileDTO.getProvider())) {
+            String email = scope.toString();
+        }
         // accessToken 가져오기
         String accessToken = userRequest.getAccessToken().getTokenValue();
 
@@ -80,18 +81,6 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
         return authorizedClient != null && authorizedClient.getRefreshToken() != null
                 ? authorizedClient.getRefreshToken().getTokenValue()
                 : null;
-    }
-
-    public Map<String, Object> getCustomAttribute(String registrationId,
-                                                  String userNameAttributeName,
-                                                  Map<String, Object> attributes,
-                                                  UserProfileDTO userProfileDTO) {
-        Map<String, Object> customAttribute = new ConcurrentHashMap<>();
-        customAttribute.put(userNameAttributeName, attributes.get(userNameAttributeName));
-        customAttribute.put("provider", registrationId);
-        customAttribute.put("name", userProfileDTO.getUsername());
-        customAttribute.put("email", userProfileDTO.getEmail());
-        return customAttribute;
     }
 
     // OAuthToken 저장 또는 업데이트하는 로직

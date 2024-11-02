@@ -1,5 +1,6 @@
 "use client";
 import React from 'react';
+import {AiCardChatRoom} from "@/models/card";
 
 type ChatRoomListProps = {
   chatRoomMockData: AiCardChatRoom[];

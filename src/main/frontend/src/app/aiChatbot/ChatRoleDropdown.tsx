@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
+import {ChatRoleOption} from "@/models/card";
 
 type RoleDropdownProps = {
   onResetChat: () => void;
