@@ -1,8 +1,8 @@
 'use client';
 
-import React, {memo, useMemo} from 'react';
+import React, {useMemo} from 'react';
 import SkillNode from './SkillNode';
-import { RoadmapSkill } from '@/models/skill';
+import {RoadmapSkill} from '@/models/skill';
 
 function TimelineRoadmap({ skills }: { skills: RoadmapSkill[] }) {
     const sortedSkills = useMemo(() => {

@@ -1,27 +1,46 @@
 package com.project.sanhak.card.mapper;
 
 import com.project.sanhak.card.dto.aiCardDTO;
+import com.project.sanhak.card.dto.skill;
+import com.project.sanhak.category.repository.categoryRepository;
+import com.project.sanhak.category.repository.toolsRepository;
 import com.project.sanhak.domain.card.ExperienceCard;
+import com.project.sanhak.domain.skil.code.Tools;
 import com.project.sanhak.domain.user.User;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@Component
 public class CardMapper {
+    private static toolsRepository toolsRepository;
+    private static categoryRepository categoryRepository;
 
+    @Autowired
+    public CardMapper(toolsRepository toolsRepository, categoryRepository categoryRepository) {
+        CardMapper.toolsRepository = toolsRepository;
+        CardMapper.categoryRepository = categoryRepository;
+    }
     // DTO->domain
     public static ExperienceCard toEntity(aiCardDTO dto, User user) {
         ExperienceCard card = new ExperienceCard();
-        card.setECFromDate(LocalDateTime.parse(dto.getFromDate()));
-        card.setECToDate(LocalDateTime.parse(dto.getToDate()));
+        card.setECFromDate(LocalDate.parse(dto.getFromDate()));
+        card.setECToDate(LocalDate.parse(dto.getToDate()));
         card.setECTitle(dto.getTitle());
-        card.setECPosition(null);  // Position 값이 없으므로 null 처리 (또는 다른 값 설정)
-        card.setECSkill(String.join(", ", dto.getSkills()));  // 리스트를 문자열로 변환
-        card.setECTool(String.join(", ", dto.getTools()));    // 리스트를 문자열로 변환
+        card.setECPosition(String.join(", ", dto.getCategory()));
+        card.setECSkill(
+                dto.getSkills().stream()
+                        .map(skill::getName)
+                        .collect(Collectors.joining(", "))
+        );
+        card.setECTool(dto.getTools().stream()
+                .map(Tools::getName)
+                .collect(Collectors.joining(", "))
+        );    // 리스트를 문자열로 변환
         card.setECReflection(dto.getReflection());
         card.setECSummary(dto.getSummary());
         card.setECImageUrl(dto.getImageUrl());
@@ -35,19 +54,29 @@ public class CardMapper {
 
     // domain->dto
     public static aiCardDTO toDTO(ExperienceCard card) {
+        List<String> skillNames = Arrays.asList(card.getECSkill().split(", "));
+        List<String> ToolsNames = Arrays.asList(card.getECTool().split(","));
+        List<skill> skills = categoryRepository.findByCSNameIn(skillNames).stream()
+                .map(codeSkill -> new skill(codeSkill.getCSId(), codeSkill.getCSName()))
+                .collect(Collectors.toList());
+
+        List<Tools> tools = toolsRepository.findByNameIn(ToolsNames).stream()
+                .map(Tools -> new Tools(Tools.getId(), Tools.getName()))
+                .collect(Collectors.toList());
         return new aiCardDTO(
                 card.getECFromDate().toString(),
                 card.getECToDate().toString(),
                 card.getECTitle(),
                 Arrays.asList(card.getECPosition().split(", ")),
-                Arrays.asList(card.getECSkill().split(", ")),
-                Arrays.asList(card.getECTool().split(", ")),
+                skills,
+                tools,
                 card.getECReflection(),
                 card.getECImageUrl(),
                 card.getECPdfName(),
                 card.getECPdfUrl(),
                 Arrays.asList(card.getECLink().split(", ")),
-                card.getECSummary()
+                card.getECSummary(),
+                card.getECId()
         );
     }
 

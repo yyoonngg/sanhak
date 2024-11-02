@@ -8,7 +8,6 @@ import lombok.Data;
 
 @Data
 @Entity
-
 public class OAuthToken {
 
     @Id
