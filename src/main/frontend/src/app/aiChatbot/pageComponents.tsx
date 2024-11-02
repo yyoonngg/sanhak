@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import Card from '../card/Card';
 import ChatRoomList from './ChatRoomList';
 import ChatInterface from './ChatInterface';
@@ -15,7 +15,7 @@ type AiCard = {
   tools: { id: number; name: string }[];
   reflection: string;
   imageUrl: string;
-  pdfFile: string;
+  pdfFileName: string;
   sourceUrl: string[];
 };
 

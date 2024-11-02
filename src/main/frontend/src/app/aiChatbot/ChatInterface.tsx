@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import RoleDropdown from './ChatRoleDropdown';
+import {AiCardChat, ChatRoleOption} from "@/models/card";
 
 type ChatInterfaceProps = {
   chatData: AiCardChat[];
