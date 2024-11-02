@@ -1,5 +1,6 @@
 package com.project.sanhak.aiChatbot.controller;
 
+import com.project.sanhak.aiChatbot.dto.ChatRoomDTO;
 import com.project.sanhak.aiChatbot.service.chatService;
 import com.project.sanhak.domain.chat.ChatMessage;
 import com.project.sanhak.domain.chat.ChatRooms;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @CrossOrigin(origins = "http://localhost:3000")
@@ -31,6 +33,7 @@ public class chatController {
                                        @PathVariable(required = false) Integer chat_id,
                                        @PathVariable(required = false) Integer chat_type) {
         try {
+            System.out.println("1");
             Integer uidAttribute = (Integer) session.getAttribute("uid");
             if (uidAttribute == null) {
                 throw new NullPointerException("UID is null");
@@ -48,7 +51,9 @@ public class chatController {
             }
 
             // 초기화
+            System.out.println("9");
             String response = chatService.initializeChat(uid, chat_id, chat_type);
+            System.out.println("6");
             if ("success".equals(response)) {
                 return ResponseEntity.ok("채팅이 성공적으로 초기화되었습니다.");
             } else {
@@ -73,8 +78,8 @@ public class chatController {
             }
             int uid = uidAttribute;
 
-            // 사용자의 채팅방 목록 조회
-            List<ChatRooms> chatRoomsList = chatService.getUserChatRooms(uid);
+            // 사용자의 채팅방 목록 조회 (DTO로 변환하여 title 포함)
+            List<ChatRoomDTO> chatRoomsList = chatService.getUserChatRooms(uid);
             return ResponseEntity.ok(chatRoomsList);
 
         } catch (NullPointerException e) {
@@ -127,7 +132,7 @@ public class chatController {
             }
 
             String response = chatService.sendMessageToBot(uid, chat_id, chat_type, question);
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(Map.of("response", response));
 
         } catch (NullPointerException e) {
             return ResponseEntity.badRequest().body("오류가 발생했습니다: UID를 가져올 수 없습니다.");

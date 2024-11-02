@@ -15,7 +15,7 @@ type AiCard = {
     pdfName?: String;
     sourceUrl?: string[]
     summary?: String | null;
-}
+};
 
 type AiCardChatRoom = {
     id: number;
@@ -28,12 +28,12 @@ type AiCardChat = {
     id: number;
     isUser: number; // 0: AI, 1: User
     content: string;
-}
+};
 
 type ChatRoleOption = {
     label: string;
     description: string;
     guideNotice: string;
-}
+};
 
 type AiCardWithNew = AiCard & { isNew?: boolean };
