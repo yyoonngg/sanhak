@@ -83,7 +83,7 @@ const SkillNode = ({
         x={0} 
         y={40}
         fill={isDragging || isSelected ? "#FFFFFF" : "#000000"} 
-        fontSize='20px'
+        fontSize='15px'
         textAnchor="middle"
       >
         {skill.name}
