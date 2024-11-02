@@ -111,7 +111,7 @@ export default function Card({
   }
 
   return (
-    <div className={`${style ? style : ''} w-[390px] h-[580px] relative mb-4`}>
+    <div className={`${style ? style : ''} w-[400px] h-[75dvh] max-h-[600px] relative mb-4`}>
       <motion.div
         className='w-full h-full relative'
         initial={false}
@@ -130,13 +130,13 @@ export default function Card({
         >
           <div className='w-full h-2/3 px-5 pt-5 pb-2'>
             {card.imageUrl && (
-              <img className='w-full h-full object-cover rounded-xl' src={card.imageUrl} alt='' />
+              <img className='w-full h-full object-cover rounded-t-xl' src={card.imageUrl} alt='' />
             )}
           </div>
           <div className='w-full h-2/3 flex flex-col justify-around'>
-            <div className='flex flex-col justify-between items-start px-5'>
+            <div className='flex flex-col justify-between items-start px-4'>
               {(card.fromDate || card.toDate) && (
-                <div className='font-normal text-black text-sm'>{card.fromDate} ~ {card.toDate}</div>
+                <div className='font-normal text-gray-cc'>{card.fromDate} ~ {card.toDate}</div>
               )}
               {card.title && (
                 <div className='font-semibold text-3xl mb-2'>{card.title}</div>
@@ -184,8 +184,12 @@ export default function Card({
                 )}
               </div>
             </div>
-            <div className='flex flex-col justify-between px-4 pb-2'>
+            <div className='h-1/3 flex flex-col justify-between px-4 pb-2'>
               {card.reflection && (
+                <>
+                  <div className='line-clamp-4 text-sm mt-2 font-semibold'>
+                    {card.reflection}
+                  </div>
                   <div className='flex justify-end items-end'>
                     <button
                       onClick={handleFlip}
@@ -194,13 +198,12 @@ export default function Card({
                       {'자세히 보기 ->'}
                     </button>
                   </div>
+                </>
               )}
             </div>
           </div>
 
         </motion.div>
-
-        {/*카드뒷면*/}
         <motion.div
           className={`absolute overflow-y-auto scrollbar w-full h-full flex flex-col justify-between items-start bg-white rounded-xl shadow-[4px_4px_8px_rgba(0,0,0,0.3)] ${!isFlipped ? 'rotate-y-180' : ''}`}
           style={{
