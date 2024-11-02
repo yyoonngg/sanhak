@@ -4,6 +4,8 @@ import com.project.sanhak.domain.card.ExperienceCard;
 import com.project.sanhak.domain.chat.ChatRooms;
 import com.project.sanhak.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,9 +18,10 @@ public interface chatRepository extends JpaRepository<ChatRooms, Integer> {
 
     int findCRTypeByCRId(int chatId);
 
-    ChatRooms findTopByCRuidOrderByCRIdDesc(User CRuid);
+    public ChatRooms findTopByCRuidOrderByCRIdDesc(User user);
 
-    int findCRecIdByCRId(int chatId);
+    @Query("SELECT c.CRecid.ECId FROM ChatRooms c WHERE c.CRId = :chatId")
+    int findCRecIdByCRId(@Param("chatId") int chatId);
 
     // 사용자별 채팅방 목록 조회
     List<ChatRooms> findByCRuid_UId(int uid);

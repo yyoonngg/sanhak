@@ -11,7 +11,9 @@ type ChatInterfaceProps = {
   onKeyDown: (event: React.KeyboardEvent) => void;
   onResetChat: () => void;
   selectedChatId: number;
-  selectedChatType: String;
+  selectedChatType: string | undefined;
+  selectedRole: ChatRoleOption; // 추가된 속성
+  handleSelectRole: (role: ChatRoleOption) => void; // 추가된 속성
 };
 
 const aiRoles: ChatRoleOption[] = [
@@ -41,34 +43,24 @@ export default function ChatInterface({
   };
 
   const handleSendChat = async () => {
-    if (!chatInput.trim()) return;
-
-    const userMessage = { id: chatData.length + 1, isUser: 1, content: chatInput };
-    onSendChat(userMessage);
-    setLoading(true);
-
+    console.log("Send button clicked");
     try {
-      const response = await fetch(`http://localhost:8080/api/chat/${selectedChatId}/send/${selectedChatType}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch('http://localhost:8080/api/chat/list', {
+        method: 'GET',
         credentials: 'include',
-        body: JSON.stringify({ question: chatInput }),
       });
-
-      if (!response.ok) {
-        throw new Error('서버 응답 실패');
+      if (response.ok) {
+        const data = await response.json();
+        setChatRoomData(data); // 채팅방 데이터 설정
+      } else {
+        throw new Error('채팅방 목록을 불러오는 중 오류가 발생했습니다.');
       }
-
-      const responseData = await response.json();
-      const aiMessage = { id: chatData.length + 2, isUser: 0, content: responseData };
-
-      onSendChat(aiMessage);
     } catch (error) {
-      console.error('채팅 전송 중 오류:', error);
-      const errorMessage = { id: chatData.length + 2, isUser: 0, content: '오류가 발생했습니다. 다시 시도해 주세요.' };
-      onSendChat(errorMessage);
-    } finally {
-      setLoading(false);
+      if (error instanceof Error) {
+        console.error(error.message);
+      } else {
+        console.error("An unknown error occurred");
+      }
     }
   };
 
@@ -121,8 +113,8 @@ export default function ChatInterface({
                 onKeyDown={onKeyDown}
             />
             <div
-                className="w-8 h-7 flex justify-center items-center bg-primary rounded-full text-white font-semibold cursor-pointer text-xl mr-2 py-1"
-                onClick={handleSendChat}
+                className="w-8 h-7 flex justify-center items-center bg-primary rounded-full text-white font-semibold cursor-pointer text-xs mr-2 py-1"
+                onClick={handleSendChat}  // 여기서 `await`을 제거하고 함수 참조를 전달
             >
               전송
             </div>
