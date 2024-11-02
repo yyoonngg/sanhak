@@ -1,23 +1,20 @@
 package com.project.sanhak.domain.user;
 
+import com.project.sanhak.domain.skil.code.CodeSkil;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 @Data
 @Entity
-public class Notifications {
+public class Badge {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int NId;
-
-    private String NMessage;
-    private boolean NIsRead;
-    private LocalDateTime NDate;
-
+    private int UBId;
+    @ManyToOne
+    @JoinColumn(referencedColumnName = "CSId")
+    private CodeSkil UBCSid;
     @ManyToOne
     @JoinColumn(referencedColumnName = "UId")
-    private User Nuid;
+    private User UBUid;
 }

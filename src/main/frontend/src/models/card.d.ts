@@ -1,3 +1,5 @@
+import {Skill} from "@/models/skill";
+
 type AiCard = {
     id?: number;
     fromDate?: string,
@@ -7,9 +9,12 @@ type AiCard = {
     skills?: Skill[],
     tools?: Tool[],
     reflection?: string,
+    imageFile? : File | null;
     imageUrl?: string,
-    pdfFile?: string,
+    pdfFile?: File | null;
+    pdfName?: String;
     sourceUrl?: string[]
+    summary?: String | null;
 }
 
 type AiCardChatRoom = {
@@ -30,3 +35,5 @@ type ChatRoleOption = {
     description: string;
     guideNotice: string;
 }
+
+type AiCardWithNew = AiCard & { isNew?: boolean };

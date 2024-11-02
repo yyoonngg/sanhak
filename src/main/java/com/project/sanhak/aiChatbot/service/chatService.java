@@ -1,13 +1,15 @@
 package com.project.sanhak.aiChatbot.service;
 
 import com.project.sanhak.aiChatbot.mapper.ChatMapper;
+import com.project.sanhak.aiChatbot.repository.chatRepository;
+import com.project.sanhak.aiChatbot.repository.messageRepository;
 import com.project.sanhak.card.dto.aiCardDTO;
 import com.project.sanhak.card.service.cardService;
-import com.project.sanhak.aiChatbot.repository.*;
 import com.project.sanhak.domain.chat.ChatMessage;
 import com.project.sanhak.domain.chat.ChatRooms;
 import com.project.sanhak.domain.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -20,6 +22,8 @@ import java.util.Map;
 
 @Service
 public class chatService {
+    @Value("${api.base.url}")
+    private String apiBaseUrl;
     @Autowired
     private cardService cardService;
     @Autowired
@@ -38,8 +42,8 @@ public class chatService {
             return "해당 카드가 존재하지 않습니다.";
         }
         Map<String, Object> chatInitData = chatMapper.toChatInitData(uid, cardData, chat_id);
-        String pythonServerUrl = "http://python-server-url/initialize";
-        ResponseEntity<String> response = restTemplate.postForEntity(pythonServerUrl, chatInitData, String.class);
+        String url = apiBaseUrl + "/initialize";
+        ResponseEntity<String> response = restTemplate.postForEntity(url, chatInitData, String.class);
         if (response.getStatusCode().is2xxSuccessful()) {
             return "success";
         } else {
@@ -79,8 +83,8 @@ public class chatService {
         chatRequestData.put("userId", uid);
         chatRequestData.put("question", question);
 
-        String pythonServerUrl = "http://python-server-url/send";
-        ResponseEntity<Map> response = restTemplate.postForEntity(pythonServerUrl, chatRequestData, Map.class);
+        String url = apiBaseUrl + "send";
+        ResponseEntity<Map> response = restTemplate.postForEntity(url, chatRequestData, Map.class);
 
         if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
             Map responseBody = response.getBody();

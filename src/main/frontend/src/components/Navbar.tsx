@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import Link from 'next/link';
+
 const NavigationBar = () =>{
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -41,12 +42,43 @@ const NavigationBar = () =>{
                               className={"hover:underline text-sm font-gmarketsansMedium"}>직무별로드맵</Link></li>
                     <li><Link href="/company" className={"hover:underline text-sm font-gmarketsansMedium"}>기업별로드맵</Link>
                     </li>
-                    <li><Link href="/card" className={"hover:underline text-sm font-gmarketsansMedium"}>AI경험카드</Link>
-                    </li>
-                    <li><Link href="/aiChatbot"
-                              className={"hover:underline text-sm font-gmarketsansMedium"}>AI경험Chat</Link></li>
-                    <li><Link href="/mypage" className={"hover:underline text-sm font-gmarketsansMedium"}>마이페이지</Link>
-                    </li>
+                    {isAuthenticated ? (
+                        <>
+                            <li>
+                                <Link href="/card" className={"hover:underline text-sm font-gmarketsansMedium"}>
+                                    AI경험카드
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/aiChatbot" className={"hover:underline text-sm font-gmarketsansMedium"}>
+                                    AI경험Chat
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/mypage" className={"hover:underline text-sm font-gmarketsansMedium"}>
+                                    마이페이지
+                                </Link>
+                            </li>
+                        </>
+                    ) : (
+                        <>
+                            <li>
+                                <Link href="/" className={"hover:underline text-sm font-gmarketsansMedium"}>
+                                    AI경험카드
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/" className={"hover:underline text-sm font-gmarketsansMedium"}>
+                                    AI경험Chat
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/" className={"hover:underline text-sm font-gmarketsansMedium"}>
+                                    마이페이지
+                                </Link>
+                            </li>
+                        </>
+                    )}
                 </ul>
                 <div
                     className='flex items-center border-2 border-primary text-sm font-gmarketsansMedium px-3 pb-1 pt-2 rounded-xl cursor-pointer hover:bg-gray-ec'>

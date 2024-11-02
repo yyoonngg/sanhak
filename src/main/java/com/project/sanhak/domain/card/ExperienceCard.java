@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -20,13 +20,14 @@ public class ExperienceCard {
     @JoinColumn(referencedColumnName = "UId")
     @ManyToOne
     private User ECuid;
-    private LocalDateTime ECFromDate;
-    private LocalDateTime ECToDate;
+    private LocalDate ECFromDate;
+    private LocalDate ECToDate;
     private String ECTitle;
     private String ECPosition;
     private String ECSkill;
     private String ECTool;
     private String ECReflection;
+    @Column(columnDefinition = "LONGTEXT")
     private String ECSummary;
     private String ECImageUrl;
     private String ECPdfName;

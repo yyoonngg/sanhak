@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Roadmap from '../category/Roadmap';
-import { ExitIcon } from '@/components/icon';
+import {ExitIcon} from '@/components/icon';
 import {AllKindOfRoadmapSkills, RoadmapSkill, SkillDetail, SkillSelectUnion} from "@/models/skill";
 
 type RoadmapCustomizeProps = {
