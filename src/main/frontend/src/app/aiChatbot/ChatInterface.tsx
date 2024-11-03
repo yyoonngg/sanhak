@@ -153,3 +153,7 @@ export default function ChatInterface({
       </div>
   );
 }
+
+function setChatRoomData(data: any) {
+  throw new Error('Function not implemented.');
+}

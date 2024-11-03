@@ -34,7 +34,11 @@ const config: Config = {
         f1: '#F1416C',
       },
       category: {
-        front: "#FF6F61",
+        frontend: '#FF6F61',
+        backend: '#7C3FFC',
+        data: '#FF6F61',
+        security: '#7C3FFC',
+        application: '#4A5FCF',
       },
       white: '#FFFFFF',
       transparent: 'transparent',
@@ -69,6 +73,18 @@ const config: Config = {
       }
     },
   },
+  safelist: [
+    'bg-category-frontend',
+    'bg-category-backend',
+    'bg-category-data',
+    'bg-category-security',
+    'bg-category-application',
+    'text-category-frontend',
+    'text-category-backend',
+    'text-category-data',
+    'text-category-security',
+    'text-category-application',
+  ],
   plugins: [
     require('@tailwindcss/forms'),
     require('@tailwindcss/typography'),
