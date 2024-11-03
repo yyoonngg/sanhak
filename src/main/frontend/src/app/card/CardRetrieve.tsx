@@ -1,8 +1,8 @@
 'use client';
 
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Card from './Card';
-import {AiCard, AiCardWithNew} from "@/models/card";
+import { AiCard, AiCardWithNew } from "@/models/card";
 
 type CardRetrieveProps = {
   onChangePage: (card: AiCardWithNew | null) => void;
@@ -34,20 +34,20 @@ export default function CardRetrieve({ onChangePage }: CardRetrieveProps) {
   }, []);
 
   return (
-
-    <div className='w-full h-full flex flex-col items-center justify-center px-24'>
-      <div className='w-full text-2xl font-gmarketsansMedium mb-4'>AI경험카드 관리</div>
-      <div className='w-full h-full grid grid-cols-3 gap-4'>
-        {cardInfos.map((card, index) => (
-          <div className='cursor-pointer' key={index} onClick={()=>onChangePage(card)}>
-            <Card card={card} />
+      <div className='w-full h-full flex flex-col items-center justify-center px-24'>
+        <div className='w-full text-2xl font-gmarketsansMedium mb-4'>AI경험카드 관리</div>
+        <div className='w-full h-full grid grid-cols-3 gap-4'>
+          {cardInfos.map((card, index) => (
+              <div className='cursor-pointer' key={index} onClick={() => onChangePage(card)}>
+                <Card card={card} />
+              </div>
+          ))}
+          <div
+              className='w-[400px] h-[580px] cursor-pointer flex justify-center items-center mb-4 rounded-xl border-2 border-dashed border-gray-d9'
+              onClick={() => onChangePage({})}
+          >
+            <div className='text-3xl font-bold text-gray-d9'>+</div>
           </div>
-        ))}
-        <div className='w-[400px] h-[580px] cursor-pointer flex justify-center items-center mb-4 rounded-xl border-2 border-dashed border-gray-d9'
-          onClick={()=>onChangePage(null)}
-        >
-          <div className='text-3xl font-bold text-gray-d9'>+</div>
-        </div>
       </div>
     </div>
   );
