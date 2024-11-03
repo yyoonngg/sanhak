@@ -254,8 +254,8 @@ const AiChatbotPage: React.FC = () => {
                   onKeyDown={handleKeyDown}
                   onResetChat={() => setChatData([])}
                   selectedChatId={selectedChatRoom?.id as number}
-                  selectedChatType={selectedRole?.label as string} // selectedRole 사용
-                  selectedRole={selectedRole} // 추가된 selectedRole prop
+                  selectedChatType={selectedRole?.label as string}
+                  selectedRole={selectedRole}
                   handleSelectRole={handleSelectRole}
               />
             </div>

@@ -44,23 +44,41 @@ export default function ChatInterface({
 
   const handleSendChat = async () => {
     console.log("Send button clicked");
+    if (!chatInput.trim()) return;
+
+    if (selectedChatId == null || selectedChatType == null) {
+      console.error("채팅방이 선택되지 않았습니다.");
+      const errorMessage = { id: chatData.length + 1, isUser: 0, content: "채팅방을 선택해 주세요." };
+      onSendChat(errorMessage);
+      return;
+    }
+
+    const userMessage = { id: chatData.length + 1, isUser: 1, content: chatInput };
+    onSendChat(userMessage);
+    setLoading(true);
+
     try {
-      const response = await fetch('http://localhost:8080/api/chat/list', {
-        method: 'GET',
+      const response = await fetch(`http://localhost:8080/api/chat/${selectedChatId}/send/${selectedChatType}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
+        body: JSON.stringify({ question: chatInput }),
       });
-      if (response.ok) {
-        const data = await response.json();
-        setChatRoomData(data); // 채팅방 데이터 설정
-      } else {
-        throw new Error('채팅방 목록을 불러오는 중 오류가 발생했습니다.');
+
+      if (!response.ok) {
+        throw new Error('서버 응답 실패');
       }
+
+      const responseData = await response.json();
+      const aiMessage = { id: chatData.length + 2, isUser: 0, content: responseData };
+
+      onSendChat(aiMessage);
     } catch (error) {
-      if (error instanceof Error) {
-        console.error(error.message);
-      } else {
-        console.error("An unknown error occurred");
-      }
+      console.error('채팅 전송 중 오류:', error);
+      const errorMessage = { id: chatData.length + 2, isUser: 0, content: '오류가 발생했습니다. 다시 시도해 주세요.' };
+      onSendChat(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
