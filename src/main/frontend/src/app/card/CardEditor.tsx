@@ -8,12 +8,10 @@ import {AiCard, AiCardWithNew} from "@/models/card";
 
 type CardEditorProps = {
   selectedCard: AiCard | null,
-  onChangePage: (card: any) => void
+  onCancel: () => void,
+  onCreate: (card: any) => void,
+  onModify: (card: any) => void,
 };
-
-// '생성하기'일때 mock data
-// const cardInfo: AiCard = {
-// }
 
 // TODO: API 연결 
 const allCategorySkills: AllKindOfSkills[] = [
@@ -64,19 +62,22 @@ const allTools: Tool[] = [
 
 const categories = ['frontend', 'backend', 'data', 'security', 'application'];
 export default function CardEditor({
-  onChangePage,
+  onCreate,
+  onModify,
+  onCancel,
   selectedCard
 }: CardEditorProps) {
-  const [card, setCard] = useState<AiCardWithNew>(selectedCard || { isNew: true });
-  const isNewCard = card.isNew;
+  const [card, setCard] = useState<AiCard | null>(selectedCard);
+  const isNewCard = selectedCard ? false : true; 
   const [buttonStyles, setButtonStyles] = useState(Array(categories.length).fill('border-primary'));
   const [selectedSkills, setSelectedSkills] = useState<Skill[]>([]);
   const [isLoading, setIsLoading] = useState(false); // 로딩
+
   // 1. 제목과 기간
   const handlerTitleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCard(prevCard => ({
       ...prevCard,
-      title: event.target.value
+      title: event.target.value,
     }))
   }
   const handlerFromDateInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,13 +95,13 @@ export default function CardEditor({
 
   // 2. 카테고리
   useEffect(() => {
-    if (card.category) {
+    if (card?.category) {
       const newStyles = categories.map(c =>
         card.category?.includes(c) ? '' : 'border-primary'
       );
       setButtonStyles(newStyles);
     }
-  }, [card.category, categories]);
+  }, [card?.category, categories]);
 
   const handleCategoryClick = (index: number) => {
     const newStyles = [...buttonStyles];
@@ -110,7 +111,7 @@ export default function CardEditor({
     const category = categories[index];
 
     setCard(prevCard => {
-      const currentCategories = prevCard.category || [];
+      const currentCategories = prevCard?.category || [];
       const updatedCategories = currentCategories.includes(category)
       ? currentCategories.filter(c => c !== category)
       : [...currentCategories, category];
@@ -124,15 +125,15 @@ export default function CardEditor({
   // 3. 언어와 스킬
   useEffect(() => {
     const filteredSkills = allCategorySkills
-      .filter(skill => card.category?.includes(skill.category)) 
+      .filter(skill => card?.category?.includes(skill.category)) 
       .flatMap(skill => skill.skills); 
 
     setSelectedSkills(filteredSkills);
-  }, [card.category]);
+  }, [card?.category]);
   
   const handleSkillClick = (skill: Skill) => {
     setCard(prevCard => {
-      const currentSkills = prevCard.skills || [];
+      const currentSkills = prevCard?.skills || [];
       const updatedSkills = currentSkills.some(s=> skill.id === s.id)
         ? currentSkills.filter(s => s.id !== skill.id)
         : [...currentSkills, skill];
@@ -147,7 +148,7 @@ export default function CardEditor({
   // 4 개발 도구
   const handleToolClick = (tool: Tool) => {
     setCard(prevCard => {
-      const currentTools = prevCard.tools || [];
+      const currentTools = prevCard?.tools || [];
       const updatedTools = currentTools.some(t => tool.id === t.id)
       ? currentTools.filter(t => t.id !== tool.id)
       : [...currentTools, tool];
@@ -168,26 +169,18 @@ export default function CardEditor({
   }
 
   // 6. 경험 이미지 업로드
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setCard(prevCard => ({
-        ...prevCard,
-        imageFile : file,
-        imageUrl: `/asset/png/profile/${file.name}`
-      }))
-      // const reader = new FileReader();
-      // reader.readAsDataURL(file);
-      // reader.onloadend = () => {
-      //   setCard(prevCard => ({
-      //     ...prevCard,
-      //     imageUrl: reader.result as string
-      //   }));
-      // };
-    }
-  };
+  // const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = event.target.files?.[0];
+  //   if (file) {
+  //     setCard(prevCard => ({
+  //       ...prevCard,
+  //       imageFile : file,
+  //       imageUrl: `/asset/png/profile/${file.name}`
+  //     }))
+  //   }
+  // };
 
-  // 7. pdf 참고자료
+  // 6. pdf 참고자료
   const handlePdfUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -199,10 +192,10 @@ export default function CardEditor({
     }
   };
   
-  // 8. 소스 URL
+  // 7. 소스 URL
   const handleSourceUrlInput = (index: number, value: string) => {
     setCard(prevCard => {
-      const newSourceUrl = [...(prevCard.sourceUrl || [])];
+      const newSourceUrl = [...(prevCard?.sourceUrl || [])];
       newSourceUrl[index] = value;
       return {
         ...prevCard,
@@ -211,78 +204,49 @@ export default function CardEditor({
     });
   };
 
-  const createAiCard = async () => {
-    setIsLoading(true);
-    const formData = new FormData();
-    formData.append("cardInfo", new Blob([JSON.stringify(card)], { type: "application/json" }))
-    if (card.imageFile) {
-      formData.append("image", card.imageFile);
-    }
-    if (card.pdfFile) {
-      formData.append("pdfFile", card.pdfFile);
-    }
+  // 8. AI 이미지
+  const getRandomImageUrl = (): string => {
+    const randomIndex = Math.floor(Math.random() * 20) + 1; 
+    return `/asset/png/card/card_img_${randomIndex}.png`; // 경로 수정
+  };
+  const fetchImageAsFile = async (imageUrl: string): Promise<File | null> => {
     try {
-      const response = await fetch('http://localhost:8080/api/card/create', {
-        method: 'POST',
-        body: formData as any,
-        credentials: 'include'
-      });
-      if (response.ok) {
-        const result = await response.json();
-        onChangePage(result);
-        if (result.status === "success") {
-          window.location.href = "/card";
-        }
-      } else {
-        console.error("카드 생성에 실패했습니다.");
-      }
+      const response = await fetch(imageUrl);
+      if (!response.ok) throw new Error('Network response was not ok');
+
+      const blob = await response.blob(); // Blob으로 변환
+      const file = new File([blob], 'card_image.png', { type: blob.type }); // File 객체 생성
+      return file;
     } catch (error) {
-      console.error("오류 발생:", error);
-    } finally {
-      setIsLoading(false);
+      console.error('Error fetching image:', error);
+      return null;
     }
   };
 
-  const updateAiCard = async () => {
-    setIsLoading(true);
-    const formData = new FormData();
-    formData.append("cardInfo", new Blob([JSON.stringify(card)], { type: "application/json" }))
-    if (card.imageFile) {
-      formData.append("image", card.imageFile);
-    }
-    if (card.pdfFile) {
-      formData.append("pdfFile", card.pdfFile);
-    }
-
-    try {
-      const response = await fetch(`http://localhost:8080/api/card/update/${card.id}`, {
-        method: 'POST',
-        body: formData as any,
-        credentials: 'include'
-      });
-      if (response.ok) {
-        const result = await response.json();
-        onChangePage(result);
-        if (result.status === "success") {
-          window.location.href = "/card";
-        }
-      } else {
-        console.error("카드 수정에 실패했습니다.");
-      }
-    } catch (error) {
-      console.error("오류 발생:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSaveClick = () => {
+  const handleSaveClick = async () => { // 비동기로 변경
     if (isNewCard) {
-      createAiCard();
+      const randomImageUrl = getRandomImageUrl(); // 랜덤 이미지 URL 생성
+      const imageFile = await fetchImageAsFile(randomImageUrl);
+
+      // 카드 상태 업데이트
+      setCard(prevCard => ({
+        ...prevCard,
+        imageUrl: randomImageUrl,
+        imageFile: imageFile,
+      }));
+
+      // 카드 생성 호출
+      if (imageFile) { 
+        onCreate({ ...card, imageFile });
+      }
     } else {
-      updateAiCard();
+      onModify(card);
     }
   };
+
+  const handleCancelClick = () => {
+    onCancel();
+  }
 
   // 디버깅용
   useEffect(()=> {
@@ -300,7 +264,7 @@ export default function CardEditor({
                 type='text'
                 className='w-full rounded-xl border-gray-d9 text-sm focus:outline-0'
                 placeholder='제목을 입력해주세요'
-                value={card.title}
+                value={card?.title}
                 onChange={handlerTitleInput}
               />
             </div>
@@ -313,7 +277,7 @@ export default function CardEditor({
                   type='text'
                   className='w-full rounded-xl border-gray-d9 text-sm focus:outline-0'
                   placeholder='YYYY-MM-DD'
-                  value={card.fromDate}
+                  value={card?.fromDate}
                   onChange={handlerFromDateInput}
                 />
               </div>
@@ -323,14 +287,14 @@ export default function CardEditor({
                   type='text'
                   className='w-full rounded-xl border-gray-d9 text-sm focus:outline-0'
                   placeholder='YYYY-MM-DD'
-                  value={card.toDate}
+                  value={card?.toDate}
                   onChange={handlerToDateInput}
                 />
               </div>
             </div>
           </div>
         </CardEditorFormSection>
-        { card.title && card.fromDate && card.toDate && card.title.length > 0 && (
+        { card?.title && card?.fromDate && card?.toDate && card?.title.length > 0 && (
           <CardEditorFormSection title="내가 맡았던 역할은 무엇인가요?">
             <div className='flex flex-row w-full justify-between'>
               {categories.map((c, index) => (
@@ -345,7 +309,7 @@ export default function CardEditor({
             </div>
           </CardEditorFormSection>
         )}
-        { card.category && card.category.length > 0 && (
+        { card?.category && card?.category.length > 0 && (
           <CardEditorFormSection title="어떤 언어와 스킬을 경험해보았나요?">
             <div className='flex flex-row w-full flex-wrap'>
               {selectedSkills.map(s => (
@@ -353,14 +317,14 @@ export default function CardEditor({
                   key={s.id} 
                   type="skill" 
                   label={s.name} 
-                  style={card.skills?.some(skill => skill.id === s.id) ? '' : 'border-primary'}
+                  style={card?.skills?.some(skill => skill.id === s.id) ? '' : 'border-primary'}
                   onClick={()=>handleSkillClick(s)}
                 />
               ))}
             </div>
           </CardEditorFormSection>
         )}
-        { card.skills && card.skills.length > 0 && (
+        { card?.skills && card?.skills.length > 0 && (
           <CardEditorFormSection title="어떤 개발 도구를 경험해보았나요?">
             <div className='flex flex-row w-full flex-wrap'>
               {allTools.map(t => (
@@ -368,25 +332,25 @@ export default function CardEditor({
                   key={t.id} 
                   type="tool" 
                   label={t.name} 
-                  style={card.tools?.some(tool => tool.id === t.id) ? '' : 'border-primary'}
+                  style={card?.tools?.some(tool => tool.id === t.id) ? '' : 'border-primary'}
                   onClick={()=>handleToolClick(t)}
                 />
               ))}
             </div>
           </CardEditorFormSection>
         )}
-        { card.tools && card.tools.length > 0 && (
+        { card?.tools && card?.tools.length > 0 && (
           <CardEditorFormSection title="이번 경험에 대하여">
             <textarea
               className='w-full h-52 rounded-xl border-gray-d9 text-sm focus:outline-0 p-3'
-              value={card.reflection}
+              value={card?.reflection}
               placeholder='느낀점, 배운점, 더 알아보고 싶은 점 등 자유롭게 적어주세요'
               style={{ textAlign: 'left', verticalAlign: 'top' }}
               onChange={handlerReflectionInput}
             />
           </CardEditorFormSection>
         )}
-        { card.reflection && card.reflection.length > 0 && (
+        {/* { card?.reflection && card?.reflection.length > 0 && (
           <CardEditorFormSection title="사진으로 경험을 보여주세요">
             <div className='w-full flex'>
               <label className='cursor-pointer inline-flex items-center mr-4 py-2 px-4 rounded-lg border-0 text-sm font-semibold bg-primary text-white'>
@@ -398,20 +362,20 @@ export default function CardEditor({
                 />
                 파일 선택
               </label>
-              {card.imageUrl && (
-                <div className="mt-2 font-semibold">{card.imageUrl}</div> 
+              {card?.imageUrl && (
+                <div className="mt-2 font-semibold">{card?.imageUrl}</div> 
               )}
             </div>
-            {card.imageUrl && (
+            {card?.imageUrl && (
               <img
-                src={card.imageUrl}
+                src={card?.imageUrl}
                 alt="Preview"
                 className="mt-4 w-1/2 h-1/2 object-cover border border-gray-d9 rounded-xl"
               />
             )}
           </CardEditorFormSection>
-        )}
-        { card.imageUrl && card.imageUrl.length > 0 && (
+        )} */}
+        { card?.reflection && card?.reflection.length > 0 && (
           <CardEditorFormSection title="경험을 가장 잘 보여주는 자료(.pdf)">
             <div className='w-full flex'>
               <label className="cursor-pointer inline-flex items-center mr-4 py-2 px-4 rounded-lg border-0 text-sm font-semibold bg-primary text-white">
@@ -423,18 +387,18 @@ export default function CardEditor({
                 />
                 파일 선택
               </label>
-              {card.pdfFile && (
-                <div className="mt-2 font-semibold">{card.pdfName}</div>
+              {card?.pdfFile && (
+                <div className="mt-2 font-semibold">{card?.pdfName}</div>
               )}
             </div>
           </CardEditorFormSection>
         )}
-        { card.pdfName && card.pdfName.length > 0 && (
+        { card?.pdfName && card?.pdfName.length > 0 && (
           <CardEditorFormSection title="경험을 보여주는 소스 URL을 입력해주세요">
             {[0, 1].map(index => (
               <Input 
                 key={index}
-                value={card.sourceUrl?.[index]}
+                value={card?.sourceUrl?.[index]}
                 type='text'
                 className='w-full mb-2 rounded-xl border-gray-d9 text-sm focus:outline-0'
                 placeholder='ex) Github, Figma, ...'
@@ -447,18 +411,20 @@ export default function CardEditor({
       <div className='w-1/3 flex flex-col items-center'>
         <div className='fixed'>
           <Card card={card}/>
-          {card.sourceUrl && card.sourceUrl.length > 0 ? (
-              <div
-                  className='cursor-pointer w-full flex justify-center font-semibold bg-primary text-white border-2 border-primary hover:text-primary hover:bg-white px-4 py-2 mt-2 rounded-xl'
-                  onClick={handleSaveClick}>
-                {isNewCard ? 'AI경험카드 생성하기' : 'AI경험카드 수정하기'}
-              </div>
+          {card?.sourceUrl && card?.sourceUrl.length > 0 ? (
+            <div
+              className='cursor-pointer w-full flex justify-center font-semibold bg-primary text-white border-2 border-primary hover:text-primary hover:bg-white px-4 py-2 mt-2 rounded-xl'
+              onClick={handleSaveClick}
+            >
+              {isNewCard ? 'AI경험카드 생성하기' : 'AI경험카드 수정하기'}
+            </div>
           ) :
           (
             <div
               className='cursor-pointer w-full flex justify-center font-semibold bg-primary text-white border-2 border-primary hover:text-primary hover:bg-white px-4 py-2 mt-2 rounded-xl'
-              onClick={handleSaveClick}>
-              {isNewCard ? 'AI경험카드 관리 돌아가기': 'AI경험카드 수정하기'}
+              onClick={handleCancelClick}
+            >
+             {'AI경험카드 관리 돌아가기'}
             </div>
           )}
         </div>

@@ -49,7 +49,7 @@ export default function CategoryPage() {
   const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/category/backend')
+    fetch('http://localhost:8080/api/category')
         .then((response) => response.json())
         .then((data) => {
             console.log(data);
@@ -83,18 +83,19 @@ export default function CategoryPage() {
   }
 
   return (
-      <div className="w-full h-screen flex flex-col items-center">
-        <div className="w-full h-full">
-            <div>
-                <TimelineRoadmap skills={roadmapSkills}/>
-            </div>
+    <div className="w-full h-screen flex flex-col items-center">
+      <div className="w-[1400px] h-full">
+        <div className='w-full px-24'>
+          <TimelineRoadmap skills={roadmapSkills}/>
+        </div>
+        <div className='w-full flex flex-col px-24'>
           <div className="flex flex-col">
-            <div className="font-bold ml-20">RoadMap</div>
-            <div className="font-semibold text-category-front ml-20 mb-5">Web_FrontEnd</div>
+            <div className="font-bold">RoadMap</div>
+            <div className="font-semibold text-category-front mb-5">Web_FrontEnd</div>
           </div>
           <Roadmap isEditMode={false} roadmapSkills={roadmapSkills} />
         </div>
       </div>
+    </div>
   );
-
 }

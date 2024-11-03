@@ -30,7 +30,7 @@ function TimelineRoadmap({ skills }: { skills: RoadmapSkill[] }) {
 
 
     return (
-        <div className="box-border justify-between my-10 mx-20 flex bg-category-front rounded-lg">
+        <div className="box-border justify-between my-10 flex bg-category-front rounded-lg">
             <div className="w-1/3 bg-dark-light rounded-s-lg flex justify-center p-10">
                 <img src="/asset/png/category/frontend_img.png" alt ="frontend"></img>
             </div>
