@@ -5,7 +5,7 @@ import Card from './Card';
 import {AiCard, AiCardWithNew} from "@/models/card";
 
 type CardRetrieveProps = {
-  onChangePage: (card: AiCardWithNew) => void;
+  onChangePage: (card: AiCardWithNew | null) => void;
 };
 
 // 카드를 관리하는 컴포넌트
@@ -23,6 +23,7 @@ export default function CardRetrieve({ onChangePage }: CardRetrieveProps) {
           throw new Error('Failed to fetch cards');
         }
         const data = await response.json();
+        console.log("data: ", data);
         setCardInfos(data); // 카드 데이터를 상태에 저장
       } catch (error) {
         console.error('Error fetching cards:', error);
@@ -43,11 +44,11 @@ export default function CardRetrieve({ onChangePage }: CardRetrieveProps) {
           </div>
         ))}
         <div className='w-[400px] h-[580px] cursor-pointer flex justify-center items-center mb-4 rounded-xl border-2 border-dashed border-gray-d9'
-          onClick={()=>onChangePage({})}
-             >
+          onClick={()=>onChangePage(null)}
+        >
           <div className='text-3xl font-bold text-gray-d9'>+</div>
-
         </div>
       </div>
+    </div>
   );
 }
