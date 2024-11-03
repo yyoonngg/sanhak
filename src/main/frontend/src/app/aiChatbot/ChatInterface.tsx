@@ -3,6 +3,7 @@ import RoleDropdown from './ChatRoleDropdown';
 import {AiCardChat, ChatRoleOption} from "@/models/card";
 
 type ChatInterfaceProps = {
+  roles: ChatRoleOption[];
   chatData: AiCardChat[];
   chatInput: string;
   selectedCardTitle: string | undefined;
@@ -39,6 +40,7 @@ export default function ChatInterface({
   const [loading, setLoading] = useState(false);
 
   const handleSelectRole = (role: ChatRoleOption) => {
+    console.log("is role",role);
     setSelectedRole(role);
   };
 
@@ -93,7 +95,17 @@ export default function ChatInterface({
   return (
       <div className="w-full h-full flex flex-col">
         <div className="w-full">
-          <RoleDropdown roles={roles} selectedRole={selectedRole} onResetChat={onResetChat} handleSelectRole={handleSelectRole} />
+          <RoleDropdown roles={roles}
+                        selectedRole={selectedRole}
+                        onResetChat={() => {
+                          console.log("onResetChat function passed to RoleDropdown");
+                          onResetChat();
+                        }}
+                        handleSelectRole={(role) => {
+                          console.log("handleSelectRole function passed to RoleDropdown with role:", role);
+                          handleSelectRole(role);
+                        }}
+          />
         </div>
         <div className={`w-full h-full flex flex-col items-center ${chatData.length > 0 ? 'justify-between' : 'justify-center'}`}>
           {chatData.length > 0 ? (

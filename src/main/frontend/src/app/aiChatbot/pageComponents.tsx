@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import Card from '../card/Card';
 import ChatRoomList from './ChatRoomList';
 import ChatInterface from './ChatInterface';
@@ -74,7 +74,7 @@ const AiChatbotPage: React.FC = () => {
   };
 
   const initializeChat = async (chatId: number, chatRole: String) => {
-    console.log(chatRole);
+    console.log("Initializing chat:", { chatId, chatRole });
     let chatType;
     if (chatRole === "AI 면접관") {
       chatType = 0;
@@ -122,6 +122,7 @@ const AiChatbotPage: React.FC = () => {
   };
 
   const fetchChatMessages = async (chatId: number) => {
+    console.log("Fetching chat messages for chat ID:", chatId);
     try {
       const response = await fetch(`http://localhost:8080/api/chat/message/${chatId}`, {
         method: 'GET',
@@ -129,7 +130,14 @@ const AiChatbotPage: React.FC = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        setChatData(data); // 채팅 메시지 데이터 설정
+
+        const formattedData: ChatMessage[] = data.map((message: any) => ({
+          id: message.cmid,
+          isUser: message.cmisUser,
+          content: message.cmcontent,
+        }));
+
+        setChatData(formattedData);
       } else {
         throw new Error('채팅 메시지를 불러오는 중 오류가 발생했습니다.');
       }
@@ -167,18 +175,22 @@ const AiChatbotPage: React.FC = () => {
     }
   };
 
-  const handleSelectRole = (role: ChatRoleOption) => {
+  const handleSelectRole = useCallback((role: ChatRoleOption) => {
+    console.log("AiChatbotPage: handleSelectRole called with role:", role);
     setSelectedRole(role);
-    // 선택된 역할에 따라 채팅을 다시 초기화
-    if (selectedChatRoom) {
-      initializeChat(selectedChatRoom.id, role.label);
-      fetchChatMessages(selectedChatRoom.id);
-    }
-  };
+  }, []);
 
   const handleChatInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChatInput(event.target.value);
   };
+
+  useEffect(() => {
+    if (selectedChatRoom && selectedRole) {
+      console.log("useEffect - Initializing chat with selectedRole:", selectedRole);
+      initializeChat(selectedChatRoom.id, selectedRole.label);
+      fetchChatMessages(selectedChatRoom.id);
+    }
+  }, [selectedRole, selectedChatRoom]);
 
   const handleSendChat = async () => {
     if (chatInput.trim()) {
@@ -189,7 +201,7 @@ const AiChatbotPage: React.FC = () => {
       try {
         let selectedChatId=selectedChatRoom?.id;
         let selectedChatType=selectedChatRoom?.role;
-        let chatType;
+        let chatType;``
         if (selectedChatType === "AI 면접관") {
           chatType = 0;
         } else if (selectedChatType === "AI 자소서 도우미") {
@@ -246,6 +258,7 @@ const AiChatbotPage: React.FC = () => {
                   onSelectCard={handleSelect}
               />
               <ChatInterface
+                  roles={roles}
                   chatData={chatData}
                   chatInput={chatInput}
                   selectedCardTitle={selectedCard ? selectedCard.title : ""}
