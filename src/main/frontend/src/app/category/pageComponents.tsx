@@ -89,8 +89,8 @@ export default function CategoryPage() {
                 <TimelineRoadmap skills={roadmapSkills}/>
             </div>
           <div className="flex flex-col">
-            <div className="font-bold">RoadMap</div>
-            <div className="font-semibold text-category-front">Web_FrontEnd</div>
+            <div className="font-bold ml-20">RoadMap</div>
+            <div className="font-semibold text-category-front ml-20 mb-5">Web_FrontEnd</div>
           </div>
           <Roadmap isEditMode={false} roadmapSkills={roadmapSkills} />
         </div>
