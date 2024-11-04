@@ -78,7 +78,7 @@ public class SecurityConfig{
 
                             request.getSession().invalidate();
                             response.setContentType("text/html");
-                            response.getWriter().write("<html><body onload=\"setTimeout(function() { window.location.href = 'http://localhost:200'; }, 3000);\">");
+                            response.getWriter().write("<html><body onload=\"setTimeout(function() { window.location.href = 'http://localhost:3000/category'; }, 3000);\">");
                             response.getWriter().write("<script>window.location.href='" + logoutUrl + "';</script>");
                             response.getWriter().write("<p>Logging out... You will be redirected to the home page shortly.</p>");
                             response.getWriter().write("</body></html>");

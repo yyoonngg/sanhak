@@ -68,7 +68,7 @@ export default function CardEditor({
   selectedCard
 }: CardEditorProps) {
   const [card, setCard] = useState<AiCard | null>(selectedCard);
-  const isNewCard = selectedCard ? false : true; 
+  const isNewCard = selectedCard ? false : true;
   const [buttonStyles, setButtonStyles] = useState(Array(categories.length).fill('border-primary'));
   const [selectedSkills, setSelectedSkills] = useState<Skill[]>([]);
   const [isLoading, setIsLoading] = useState(false); // 로딩
@@ -251,6 +251,7 @@ export default function CardEditor({
   // 디버깅용
   useEffect(()=> {
     console.log(card);
+    console.log(isNewCard);
   }, [card]);
   
   return (

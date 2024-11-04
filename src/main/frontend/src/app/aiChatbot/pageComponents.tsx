@@ -201,7 +201,7 @@ const AiChatbotPage: React.FC = () => {
       try {
         let selectedChatId=selectedChatRoom?.id;
         let selectedChatType=selectedChatRoom?.role;
-        let chatType;``
+        let chatType;
         if (selectedChatType === "AI 면접관") {
           chatType = 0;
         } else if (selectedChatType === "AI 자소서 도우미") {

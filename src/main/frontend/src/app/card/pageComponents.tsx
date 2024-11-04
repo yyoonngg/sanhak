@@ -1,14 +1,15 @@
 "use client";
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import CardRetrieve from './CardRetrieve';
 import CardEditor from './CardEditor';
 import {AiCard, AiCardWithNew} from "@/models/card";
 
 export default function CardPage() {
   const [isCreatePage, setIsCreatePage] = useState<Boolean>(false);
-  const [selectedCard, setSelectedCard] = useState<AiCardWithNew | null>(null);
+  const [selectedCard, setSelectedCard] = useState<AiCard | null>(null);
 
   const onSelectCard = (card: AiCard | null) => {
+    console.log("onSelectCard: ", card);
     setIsCreatePage(true);
     setSelectedCard(card);
   }

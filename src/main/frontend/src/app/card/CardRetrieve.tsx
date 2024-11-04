@@ -44,7 +44,7 @@ export default function CardRetrieve({ onChangePage }: CardRetrieveProps) {
           ))}
           <div
               className='w-[400px] h-[580px] cursor-pointer flex justify-center items-center mb-4 rounded-xl border-2 border-dashed border-gray-d9'
-              onClick={() => onChangePage({})}
+              onClick={() => onChangePage(null)}
           >
             <div className='text-3xl font-bold text-gray-d9'>+</div>
           </div>
