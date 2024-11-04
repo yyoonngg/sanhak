@@ -19,6 +19,7 @@ import java.util.List;
 public class SecurityConfig{
 
     private final OAuth2Service oAuth2Service;
+
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         return http
