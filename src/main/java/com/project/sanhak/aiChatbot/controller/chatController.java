@@ -6,6 +6,11 @@ import com.project.sanhak.domain.chat.ChatMessage;
 import com.project.sanhak.domain.chat.ChatRooms;
 import com.project.sanhak.domain.user.User;
 import com.project.sanhak.main.service.MainService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +33,8 @@ public class chatController {
     @Autowired
     private chatService chatService;
 
+    @Operation(summary = "채팅방 초기화")
+    @ApiResponse(responseCode = "200", description = "채팅방 초기화 성공 메시지")
     @GetMapping("initialize/{chat_id}/{chat_type}")
     public ResponseEntity<?> handshake(HttpSession session,
                                        @PathVariable(required = false) Integer chat_id,
@@ -68,7 +75,9 @@ public class chatController {
     }
 
 
-    // 사용자의 채팅방 목록을 가져오는 메서드
+    @Operation(summary = "사용자의 채팅방 목록을 가져옴")
+    @ApiResponse(responseCode = "200", description = "사용자 채팅방 목록",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ChatRoomDTO.class))))
     @GetMapping("/list")
     public ResponseEntity<?> callChatList(HttpSession session) {
         try {
@@ -90,7 +99,9 @@ public class chatController {
         }
     }
 
-    // 특정 채팅방의 과거 메시지를 가져오는 메서드
+    @Operation(summary = "특정 채팅방의 과거 메세지 호출")
+    @ApiResponse(responseCode = "200", description = "특정 채팅방의 과거 메세지 목록",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ChatMessage.class))))
     @GetMapping("/message/{chat_id}")
     public ResponseEntity<?> callChatMessage(HttpSession session,
                                              @PathVariable(required = false) Integer chat_id) {
@@ -113,6 +124,9 @@ public class chatController {
         }
     }
 
+    @Operation(summary = "AI 서버와의 채팅 메시지 송신 및 응답")
+    @ApiResponse(responseCode = "200", description = "AI 서버 응답",
+            content = @Content(schema = @Schema(example = "{\"response\": \"AI 응답 메시지\"}")))
     @Transactional
     @PostMapping("/{chat_id}/send/{chat_type}")
     public ResponseEntity<?> chatToBot(HttpSession session,

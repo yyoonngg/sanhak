@@ -1,5 +1,6 @@
 package com.project.sanhak.login.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -14,6 +15,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/oauth")
 public class UserController {
+    @Operation(summary = "로그인 정보 호출")
     @GetMapping("/loginInfo")
     public String getJson(Authentication authentication) {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
@@ -25,6 +27,7 @@ public class UserController {
         return attributes.toString();
     }
 
+    @Operation(summary = "로그인 중인지 확인")
     @GetMapping("/status")
     public ResponseEntity<?> getAuthStatus(Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {

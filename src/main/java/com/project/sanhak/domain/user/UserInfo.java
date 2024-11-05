@@ -14,10 +14,9 @@ public class UserInfo {
     @OneToOne
     @JoinColumn(referencedColumnName = "UId")
     private User UIuid;
-
+    private String UIUserName;
+    private String UIUserEmail;
     private String UIBio;
     private String UIProfileImg;
-    private int UIExp;
-    private String UINowPosition;
     private String UIDesirePosition;
 }
