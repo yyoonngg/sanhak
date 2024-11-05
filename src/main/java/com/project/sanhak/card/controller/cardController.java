@@ -8,6 +8,11 @@ import com.project.sanhak.domain.card.ExperienceCard;
 import com.project.sanhak.domain.user.User;
 import com.project.sanhak.main.service.MainService;
 import com.project.sanhak.util.s3.S3FileService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +37,9 @@ public class cardController {
     @Autowired
     private cardRepository cardRepository;
 
+    @Operation(summary = "내 경험 카드 전체 호출")
+    @ApiResponse(responseCode = "200", description = "전체 경험 카드 목록",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = aiCardDTO.class))))
     @GetMapping("/")
     public ResponseEntity<?> getAiCard(HttpSession session) {
         try {
@@ -46,8 +54,10 @@ public class cardController {
         }
     }
 
-    @Transactional
+    @Operation(summary = "내 경험 카드 생성")
+    @ApiResponse(responseCode = "200", description = "경험 카드 생성 성공 메시지")
     @PostMapping("/create")
+    @Transactional
     public ResponseEntity<String> createAiCard(HttpSession session,
                                                      @RequestPart("cardInfo") aiCardDTO cardInfoDTO,
                                                      @RequestPart("image") MultipartFile imageFile,
@@ -92,6 +102,9 @@ public class cardController {
         }
     }
 
+    @Operation(summary = "특정 경험카드 읽어오기")
+    @ApiResponse(responseCode = "200", description = "경험 카드 정보",
+            content = @Content(schema = @Schema(implementation = aiCardDTO.class)))
     @GetMapping("/read/{card_id}")
     public ResponseEntity<?> readAiCard(@PathVariable int card_id) {
         try {
@@ -103,8 +116,10 @@ public class cardController {
         }
     }
 
-    @Transactional
+    @Operation(summary = "내 경험 카드 수정")
+    @ApiResponse(responseCode = "200", description = "경험 카드 수정 성공 메시지")
     @PostMapping("/update/{card_id}")
+    @Transactional
     public ResponseEntity<String> updateAiCard(@PathVariable int card_id,
                                                      HttpSession session,
                                                      @RequestPart("cardInfo") aiCardDTO updatedCardDTO,
@@ -173,8 +188,10 @@ public class cardController {
         }
     }
 
-    @Transactional
+    @Operation(summary = "내 경험 카드 삭제")
+    @ApiResponse(responseCode = "200", description = "경험 카드 삭제 성공 메시지")
     @PostMapping("/delete/{card_id}")
+    @Transactional
     public ResponseEntity<?> deleteAiCard(@PathVariable int card_id, HttpSession session) {
         try {
             Integer uidAttribute = (Integer) session.getAttribute("uid");

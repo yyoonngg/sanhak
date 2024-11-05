@@ -1,6 +1,7 @@
 package com.project.sanhak.card.dto;
 
 import com.project.sanhak.domain.skil.code.Tools;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description ="ai경험카드")
 public class aiCardDTO {
     private String fromDate;
     private String toDate;
