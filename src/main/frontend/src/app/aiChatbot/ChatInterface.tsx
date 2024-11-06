@@ -3,6 +3,7 @@ import RoleDropdown from './ChatRoleDropdown';
 import {AiCardChat, ChatRoleOption} from "@/models/card";
 
 type ChatInterfaceProps = {
+  roles: ChatRoleOption[];
   chatData: AiCardChat[];
   chatInput: string;
   selectedCardTitle: string | undefined;
@@ -11,7 +12,9 @@ type ChatInterfaceProps = {
   onKeyDown: (event: React.KeyboardEvent) => void;
   onResetChat: () => void;
   selectedChatId: number;
-  selectedChatType: String;
+  selectedChatType: string | undefined;
+  selectedRole: ChatRoleOption; // 추가된 속성
+  handleSelectRole: (role: ChatRoleOption) => void; // 추가된 속성
 };
 
 const aiRoles: ChatRoleOption[] = [
@@ -37,11 +40,20 @@ export default function ChatInterface({
   const [loading, setLoading] = useState(false);
 
   const handleSelectRole = (role: ChatRoleOption) => {
+    console.log("is role",role);
     setSelectedRole(role);
   };
 
   const handleSendChat = async () => {
+    console.log("Send button clicked");
     if (!chatInput.trim()) return;
+
+    if (selectedChatId == null || selectedChatType == null) {
+      console.error("채팅방이 선택되지 않았습니다.");
+      const errorMessage = { id: chatData.length + 1, isUser: 0, content: "채팅방을 선택해 주세요." };
+      onSendChat(errorMessage);
+      return;
+    }
 
     const userMessage = { id: chatData.length + 1, isUser: 1, content: chatInput };
     onSendChat(userMessage);
@@ -83,7 +95,17 @@ export default function ChatInterface({
   return (
       <div className="w-full h-full flex flex-col">
         <div className="w-full">
-          <RoleDropdown roles={roles} selectedRole={selectedRole} onResetChat={onResetChat} handleSelectRole={handleSelectRole} />
+          <RoleDropdown roles={roles}
+                        selectedRole={selectedRole}
+                        onResetChat={() => {
+                          console.log("onResetChat function passed to RoleDropdown");
+                          onResetChat();
+                        }}
+                        handleSelectRole={(role) => {
+                          console.log("handleSelectRole function passed to RoleDropdown with role:", role);
+                          handleSelectRole(role);
+                        }}
+          />
         </div>
         <div className={`w-full h-full flex flex-col items-center ${chatData.length > 0 ? 'justify-between' : 'justify-center'}`}>
           {chatData.length > 0 ? (
@@ -121,8 +143,8 @@ export default function ChatInterface({
                 onKeyDown={onKeyDown}
             />
             <div
-                className="w-8 h-7 flex justify-center items-center bg-primary rounded-full text-white font-semibold cursor-pointer text-xl mr-2 py-1"
-                onClick={handleSendChat}
+                className="w-8 h-7 flex justify-center items-center bg-primary rounded-full text-white font-semibold cursor-pointer text-xs mr-2 py-1"
+                onClick={handleSendChat}  // 여기서 `await`을 제거하고 함수 참조를 전달
             >
               전송
             </div>
@@ -130,4 +152,8 @@ export default function ChatInterface({
         </div>
       </div>
   );
+}
+
+function setChatRoomData(data: any) {
+  throw new Error('Function not implemented.');
 }

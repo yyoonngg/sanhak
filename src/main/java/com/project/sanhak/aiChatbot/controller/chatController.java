@@ -1,10 +1,16 @@
 package com.project.sanhak.aiChatbot.controller;
 
+import com.project.sanhak.aiChatbot.dto.ChatRoomDTO;
 import com.project.sanhak.aiChatbot.service.chatService;
 import com.project.sanhak.domain.chat.ChatMessage;
 import com.project.sanhak.domain.chat.ChatRooms;
 import com.project.sanhak.domain.user.User;
 import com.project.sanhak.main.service.MainService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @CrossOrigin(origins = "http://localhost:3000")
@@ -26,11 +33,14 @@ public class chatController {
     @Autowired
     private chatService chatService;
 
+    @Operation(summary = "채팅방 초기화")
+    @ApiResponse(responseCode = "200", description = "채팅방 초기화 성공 메시지")
     @GetMapping("initialize/{chat_id}/{chat_type}")
     public ResponseEntity<?> handshake(HttpSession session,
                                        @PathVariable(required = false) Integer chat_id,
                                        @PathVariable(required = false) Integer chat_type) {
         try {
+            System.out.println("1");
             Integer uidAttribute = (Integer) session.getAttribute("uid");
             if (uidAttribute == null) {
                 throw new NullPointerException("UID is null");
@@ -48,7 +58,9 @@ public class chatController {
             }
 
             // 초기화
+            System.out.println("9");
             String response = chatService.initializeChat(uid, chat_id, chat_type);
+            System.out.println("6");
             if ("success".equals(response)) {
                 return ResponseEntity.ok("채팅이 성공적으로 초기화되었습니다.");
             } else {
@@ -63,7 +75,9 @@ public class chatController {
     }
 
 
-    // 사용자의 채팅방 목록을 가져오는 메서드
+    @Operation(summary = "사용자의 채팅방 목록을 가져옴")
+    @ApiResponse(responseCode = "200", description = "사용자 채팅방 목록",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ChatRoomDTO.class))))
     @GetMapping("/list")
     public ResponseEntity<?> callChatList(HttpSession session) {
         try {
@@ -73,8 +87,8 @@ public class chatController {
             }
             int uid = uidAttribute;
 
-            // 사용자의 채팅방 목록 조회
-            List<ChatRooms> chatRoomsList = chatService.getUserChatRooms(uid);
+            // 사용자의 채팅방 목록 조회 (DTO로 변환하여 title 포함)
+            List<ChatRoomDTO> chatRoomsList = chatService.getUserChatRooms(uid);
             return ResponseEntity.ok(chatRoomsList);
 
         } catch (NullPointerException e) {
@@ -85,7 +99,9 @@ public class chatController {
         }
     }
 
-    // 특정 채팅방의 과거 메시지를 가져오는 메서드
+    @Operation(summary = "특정 채팅방의 과거 메세지 호출")
+    @ApiResponse(responseCode = "200", description = "특정 채팅방의 과거 메세지 목록",
+            content = @Content(array = @ArraySchema(schema = @Schema(implementation = ChatMessage.class))))
     @GetMapping("/message/{chat_id}")
     public ResponseEntity<?> callChatMessage(HttpSession session,
                                              @PathVariable(required = false) Integer chat_id) {
@@ -108,6 +124,9 @@ public class chatController {
         }
     }
 
+    @Operation(summary = "AI 서버와의 채팅 메시지 송신 및 응답")
+    @ApiResponse(responseCode = "200", description = "AI 서버 응답",
+            content = @Content(schema = @Schema(example = "{\"response\": \"AI 응답 메시지\"}")))
     @Transactional
     @PostMapping("/{chat_id}/send/{chat_type}")
     public ResponseEntity<?> chatToBot(HttpSession session,
@@ -127,7 +146,7 @@ public class chatController {
             }
 
             String response = chatService.sendMessageToBot(uid, chat_id, chat_type, question);
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(Map.of("response", response));
 
         } catch (NullPointerException e) {
             return ResponseEntity.badRequest().body("오류가 발생했습니다: UID를 가져올 수 없습니다.");

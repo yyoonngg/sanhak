@@ -15,12 +15,17 @@ export default function RoleDropdown({
   handleSelectRole
 }: RoleDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
-
-  const toggleDropdown = () => setIsOpen(!isOpen);
+  const toggleDropdown = () => {
+    console.log("Toggle dropdown")
+    setIsOpen(!isOpen);
+  }
   const selectRole = (role: ChatRoleOption) => {
-    handleSelectRole(role);
+    console.log("Role selected:", role.label);
+    if (role.label !== selectedRole.label) {
+      handleSelectRole(role);
+      onResetChat();
+    }
     setIsOpen(false);
-    onResetChat();
   };
 
   return (

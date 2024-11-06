@@ -35,6 +35,7 @@ public class cardService {
     private chatRepository chatRepository;
     @Autowired
     private messageRepository messageRepository;
+
     public cardService(CardMapper cardMapper, WebClient webClient) {
         this.cardMapper = cardMapper;
         this.webClient = webClient;
@@ -106,7 +107,7 @@ public class cardService {
         }
     }
 
-    private String extractTextFromPDF(MultipartFile pdfFile) throws IOException {
+    public String extractTextFromPDF(MultipartFile pdfFile) throws IOException {
         File tempFile = File.createTempFile("temp", ".pdf");
         pdfFile.transferTo(tempFile);
         try (PDDocument document = Loader.loadPDF(tempFile)) {

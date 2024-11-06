@@ -8,9 +8,10 @@ export default function Card({
   style,
   card : initialCard
 }: {
-  card?: AiCard,
+  card?: AiCard | null,
   style?: string
 }) {
+  console.log(initialCard);
   const [isFlipped, setIsFlipped] = useState(false);
   const [card, setCard] = useState<AiCard | null>(initialCard || null);  // 서버에서 가져올 카드 상태
   const [hiddenCounts, setHiddenCounts] = useState({
@@ -73,7 +74,7 @@ export default function Card({
       }
     };
 
-    fetchData();
+    // fetchData();
 
     calculateHiddenCount('skills');
     calculateHiddenCount('category');
@@ -106,12 +107,12 @@ export default function Card({
     setIsFlipped(!isFlipped);
   };
 
-  if (!card) {
-    return <div>Loading...</div>;
-  }
+  // if (!card) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
-    <div className={`${style ? style : ''} w-[390px] h-[580px] relative mb-4`}>
+    <div className={`${style ? style : ''} w-[400px] h-[75dvh] max-h-[600px] relative mb-4`}>
       <motion.div
         className='w-full h-full relative'
         initial={false}
@@ -129,23 +130,23 @@ export default function Card({
           }}
         >
           <div className='w-full h-2/3 px-5 pt-5 pb-2'>
-            {card.imageUrl && (
-              <img className='w-full h-full object-cover rounded-xl' src={card.imageUrl} alt='' />
+            {card?.imageUrl && (
+              <img className='w-full h-full object-cover rounded-t-xl' src={card?.imageUrl} alt='' />
             )}
           </div>
           <div className='w-full h-2/3 flex flex-col justify-around'>
-            <div className='flex flex-col justify-between items-start px-5'>
-              {(card.fromDate || card.toDate) && (
-                <div className='font-normal text-black text-sm'>{card.fromDate} ~ {card.toDate}</div>
+            <div className='flex flex-col justify-between items-start px-4'>
+              {(card?.fromDate || card?.toDate) && (
+                <div className='font-normal text-gray-cc'>{card?.fromDate} ~ {card?.toDate}</div>
               )}
-              {card.title && (
-                <div className='font-semibold text-3xl mb-2'>{card.title}</div>
+              {card?.title && (
+                <div className='font-semibold text-3xl mb-2'>{card?.title}</div>
               )}
               <div className='w-full flex justify-between items-center'>
                 <div className='flex items-center'>
-                  {card.category && card.category.length > 0 && (
+                  {card?.category && card?.category.length > 0 && (
                     <div ref={refs.category} className='h-[35px] flex flex-wrap overflow-hidden items-center text-sm font-semibold mb-1'>
-                      {card.category.map(c => (
+                      {card?.category.map(c => (
                         <ButtonLabel key={c} type='category' label={c} />
                       ))}
                     </div>
@@ -157,9 +158,9 @@ export default function Card({
               </div>
               <div className='w-full flex justify-between items-center'>
                 <div className='flex items-center'>
-                  {card.skills && card.skills.length > 0 && (
+                  {card?.skills && card?.skills.length > 0 && (
                     <div ref={refs.skills} className='h-auto max-h-[35px] min-h-[35px] flex flex-wrap overflow-hidden items-center text-sm font-semibold mb-1'>
-                      {card.skills.map(s => (
+                      {card?.skills.map(s => (
                         <ButtonLabel key={s.id} type='skill' label={s.name} />
                       ))}
                     </div>
@@ -171,9 +172,9 @@ export default function Card({
               </div>
               <div className='w-full flex justify-between items-center'>
                 <div>
-                  {card.tools && card.tools.length > 0 && (
+                  {card?.tools && card?.tools.length > 0 && (
                     <div ref={refs.tools} className='h-[35px] flex flex-wrap overflow-hidden items-center text-sm font-semibold mb-1'>
-                      {card.tools.map(t => (
+                      {card?.tools.map(t => (
                         <ButtonLabel key={t.id} type='tool' label={t.name} />
                       ))}
                     </div>
@@ -184,8 +185,12 @@ export default function Card({
                 )}
               </div>
             </div>
-            <div className='flex flex-col justify-between px-4 pb-2'>
-              {card.reflection && (
+            <div className='h-1/3 flex flex-col justify-between px-4 pb-2'>
+              {card?.reflection && (
+                <>
+                  <div className='line-clamp-4 text-sm mt-2 font-semibold'>
+                    {card?.reflection}
+                  </div>
                   <div className='flex justify-end items-end'>
                     <button
                       onClick={handleFlip}
@@ -194,13 +199,12 @@ export default function Card({
                       {'자세히 보기 ->'}
                     </button>
                   </div>
+                </>
               )}
             </div>
           </div>
 
         </motion.div>
-
-        {/*카드뒷면*/}
         <motion.div
           className={`absolute overflow-y-auto scrollbar w-full h-full flex flex-col justify-between items-start bg-white rounded-xl shadow-[4px_4px_8px_rgba(0,0,0,0.3)] ${!isFlipped ? 'rotate-y-180' : ''}`}
           style={{
@@ -211,9 +215,9 @@ export default function Card({
           <div className='w-full flex flex-col p-4'>
             <div className='w-full flex-col'>
               <div className='text-md font-bold mb-1'>역할</div>
-              {card.category && (
+              {card?.category && (
                 <div className='flex flex-wrap items-center text-sm font-semibold mb-2'>
-                  {card.category.map(c => (
+                  {card?.category.map(c => (
                     <ButtonLabel key={c} type='category' label={c} />
                   ))}
                 </div>
@@ -221,9 +225,9 @@ export default function Card({
             </div>
             <div className='w-full flex-col'>
               <div className='text-md font-bold mb-1'>언어와 스킬</div>
-              {card.skills && (
+              {card?.skills && (
                 <div className='flex flex-wrap items-center text-sm font-semibold mb-2'>
-                  {card.skills.map(s => (
+                  {card?.skills.map(s => (
                     <ButtonLabel key={s.id} type='skill' label={s.name} />
                   ))}
                 </div>
@@ -231,18 +235,18 @@ export default function Card({
             </div>
             <div className='w-full flex-col'>
               <div className='text-md font-bold mb-1'>개발 도구</div>
-              {card.tools && (
+              {card?.tools && (
                 <div className='flex flex-wrap items-center text-sm font-semibold mb-2'>
-                  {card.tools.map(t => (
+                  {card?.tools.map(t => (
                     <ButtonLabel key={t.id} type='tool' label={t.name} />
                   ))}
                 </div>
               )}
             </div>
-            {card.reflection && (
+            {card?.reflection && (
               <div className='w-full flex-col'>
                 <div className='text-md font-bold mb-1'>경험 요약</div>
-                <div className='text-sm mt-2 font-semibold'>{card.summary}</div>
+                <div className='text-sm mt-2 font-semibold'>{card?.summary}</div>
               </div>
             )}
           </div>

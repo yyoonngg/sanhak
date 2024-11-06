@@ -164,7 +164,7 @@ const Roadmap = ({
   };
 
   return (  
-    <div className='w-full h-full flex flex-col items-end border border-2 border-dashed p-5 overflow-auto'>
+    <div className='box-border flex flex-col items-end border border-2 border-dashed overflow-auto'>
       {isEditMode && (
         <button
           onClick={increaseSize}

@@ -15,7 +15,7 @@ public class ChatMessage {
     @JoinColumn(name = "CMcrid", referencedColumnName = "CRId")
     @ManyToOne
     private ChatRooms CMcrid;
-
+    @Column(columnDefinition = "LONGTEXT")
     private String CMContent;
     private LocalDateTime CMTime;
     private int CMIsUser;
