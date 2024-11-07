@@ -15,7 +15,7 @@ import java.util.List;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
-@Configuration
+@Configuration("loginSecurityConfig")
 public class SecurityConfig {
 
     private final OAuth2Service oAuth2Service;
