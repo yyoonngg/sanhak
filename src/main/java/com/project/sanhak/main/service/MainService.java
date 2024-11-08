@@ -29,7 +29,6 @@ public class MainService {
     private NotificationRepository notificationRepository;
 
     public User getUserFromUid(int uid) {
-        System.out.println("4");
         return userRepository.findById(uid)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
     }

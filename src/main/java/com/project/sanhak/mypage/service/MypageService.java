@@ -8,6 +8,7 @@ import com.project.sanhak.domain.user.User;
 import com.project.sanhak.mypage.dto.*;
 import com.project.sanhak.mypage.repository.*;
 import com.project.sanhak.main.service.MainService;
+import com.project.sanhak.category.service.categoryService;
 import com.project.sanhak.category.repository.masteryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +40,8 @@ public class MypageService {
     private categoryRepository codeSkilRepository;
     @Autowired
     private MainService userService;
+    @Autowired
+    private categoryService categoryService;
     private final WebClient webClient;
     public MypageService(WebClient webClient) {
         this.webClient = webClient;
@@ -67,7 +70,7 @@ public class MypageService {
                 mastery.getMSInfo3()
         );
         Map<String, Object> quizRequestData = new HashMap<>();
-        Optional<CodeSkil> codeSkillOptional =codeSkilRepository.findById(mastery.getMS_csid().getCSId());
+        Optional<CodeSkil> codeSkillOptional =codeSkilRepository.findById(mastery.getMSCSid().getCSId());
         quizRequestData.put("language", codeSkillOptional.map(CodeSkil::getCSName));
         quizRequestData.put("main", mastery.getMSName());
         quizRequestData.put("sub",masteryInfoList);
@@ -110,7 +113,8 @@ public class MypageService {
 
     public List<masteryDTO> getMasteryList(int uid, int csId) {
         User user = userService.getUserFromUid(uid);
-        List<MasterySkil> masterySkills = masteryRepository.findByMS_csid(csId);
+        CodeSkil codeSkil = categoryService.getCodeSkilFromCSId(csId);
+        List<MasterySkil> masterySkills = masteryRepository.findByMSCSid(codeSkil);
         List<masteryDTO> masteryList = new ArrayList<>();
         for (MasterySkil masterySkill : masterySkills) {
             boolean state=userMasterySkilRepository.findByUMSuidAndUMSmsid(user, masterySkill);
@@ -168,7 +172,11 @@ public class MypageService {
                 if (dto.getId() == 0) { // 부모-자식 관계 (라인)
                     int parentId = dto.getMapping().get(0);
                     int childId = dto.getMapping().get(1);
-                    roadmapSkilPrequeRepository.deleteByURSPparentscsidAndURSPchildcsid(parentId, childId);
+                    Optional<UserRoadmapSkil> parentOptional=roadmapSkilRepository.findById(parentId);
+                    Optional<UserRoadmapSkil> childOptional=roadmapSkilRepository.findById(childId);
+                    UserRoadmapSkil parent=parentOptional.get();
+                    UserRoadmapSkil child=childOptional.get();
+                    roadmapSkilPrequeRepository.deleteByURSPparentscsidAndURSPchildcsid(parent, child);
                 } else { // 노드 (x, y 좌표)
                     int skillId = dto.getId();
                     roadmapSkilRepository.deleteById(skillId);
