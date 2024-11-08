@@ -9,8 +9,7 @@ import java.util.List;
 
 @Repository
 public interface masteryRepository extends JpaRepository<MasterySkil, Integer> {
-    List<MasterySkil> findByMS_csid(int csId);
-
     MasterySkil findByMSId(int msId);
 
+    List<MasterySkil> findByMSCSid(CodeSkil codeSkil);
 }
