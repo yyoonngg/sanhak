@@ -16,4 +16,6 @@ public class UserRoadmap {
     private User URuid;
 
     private String URName;
+
+    private int state;
 }

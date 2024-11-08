@@ -27,4 +27,7 @@ public class masteryDTO {
 
     @Schema(description = "코드 스킬 ID", example = "10")
     private int cs_id;
+
+    @Schema(description = "익힌 여부.", example = "true")
+    private boolean state;
 }
