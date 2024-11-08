@@ -56,7 +56,7 @@ public class MypageController {
                                                       @RequestBody List<changeRoadmapDTO> requestData,
                                                       HttpSession session) {
         int uid = (int) session.getAttribute("uid");
-        mypageService.updateRoadmap(uid, ur_id, requestData);
+        mypageService.updateRoadmap(ur_id, requestData);
         return ResponseEntity.ok("로드맵 정보 업데이트 성공");
     }
 
