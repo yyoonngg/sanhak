@@ -51,7 +51,13 @@ const allCategorySkills: AllKindOfSkills[] = [
     { id: 24, name: 'Cypress' }, 
     { id: 25, name: 'Jest' },
     { id: 26, name: 'MobX' },
-  ]},
+    { id: 27, name: 'Android Studio' },
+      { id: 28, name: 'Kotlin' },
+      { id: 29, name: 'Python' },
+      { id: 30, name: 'Flask' },
+      { id: 31, name: 'AWS' },
+      { id: 32, name: 'Ubuntu' },
+    ]},
 ];
 
 // TODO: API 연결

@@ -135,6 +135,9 @@ const htmlMockData: SkillDetail = {
 export default function MypagePage() {
   const [updatedRoadmap, setUpdatedRoadmap] = useState<RoadmapSkill[]>(selectedSkills);
   const [skillDetailData, setSkillDetailData] = useState<SkillDetail>(htmlMockData);
+
+  const [selectedRoadmap, setSelectedRoadmap] = useState<string>(customRoadmapList[0].name);
+  const [roadmapSkills, setRoadmapSkills] = useState<RoadmapSkill[]>(selectedSkills);
   // 1. 사이드 선택창에서 스킬을 선택하여 편집창에 노드를 추가할 때
   // 2. 노드 2개를 선택해서 선후관계가 정해질 때
   const handleUpdateRoadmap = (newSkill: RoadmapSkill) => {
@@ -152,9 +155,44 @@ export default function MypagePage() {
   };
 
   // TODO: API 연결 -> 해당 커스텀 로드맵을 구성하는 스킬 리스트을 저장
-  const onSaveRoadmap = () => {
-    console.log(updatedRoadmap, "로드맵 저장");
-  }
+  const onSaveRoadmap = async () => {
+    try {
+      const currentRoadmap = customRoadmapList.find(roadmap => roadmap.name === selectedRoadmap);
+
+      if (!currentRoadmap) {
+        throw new Error('선택된 로드맵을 찾을 수 없습니다.');
+      }
+
+      const response = await fetch('http://localhost:8080/api/roadmap/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // 쿠키 포함
+        body: JSON.stringify({
+          customRoadmapName: currentRoadmap.name,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('로드맵 저장에 실패했습니다.');
+      }
+
+      const data = await response.json();
+      console.log('로드맵이 성공적으로 저장되었습니다:', data);
+      // 상태 업데이트 또는 사용자에게 성공 메시지 표시
+    } catch (error) {
+      console.error('로드맵 저장 중 오류 발생:', error);
+      // 사용자에게 오류 메시지 표시
+    }
+  };
+
+
+
+
+
+
+
 
   // TODO: API 연결 -> id에 맞는 해당 스킬의 상세설명 가져오기
   const getSelectDetail = () => {
