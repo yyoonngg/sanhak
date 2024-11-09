@@ -12,14 +12,18 @@ import java.util.List;
 @NoArgsConstructor
 @Schema(description = "로드맵 정보 객체")
 public class roadmapDTO {
-    @Schema(description = "로드맵 ID", example = "1")
+    @Schema(description = "로드맵 스킬 ID", example = "55")
     private int id;
-
-    @Schema(description = "로드맵 이름", example = "웹 개발 로드맵")
+    @Schema(description = "코드 스킬 ID", example = "1")
+    private int cs_id;
+    @Schema(description = "스킬 이름", example = "html")
     private String name;
-
-    @Schema(description = "스킬 리스트", example = "[{\"id\": 1, \"name\": \"Java\",\"List<parents>\":[],\"List<child>\":[2,3,4],\"position\":[0,0],\"tag\": \"none\" }," +
-            " {\"id\": 2, \"name\": \"Spring\",\"List<parents>\":[1],\"List<child>\":[5],\"position\":[1,0],\"tag\": \"none\" }]")
-    private List<categoryDTO> skilList;
+    @Schema(description = "부모 목록", example = "[]")
+    private List<Integer> parent;
+    @Schema(description = "자식 목록", example = "[56,57]")
+    private List<Integer> child;
+    @Schema(description = "위치", example = "[0,0]")
+    private int[] position;
+    @Schema(description = "태그 상태", example = "none")
+    private String tag;
 }
-

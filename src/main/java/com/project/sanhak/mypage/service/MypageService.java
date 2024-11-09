@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MypageService {
@@ -61,7 +62,6 @@ public class MypageService {
     }
 
     public quizDTO getQuiz(int msId) {
-        //public List<quizDTO> getQuiz(int msId) {
         String url = apiBaseUrl +"/quiz";
         MasterySkil mastery = masteryRepository.findByMSId(msId);
         List<String> masteryInfoList = List.of(
@@ -92,16 +92,6 @@ public class MypageService {
 
 
             }
-            //List<quizDTO> quizList = new ArrayList<>();
-            //if (responseList != null) {
-                //for (Map<String, Object> response : responseList) {
-                    //if (response.containsKey("question") && response.containsKey("options") && response.containsKey("answer")) {
-                        //String question = (String) response.get("question");
-                        //List<String> options = (List<String>) response.get("options");
-                        //int answer = (int) response.get("answer");
-
-                        //quizList.add(new quizDTO(question, options, answer));
-                    //}
             else {
                 throw new IllegalStateException("Python 서버 응답에 필요한 'question', 'options', 'answer' 필드가 없습니다.");
             }
@@ -192,7 +182,49 @@ public class MypageService {
         roadmapRepository.save(roadmap);
     }
 
-    public List<roadmapDTO> getRoadmapsByUid(int uid) {
-        return null;
+    public List<roadmapDTO> getRoadmapsByUid(int uid, int ur_id) {
+        User user = userService.getUserFromUid(uid);
+        UserRoadmap userRoadmap = roadmapRepository.findByURIdAndURuid(ur_id, user);
+
+        List<UserRoadmapSkil> userRoadmapSkils = roadmapSkilRepository.findByURSurid(userRoadmap);
+
+        Set<Integer> userRoadmapSkilIds = userRoadmapSkils.stream()
+                .map(UserRoadmapSkil::getURSId)
+                .collect(Collectors.toSet());
+
+        return userRoadmapSkils.stream().map(userRoadmapSkil -> {
+            roadmapDTO dto = new roadmapDTO();
+            dto.setId(userRoadmapSkil.getURSId());
+            dto.setName(userRoadmapSkil.getURScsName());
+            dto.setPosition(new int[]{userRoadmapSkil.getURScsX(), userRoadmapSkil.getURScsY()});
+            dto.setTag(userRoadmapSkil.getURSTag());
+
+            List<Integer> parents = roadmapSkilPrequeRepository.findByURSPchildcsid(userRoadmapSkil).stream()
+                    .map(preque -> preque.getURSPparentscsid().getURSId())
+                    .filter(userRoadmapSkilIds::contains)
+                    .collect(Collectors.toList());
+            dto.setParent(parents);
+
+            List<Integer> children = roadmapSkilPrequeRepository.findByURSPparentscsid(userRoadmapSkil).stream()
+                    .map(preque -> preque.getURSPchildcsid().getURSId())
+                    .filter(userRoadmapSkilIds::contains)
+                    .collect(Collectors.toList());
+            dto.setChild(children);
+
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    public List<roadmapListDTO> getRoadmapListByUid(int uid) {
+
+        List<UserRoadmap> userRoadmaps = roadmapRepository.findByURuid_UId(uid);
+
+        return userRoadmaps.stream().map(userRoadmap -> {
+            roadmapListDTO dto = new roadmapListDTO();
+            dto.setId(userRoadmap.getURId());
+            dto.setName(userRoadmap.getURName());
+            dto.setState(userRoadmap.getState());
+            return dto;
+        }).collect(Collectors.toList());
     }
 }

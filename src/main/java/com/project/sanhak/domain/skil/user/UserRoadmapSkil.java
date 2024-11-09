@@ -10,12 +10,12 @@ public class UserRoadmapSkil {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int URSId;
-
     @ManyToOne
     @JoinColumn(referencedColumnName = "URId")
     private UserRoadmap URSurid;
-    private int URScsid;
+    private String URSTag;
     private String URScsName;
     private int URScsX;
     private int URScsY;
+    private int URScsid;
 }
