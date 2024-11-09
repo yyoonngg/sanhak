@@ -18,6 +18,6 @@ public class changeRoadmapDTO {
     @Schema(description = "상태 -> add는 1, delete는 0", example = "1")
     private int state;
 
-    @Schema(description = "매핑 -> 노드면 이게 x,y 좌표, 라인이면 부모,자식", example = "[1, 2]")
+    @Schema(description = "매핑 -> 노드면 이게 x,y 좌표, 라인이면 부모,자식", example = "[55, 56]")
     private List<Integer> mapping;
 }
