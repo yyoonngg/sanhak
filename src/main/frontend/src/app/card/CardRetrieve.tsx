@@ -5,7 +5,7 @@ import Card from './Card';
 import { AiCard, AiCardWithNew } from "@/models/card";
 
 type CardRetrieveProps = {
-  onChangePage: (card: AiCardWithNew | null) => void;
+  onChangePage?: (card: AiCardWithNew | null) => void;
 };
 
 // 카드를 관리하는 컴포넌트
@@ -33,18 +33,24 @@ export default function CardRetrieve({ onChangePage }: CardRetrieveProps) {
     fetchCards();
   }, []);
 
+  const handleCardClick = (card: AiCardWithNew | null) => {
+    if (onChangePage) {
+      onChangePage(card);
+    }
+  };
+
   return (
       <div className='w-full h-full flex flex-col items-center justify-center px-24'>
         <div className='w-full text-2xl font-gmarketsansMedium mb-4'>AI경험카드 관리</div>
         <div className='w-full h-full grid grid-cols-3 gap-4'>
           {cardInfos.map((card, index) => (
-              <div className='cursor-pointer' key={index} onClick={() => onChangePage(card)}>
+              <div className='cursor-pointer' key={index} onClick={() => handleCardClick(card)}>
                 <Card card={card} />
               </div>
           ))}
           <div
               className='w-[400px] h-[580px] cursor-pointer flex justify-center items-center mb-4 rounded-xl border-2 border-dashed border-gray-d9'
-              onClick={() => onChangePage(null)}
+              onClick={() => handleCardClick(null)}
           >
             <div className='text-3xl font-bold text-gray-d9'>+</div>
           </div>

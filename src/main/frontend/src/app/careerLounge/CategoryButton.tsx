@@ -21,7 +21,7 @@ export default function CategoryButton({
   const imageSrc = `/asset/png/category/${category}_img.png`;
   return (
     <div 
-      className='cursor-pointer w-44 h-40 p-6 flex flex-col items-center justify-between text-sm font-semibold hover:bg-gray-dc hover:rounded-xl'
+      className='p-6 flex flex-col items-center justify-between text-sm font-semibold hover:bg-gray-dc hover:rounded-xl'
     >
       <div className='w-fit h-fit flex items-center justify-center bg-primary rounded-xl p-4 mb-1'>
         <img className='w-12 h-12 object-contain' src={imageSrc} alt={categoryName}/>
