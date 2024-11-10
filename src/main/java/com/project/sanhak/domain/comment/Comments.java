@@ -1,6 +1,6 @@
 package com.project.sanhak.domain.comment;
 
-import com.project.sanhak.domain.board.Boards;
+import com.project.sanhak.domain.lounge.Lounges;
 import com.project.sanhak.domain.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -11,11 +11,10 @@ public class Comments {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int CId;
-    private int CLikes;
     private int CReport;
-    @JoinColumn(referencedColumnName = "BId")
+    @JoinColumn(referencedColumnName = "LId")
     @ManyToOne
-    private Boards Cbid;
+    private Lounges Clid;
     @JoinColumn(referencedColumnName = "CId")
     @ManyToOne
     private Comments CIsParents;

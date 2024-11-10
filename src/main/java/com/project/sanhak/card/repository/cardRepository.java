@@ -15,4 +15,6 @@ public interface cardRepository extends JpaRepository<ExperienceCard, Integer> {
     Optional<ExperienceCard> findByECId(int ecId);
 
     Optional<ExperienceCard> findByECIdAndECuid(int id, User user);
+
+    int countByECuid(User user);
 }

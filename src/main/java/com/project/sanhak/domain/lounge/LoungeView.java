@@ -1,4 +1,4 @@
-package com.project.sanhak.domain.board;
+package com.project.sanhak.domain.lounge;
 
 import com.project.sanhak.domain.user.User;
 import jakarta.persistence.*;
@@ -6,17 +6,17 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Boards {
+public class LoungeView {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int BId;
-
-    private int BLikes;
-    private int BReport;
-    private int BView;
-    private int BCate;
+    private int LVId;
 
     @JoinColumn(referencedColumnName = "UId")
     @ManyToOne
-    private User Buid;
+    private User LVuid;
+
+    @JoinColumn(referencedColumnName = "LId")
+    @ManyToOne
+    private Lounges LVlid;
 }

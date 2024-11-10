@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface RoadmapRepository extends JpaRepository<UserRoadmap, Integer> {
     List<UserRoadmap> findByURuid_UId(int uid);
     UserRoadmap findByURIdAndURuid(int urId, User user);
+
+    int countByURuid(User user);
 }

@@ -1,8 +1,8 @@
-package com.project.sanhak.util.board.controller;
+package com.project.sanhak.comment.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class BoardController {
+public class CommentController {
 
 }
