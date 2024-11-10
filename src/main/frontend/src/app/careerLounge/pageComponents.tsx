@@ -4,7 +4,7 @@ import CategoryButton from './CategoryButton';
 
 const categories = ['frontend', 'backend', 'data', 'security', 'application'];
 
-export default function CompanyPage() {
+export default function CareerLoungePage() {
 
   return (
     <div className='w-full h-full flex flex-col items-center'>

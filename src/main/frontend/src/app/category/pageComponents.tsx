@@ -4,7 +4,7 @@ import React, {useEffect, useState} from 'react';
 import Roadmap from './Roadmap';
 import {RoadmapSkill} from "@/models/skill";
 import TimelineRoadmap from "@/app/category/TimeLineRoadMap";
-import CategoryButton from '../company/CategoryButton';
+import CategoryButton from '@/app/careerLounge/CategoryButton';
 
 const mockRoadmapSkills: RoadmapSkill[] = [
   { id: 1, name: 'HTML', child: [27, 28, 29], position: [0, 0], tag:'basic'},

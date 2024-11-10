@@ -40,7 +40,7 @@ const NavigationBar = () =>{
                                                 className={"w-40"}></img></Link></li>
                     <li><Link href="/category"
                               className={"hover:underline text-sm font-gmarketsansMedium"}>직무별로드맵</Link></li>
-                    <li><Link href="/company" className={"hover:underline text-sm font-gmarketsansMedium"}>기업별로드맵</Link>
+                    <li><Link href="/careerLounge" className={"hover:underline text-sm font-gmarketsansMedium"}>커리어라운지</Link>
                     </li>
                     {isAuthenticated ? (
                         <>
