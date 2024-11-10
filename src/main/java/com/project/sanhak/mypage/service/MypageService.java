@@ -4,7 +4,9 @@ import com.project.sanhak.category.repository.categoryRepository;
 import com.project.sanhak.domain.skil.code.CodeSkil;
 import com.project.sanhak.domain.skil.code.MasterySkil;
 import com.project.sanhak.domain.skil.user.*;
+import com.project.sanhak.domain.user.Badge;
 import com.project.sanhak.domain.user.User;
+import com.project.sanhak.lounge.service.LoungeService;
 import com.project.sanhak.mypage.dto.*;
 import com.project.sanhak.mypage.repository.*;
 import com.project.sanhak.main.service.MainService;
@@ -40,9 +42,13 @@ public class MypageService {
     @Autowired
     private categoryRepository codeSkilRepository;
     @Autowired
+    private BadgeRepository badgeRepository;
+    @Autowired
     private MainService userService;
     @Autowired
     private categoryService categoryService;
+    @Autowired
+    private LoungeService loungeService;
     private final WebClient webClient;
     public MypageService(WebClient webClient) {
         this.webClient = webClient;
@@ -54,6 +60,14 @@ public class MypageService {
         boolean alreadyMastered = userMasterySkilRepository.existsByUMSuidAndUMSmsid(user, mastery);
         if (alreadyMastered) {
             throw new IllegalStateException("이미 익힌 스킬입니다.");
+        }
+        if (msId % 5 == 0) {
+            CodeSkil codeSkil = mastery.getMSCSid();
+            Badge badge = new Badge();
+            badge.setUBCSid(codeSkil);
+            badge.setUBUid(user);
+            badgeRepository.save(badge);
+            loungeService.increaseBnum(user);
         }
         UserMasterySkil userMasterySkil = new UserMasterySkil();
         userMasterySkil.setUMSuid(user);
@@ -180,6 +194,7 @@ public class MypageService {
         roadmap.setURuid(userService.getUserFromUid(uid));
         roadmap.setState(0);
         roadmapRepository.save(roadmap);
+        loungeService.increaseRnum(roadmap.getURuid());
     }
 
     public List<roadmapDTO> getRoadmapsByUid(int uid, int ur_id) {

@@ -1,10 +1,16 @@
 package com.project.sanhak.main.service;
 
+import com.project.sanhak.card.repository.cardRepository;
+import com.project.sanhak.domain.card.ExperienceCard;
+import com.project.sanhak.domain.lounge.Lounges;
+import com.project.sanhak.lounge.repository.LoungeRepository;
 import com.project.sanhak.main.dto.profileDTO;
-import com.project.sanhak.domain.user.Profile;
+import com.project.sanhak.domain.user.UserInfo;
 import com.project.sanhak.domain.user.User;
 import com.project.sanhak.main.repository.UserRepository;
 import com.project.sanhak.main.repository.ProfileRepository;
+import com.project.sanhak.mypage.repository.BadgeRepository;
+import com.project.sanhak.mypage.repository.RoadmapRepository;
 import com.project.sanhak.util.s3.S3FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,47 +22,66 @@ import java.io.IOException;
 
 @Service
 public class ProfileService {
-
     @Autowired
-    private static UserRepository userRepository;
-
+    private MainService userService;
     @Autowired
-    private static ProfileRepository profileRepository;
-
+    private UserRepository userRepository;
     @Autowired
-    private static S3FileService s3FileService;
+    private ProfileRepository profileRepository;
+    @Autowired
+    private RoadmapRepository roadmapRepository;
+    @Autowired
+    private BadgeRepository badgeRepository;
+    @Autowired
+    private cardRepository cardRepository;
+    @Autowired
+    private LoungeRepository loungeRepository;
+    @Autowired
+    private S3FileService s3FileService;
 
-    public static profileDTO getProfile(int uid) {
-        Profile profile = profileRepository.findByPRuid_UId(uid);
+    public profileDTO getProfile(int uid) {
+        User user = userService.getUserFromUid(uid);
+        UserInfo profile = profileRepository.findByUIuid(user);
         if (profile == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "프로필을 찾을 수 없습니다.");
         }
         profileDTO profileDTO = new profileDTO();
-        profileDTO.setId(profile.getPRid().intValue());
-        profileDTO.setName(profile.getPRname());
-        profileDTO.setEmail(profile.getPRemail());
-        profileDTO.setBio(profile.getPRbio());
-        profileDTO.setProfileImgURL(profile.getPRprofileImgURL());
+        profileDTO.setId(profile.getUIid());
+        profileDTO.setName(profile.getUIUserName());
+        profileDTO.setEmail(profile.getUIUserEmail());
+        profileDTO.setBio(profile.getUIBio());
+        profileDTO.setProfileImgURL(profile.getUIProfileImg());
+        profileDTO.setDesirePosition(profile.getUIDesirePosition());
         return profileDTO;
     }
 
-    public static void updateProfile(int uid, profileDTO profileDTO, MultipartFile imageFile) throws IOException {
-        User user = userRepository.findById(uid)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
-
-        Profile profile = profileRepository.findByPRuid_UId(uid);
+    public void updateProfile(int uid, profileDTO profileDTO, MultipartFile imageFile) throws IOException {
+        User user = userService.getUserFromUid(uid);
+        UserInfo profile = profileRepository.findByUIuid(user);
         if (profile == null) {
-            profile = new Profile();
-            profile.setPRuid(user);
+            profile = new UserInfo();
+            profile.setUIuid(user);
+            Lounges lounge =new Lounges();
+            lounge.setLUid(user);
+            lounge.setLRoadmap(roadmapRepository.countByURuid(user));
+            lounge.setLBadge(badgeRepository.countByUBUid(user));
+            lounge.setLCard(cardRepository.countByECuid(user));
+            lounge.setLView(0);
+            lounge.setLLikes(0);
+            loungeRepository.save(lounge);
         }
-        profile.setPRname(profileDTO.getName());
-        profile.setPRemail(profileDTO.getEmail());
-        profile.setPRbio(profileDTO.getBio());
-
+        profile.setUIUserName(profileDTO.getName());
+        profile.setUIUserEmail(profileDTO.getEmail());
+        profile.setUIBio(profileDTO.getBio());
+        profile.setUIDesirePosition(profileDTO.getDesirePosition());
         if (imageFile != null && !imageFile.isEmpty()) {
             String imageUrl = s3FileService.upload(imageFile);
-            profile.setPRprofileImgURL(imageUrl);
+            profile.setUIProfileImg(imageUrl);
         }
+        Lounges lounge = loungeRepository.findByLUid(user);
+        lounge.setLName(profileDTO.getName());
+        lounge.setLPosition(profileDTO.getDesirePosition());
+        lounge.setLImageURL(profileDTO.getProfileImgURL());
         profileRepository.save(profile);
     }
 }

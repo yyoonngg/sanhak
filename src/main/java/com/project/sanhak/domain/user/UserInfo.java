@@ -9,7 +9,7 @@ public class UserInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long UIid;
+    private int UIid;
 
     @OneToOne
     @JoinColumn(referencedColumnName = "UId")

@@ -26,7 +26,10 @@ public class MainController {
     @Autowired
     private MainService mainService;
 
-    /* @Operation(summary = "랭킹 보여주는 파트. 정렬은 미구현.",
+    @Autowired
+    private ProfileService profileService;
+
+    @Operation(summary = "랭킹 보여주는 파트. 정렬은 미구현.",
             responses = @ApiResponse(
                     responseCode = "200",
                     description = "랭킹 목록 반환",
@@ -48,7 +51,7 @@ public class MainController {
     public ResponseEntity<List<cardDTO>> getCard(@PathVariable(required = false) String sort) {
         List<cardDTO> cardList = mainService.getCardList(sort);
         return ResponseEntity.ok(cardList);
-    } */
+    }
 
     @Operation(summary = "내꺼 및 타인의 프로필 보여주는 파트.",
             responses = @ApiResponse(
@@ -66,7 +69,7 @@ public class MainController {
             }
             uid = uidAttribute;
         }
-        profileDTO profile = ProfileService.getProfile(uid);
+        profileDTO profile = profileService.getProfile(uid);
         return ResponseEntity.ok(profile);
     }
 
@@ -84,7 +87,7 @@ public class MainController {
             throw new NullPointerException("UID is null");
         }
         int uid = uidAttribute;
-        ProfileService.updateProfile(uid, profile, imageFile);
+        profileService.updateProfile(uid, profile, imageFile);
         return ResponseEntity.ok("프로필 수정 성공");
     }
 }

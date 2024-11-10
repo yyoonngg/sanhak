@@ -24,4 +24,7 @@ public class profileDTO {
 
     @Schema(description = "이메일 주소", example = "hong@example.com")
     private String email;
+
+    @Schema(description = "희망 포지션", example="backend" )
+    private String desirePosition;
 }
