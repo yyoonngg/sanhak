@@ -52,7 +52,7 @@ const AiChatbotPage: React.FC = () => {
 
   const fetchChatList = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/chat/list', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat/list`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -85,7 +85,7 @@ const AiChatbotPage: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/chat/initialize/${chatId}/${chatType}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat/initialize/${chatId}/${chatType}`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -105,7 +105,7 @@ const AiChatbotPage: React.FC = () => {
 
   const fetchCardList = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/card/', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/card/`, {
         method: 'GET',
         credentials: 'include', // 세션 인증을 위해 필요할 경우 추가
       });
@@ -124,7 +124,7 @@ const AiChatbotPage: React.FC = () => {
   const fetchChatMessages = async (chatId: number) => {
     console.log("Fetching chat messages for chat ID:", chatId);
     try {
-      const response = await fetch(`http://localhost:8080/api/chat/message/${chatId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat/message/${chatId}`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -209,7 +209,7 @@ const AiChatbotPage: React.FC = () => {
         } else {
           chatType = 2;
         }
-        const response = await fetch(`http://localhost:8080/api/chat/${selectedChatId}/send/${chatType}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat/${selectedChatId}/send/${chatType}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',

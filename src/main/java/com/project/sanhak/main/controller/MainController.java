@@ -1,10 +1,10 @@
 package com.project.sanhak.main.controller;
 
-import com.project.sanhak.category.dto.categoryDTO;
 import com.project.sanhak.main.dto.cardDTO;
 import com.project.sanhak.main.dto.profileDTO;
 import com.project.sanhak.main.dto.rankDTO;
 import com.project.sanhak.main.service.MainService;
+import com.project.sanhak.main.service.ProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,14 +15,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import java.io.IOException;
 import java.util.List;
-@CrossOrigin(origins = "http://localhost:3000")
+
 @RestController
 @RequestMapping("/api/main")
 public class MainController {
     @Autowired
     private MainService mainService;
+
+    @Autowired
+    private ProfileService profileService;
 
     @Operation(summary = "랭킹 보여주는 파트. 정렬은 미구현.",
             responses = @ApiResponse(
@@ -64,7 +67,7 @@ public class MainController {
             }
             uid = uidAttribute;
         }
-        profileDTO profile = mainService.getProfile(uid);
+        profileDTO profile = profileService.getProfile(uid);
         return ResponseEntity.ok(profile);
     }
 
@@ -76,13 +79,13 @@ public class MainController {
     @PostMapping("/profile/update")
     public ResponseEntity<String> updateProfile(@RequestPart profileDTO profile,
                                                 @RequestPart("image") MultipartFile imageFile,
-                                                HttpSession session) {
+                                                HttpSession session) throws IOException {
         Integer uidAttribute = (Integer) session.getAttribute("uid");
         if (uidAttribute == null) {
             throw new NullPointerException("UID is null");
         }
         int uid = uidAttribute;
-        mainService.updateProfile(uid, profile, imageFile);
+        profileService.updateProfile(uid, profile, imageFile);
         return ResponseEntity.ok("프로필 수정 성공");
     }
 }

@@ -30,7 +30,7 @@ export default function CardPage() {
         formData.append("pdfFile", card?.pdfFile);
       }
       try {
-        const response = await fetch('http://localhost:8080/api/card/create', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/card/create`, {
           method: 'POST',
           body: formData as any,
           credentials: 'include'
@@ -62,7 +62,7 @@ export default function CardPage() {
       }
 
       try {
-        const response = await fetch(`http://localhost:8080/api/card/update/${card?.id}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/card/update/${card?.id}`, {
           method: 'POST',
           body: formData as any,
           credentials: 'include'

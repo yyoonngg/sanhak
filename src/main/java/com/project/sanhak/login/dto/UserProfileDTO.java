@@ -29,4 +29,5 @@ public class UserProfileDTO {
         oAuthToken.setExpireDate(String.valueOf(this.expireDate));
         return oAuthToken;
     }
+
 }
