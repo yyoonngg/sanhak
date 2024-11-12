@@ -60,8 +60,8 @@ export default function CategoryPage() {
     // 백엔드에서 데이터 가져오기
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/category/${category}`, {
-          credentials: 'include',
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/category/${category}`, {
+          credentials: 'omit',
         });
         if (!response.ok) {
           throw new Error('Failed to fetch cards');

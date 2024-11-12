@@ -8,7 +8,7 @@ const NavigationBar = () =>{
 
     useEffect(() => {
         const fetchAuthStatus = async () => {
-            const response = await fetch('http://localhost:8080/api/oauth/status', { credentials: 'include' });
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/oauth/status`, { credentials: 'include' });
             const data = await response.json();
             setIsAuthenticated(data.authenticated);
         };
@@ -17,7 +17,7 @@ const NavigationBar = () =>{
 
     const handleLogout = async () => {
         try {
-            const response = await fetch('http://localhost:8080/logout', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/logout`, {
                 method: 'POST',
                 credentials: 'include',
             });

@@ -63,7 +63,7 @@ export default function Card({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/card', {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/card`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }

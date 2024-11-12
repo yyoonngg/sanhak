@@ -1,6 +1,5 @@
 package com.project.sanhak.mypage.controller;
 
-import com.project.sanhak.domain.skil.code.MasterySkil;
 import com.project.sanhak.mypage.dto.*;
 import com.project.sanhak.mypage.service.MypageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/mypage")
 public class MypageController {

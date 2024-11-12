@@ -1,6 +1,5 @@
 package com.project.sanhak.main.controller;
 
-import com.project.sanhak.category.dto.categoryDTO;
 import com.project.sanhak.main.dto.cardDTO;
 import com.project.sanhak.main.dto.profileDTO;
 import com.project.sanhak.main.dto.rankDTO;
@@ -16,10 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.List;
-@CrossOrigin(origins = "http://localhost:3000")
+
 @RestController
 @RequestMapping("/api/main")
 public class MainController {
