@@ -14,9 +14,8 @@ public class Company {
     private int COMId;
     private String COMName;
     private String COMMoney;
-    private String COMWelfare;
     private String COMPlace;
-    private float COMLatitude;
-    private float COMLongitude;
+    private String COMPosition;
+    private String COMDescription;
 }
 

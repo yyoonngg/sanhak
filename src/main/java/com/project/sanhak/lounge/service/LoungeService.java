@@ -51,8 +51,8 @@ public class LoungeService {
         }
     }
 
-    public void increaseView(User user) {
-        Lounges lounge = loungeRepository.findByLUid(user);
+    public void increaseView(User viewUser, User user) {
+        Lounges lounge = loungeRepository.findByLUid(viewUser);
         LoungeView view = loungeViewRepository.findByLVlid(lounge);
         if (lounge != null) {
             if(view == null){
@@ -69,9 +69,9 @@ public class LoungeService {
 
     }
 
-    public void increaseLike(User user){
-        Lounges lounge = loungeRepository.findByLUid(user);
-        LoungeLikes like = loungeLikesRepository.findByLLlid(lounge);
+    public void increaseLike(User likeUser, User user){
+        Lounges lounge = loungeRepository.findByLUid(likeUser);
+        LoungeLikes like = loungeLikesRepository.findByLLlidAndLLuid(lounge, user);
         if (lounge != null) {
             if(like != null){
                 loungeLikesRepository.delete(like);

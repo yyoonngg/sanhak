@@ -76,7 +76,7 @@ public class MypageService {
     }
 
     public quizDTO getQuiz(int msId) {
-        String url = apiBaseUrl +"/quiz";
+        String url = apiBaseUrl +"/createTest";
         MasterySkil mastery = masteryRepository.findByMSId(msId);
         List<String> masteryInfoList = List.of(
                 mastery.getMSInfo1(),
