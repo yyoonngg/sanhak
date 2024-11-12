@@ -2,14 +2,17 @@ package com.project.sanhak.login.config;
 
 import com.project.sanhak.login.service.OAuth2Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.List;
 
@@ -18,25 +21,28 @@ import java.util.List;
 @Configuration("loginSecurityConfig")
 public class SecurityConfig {
 
+    @Value("${cors.allowed.origin}")
+    private String allowedOrigin;
+
     private final OAuth2Service oAuth2Service;
 
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         return http
                 .cors(cors -> cors.configurationSource(request -> {
-                    var config = new org.springframework.web.cors.CorsConfiguration();
-                    config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:8080"));
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.setAllowedOrigins(List.of(allowedOrigin));
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
                     config.setAllowCredentials(true);
                     config.addAllowedHeader("*");
                     return config;
                 }))
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/", "/oauth2/authorization/**").permitAll()
+                        .requestMatchers("/**", "/oauth2/authorization/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form.disable()) // 폼 로그인 비활성화
+                .formLogin(AbstractHttpConfigurer::disable) // 폼 로그인 비활성화
                 .oauth2Login(oauth2 -> oauth2
                         .defaultSuccessUrl("/", true)
                         .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2Service))
@@ -69,7 +75,8 @@ public class SecurityConfig {
                 String provider = oauthToken.getAuthorizedClientRegistrationId();
                 request.getSession().setAttribute("provider", provider);
             }
-            response.sendRedirect("http://localhost:3000/category");
+            // allowedOrigin으로 리디렉션
+            response.sendRedirect(allowedOrigin);
         };
     }
 

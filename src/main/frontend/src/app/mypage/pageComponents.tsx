@@ -163,7 +163,7 @@ export default function MypagePage() {
         throw new Error('선택된 로드맵을 찾을 수 없습니다.');
       }
 
-      const response = await fetch('http://localhost:8080/api/roadmap/create', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/roadmap/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

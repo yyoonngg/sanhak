@@ -1,6 +1,5 @@
 package com.project.sanhak.lounge.controller;
 
-import com.project.sanhak.domain.lounge.Lounges;
 import com.project.sanhak.lounge.dto.LoungesDTO;
 import com.project.sanhak.lounge.service.LoungeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,9 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/lounge")
 public class LoungeController {

@@ -16,7 +16,7 @@ export default function CardRetrieve({ onChangePage }: CardRetrieveProps) {
     // 백엔드에서 데이터 가져오기
     const fetchCards = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/card/", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/card/`, {
           credentials: 'include',
         });
         if (!response.ok) {

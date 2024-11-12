@@ -43,11 +43,11 @@ public class LoungeService {
 
     public void increaseCnum(User user) {
         Lounges lounge = loungeRepository.findByLUid(user);
-        if (lounge != null) {
-            lounge.setLRoadmap(lounge.getLCard() + 1);
-            loungeRepository.save(lounge);
-        } else {
-            throw new EntityNotFoundException("해당 사용자의 라운지를 찾을 수 없습니다.");
+            if (lounge != null) {
+                lounge.setLRoadmap(lounge.getLCard() + 1);
+                loungeRepository.save(lounge);
+            } else {
+                throw new EntityNotFoundException("해당 사용자의 라운지를 찾을 수 없습니다.");
         }
     }
 
@@ -100,7 +100,7 @@ public class LoungeService {
             default -> Sort.by(Sort.Direction.DESC, "createdDate"); // 최신순
         };
 
-        PageRequest pageRequest = PageRequest.of(page - 1, 24, sort);
+        PageRequest pageRequest = PageRequest.of(page - 1, 20, sort);
         Page<Lounges> loungesPage = loungeRepository.findAll(pageRequest);
         return loungesPage.map(this::convertToDTO);
     }
