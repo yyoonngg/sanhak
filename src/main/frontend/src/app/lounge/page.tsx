@@ -1,4 +1,4 @@
-import LoungePage from "@/app/careerLounge/pageComponents";
+import LoungePage from "@/app/lounge/pageComponents";
 
 export default function Page() {
     return (

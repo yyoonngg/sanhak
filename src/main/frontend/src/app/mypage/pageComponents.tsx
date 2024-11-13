@@ -187,13 +187,6 @@ export default function MypagePage() {
     }
   };
 
-
-
-
-
-
-
-
   // TODO: API 연결 -> id에 맞는 해당 스킬의 상세설명 가져오기
   const getSelectDetail = () => {
     console.log("스킬 상세정보 가져오기");
