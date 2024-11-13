@@ -26,4 +26,6 @@ type MiniProfileInfo = {
     badge_cnt: number;
     roadmap_cnt: number;
     card_cnt: number;
+    imageURL : string;
+
 }
