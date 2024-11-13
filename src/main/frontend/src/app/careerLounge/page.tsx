@@ -1,7 +1,5 @@
-import LoungePage from "@/app/careerLounge/pageComponents";
+const Page = () => {
+    return null;
+};
 
-export default function Page() {
-    return (
-        <LoungePage />
-    );
-}
+export default Page;
