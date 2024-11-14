@@ -16,4 +16,6 @@ public class companyDTO {
     private String position;
     @Schema(description = "부가 설명")
     private String description;
+    @Schema(description = "스킬 종류")
+    private String skill;
 }
