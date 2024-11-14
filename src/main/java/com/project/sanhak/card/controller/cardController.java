@@ -88,7 +88,7 @@ public class cardController {
             }
             card.setECImageUrl(imageUrl);
             card.setECPdfUrl(pdfUrl);
-            String result = cardService.createAiCard(card, pdfFile);
+            String result = cardService.createAiCard(card, imageUrl);
             if ("success".equals(result)) {
                 return ResponseEntity.ok("{\"status\":\"success\"}");
             } else {
@@ -140,9 +140,10 @@ public class cardController {
             if (updatedCardDTO.getReflection() != null) {
                 existingCard.setECReflection(updatedCardDTO.getReflection());
             }
-            if(imageFile != null &&!imageFile.isEmpty()){
+            String imageUrl = null;
+            if (imageFile != null && !imageFile.isEmpty()) {
                 S3FileService.deleteFileFromS3(updatedCardDTO.getImageUrl());
-                String imageUrl = null;
+                imageUrl = null;
                 if (!imageFile.isEmpty()) {
                     try {
                         imageUrl = S3FileService.upload(imageFile);
@@ -153,7 +154,7 @@ public class cardController {
                 }
                 card.setECImageUrl(imageUrl);
             }
-            if(pdfFile != null &&!pdfFile.isEmpty()){
+            if (pdfFile != null && !pdfFile.isEmpty()) {
                 S3FileService.deleteFileFromS3(updatedCardDTO.getPdfUrl());
                 String pdfUrl;
                 try {
@@ -167,14 +168,14 @@ public class cardController {
                 card.setECPdfUrl(pdfUrl);
             } else {
                 try {
-                    pdfFile= S3FileService.downloadFileAsMultipartFile(updatedCardDTO.getPdfUrl());
+                    pdfFile = S3FileService.downloadFileAsMultipartFile(updatedCardDTO.getPdfUrl());
                 } catch (Exception e) {
                     log.error("PDF 파일 다운로드 실패: {}", e.getMessage());
                     return ResponseEntity.status(500).body("PDF 파일 다운로드에 실패했습니다.");
                 }
             }
             // Call the service to update the card
-            String result = cardService.updateAiCard(user, card_id, existingCard, imageFile, pdfFile);
+            String result = cardService.updateAiCard(user, card_id, existingCard, imageFile, imageUrl);
             if ("success".equals(result)) {
                 return ResponseEntity.ok("{\"status\":\"success\"}");
             } else {

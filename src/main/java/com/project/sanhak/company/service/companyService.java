@@ -1,7 +1,9 @@
 package com.project.sanhak.company.service;
 
+import com.project.sanhak.card.dto.skill;
 import com.project.sanhak.company.dto.companyDTO;
 import com.project.sanhak.company.repository.companyRepository;
+import com.project.sanhak.category.repository.categoryRepository;
 import com.project.sanhak.domain.company.Company;
 import com.project.sanhak.domain.user.Badge;
 import com.project.sanhak.domain.user.User;
@@ -23,6 +25,9 @@ public class companyService {
     private companyRepository companyRepository;
     @Autowired
     private BadgeRepository badgeRepository;
+    @Autowired
+    private categoryRepository categoryRepository;
+
     private final WebClient webClient;
 
     public companyService(WebClient webClient) {
@@ -54,7 +59,9 @@ public class companyService {
             for (Map<String, Object> companyData : companyResponseList) {
                 String comName = companyData.get("company_name").toString();
                 String comPosition = companyData.get("result").toString();
-                List<String> comSkill =(List<String>) companyData.get("extracted_skills");
+                List<skill> skills = categoryRepository.findByCSNameIn((List<String>) companyData.get("extracted_skills")).stream()
+                        .map(codeSkill -> new skill(codeSkill.getCSId(), codeSkill.getCSName()))
+                        .collect(Collectors.toList());
                 List<Company> companies = companyRepository.findByCOMNameAndCOMPosition(comName, comPosition);
 
                 for (Company company : companies) {
@@ -64,7 +71,7 @@ public class companyService {
                     dto.setLocation(company.getCOMPlace());
                     dto.setPosition(company.getCOMPosition());
                     dto.setDescription(company.getCOMDescription());
-                    dto.setSkill(comSkill);
+                    dto.setSkill(skills);
                     companyDTOList.add(dto);
                 }
             }

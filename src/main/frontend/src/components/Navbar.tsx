@@ -6,14 +6,14 @@ import Link from 'next/link';
 const NavigationBar = () =>{
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    // useEffect(() => {
-    //     const fetchAuthStatus = async () => {
-    //         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/oauth/status`, { credentials: 'include' });
-    //         const data = await response.json();
-    //         setIsAuthenticated(data.authenticated);
-    //     };
-    //     fetchAuthStatus();
-    // }, []);
+    useEffect(() => {
+        const fetchAuthStatus = async () => {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/oauth/status`, { credentials: 'include' });
+            const data = await response.json();
+            setIsAuthenticated(data.authenticated);
+        };
+        fetchAuthStatus();
+    }, []);
 
     const handleLogout = async () => {
         try {
