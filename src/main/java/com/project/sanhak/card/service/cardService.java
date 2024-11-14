@@ -55,8 +55,7 @@ public class cardService {
                 .orElse(null);
     }
 
-    public String createAiCard(ExperienceCard card, MultipartFile pdfFile) throws IOException {
-        String pdfText = extractTextFromPDF(pdfFile); // PDF에서 텍스트 추출
+    public String createAiCard(ExperienceCard card, String pdfFileURL) throws IOException {
         String url = apiBaseUrl + "/createCard";
 
         // 요청 데이터 설정
@@ -67,7 +66,7 @@ public class cardService {
         requestData.put("tool", toolsList);
         requestData.put("position", positionList);
         requestData.put("reflection", card.getECReflection());
-        requestData.put("pdfText", pdfText);
+        requestData.put("pdfURL", pdfFileURL);
 
         System.out.println("Request data: " + requestData);
 
@@ -122,8 +121,7 @@ public class cardService {
         }
     }
 
-    public String updateAiCard(User user, int cardId, ExperienceCard card, MultipartFile imageFile, MultipartFile pdfFile) throws IOException {
-        String pdfText = extractTextFromPDF(pdfFile);
+    public String updateAiCard(User user, int cardId, ExperienceCard card, MultipartFile imageFile, String pdfFileURL) throws IOException {
         // 외부 API 요청으로 요약 생성
         String url = apiBaseUrl + "/createCard";
         Map<String, Object> requestData = new HashMap<>();
@@ -133,7 +131,7 @@ public class cardService {
         requestData.put("tool", toolsList);
         requestData.put("position", positionList);
         requestData.put("reflection", card.getECReflection());
-        requestData.put("pdfText", pdfText);
+        requestData.put("pdfURL", pdfFileURL);
 
         System.out.println("Request data: " + requestData);
 
