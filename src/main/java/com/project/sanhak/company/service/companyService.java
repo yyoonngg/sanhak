@@ -30,7 +30,7 @@ public class companyService {
     }
 
     public List<companyDTO> recommandCompany(User user) {
-        String url = apiBaseUrl +"/recommand";
+        String url = apiBaseUrl +"/recommendCompanies";
         Map<String, Object> requestData = new HashMap<>();
         List<Badge> badgeList = badgeRepository.findByUBUid(user);
         Set<String> skillList = badgeList.stream()
@@ -52,9 +52,9 @@ public class companyService {
             List<Map<String, String>> companyResponseList = (List<Map<String, String>>) response.get("companies");
 
             for (Map<String, String> companyData : companyResponseList) {
-                String comName = companyData.get("COMName");
-                String comPosition = companyData.get("COMPosition");
-
+                String comName = companyData.get("company_name");
+                String comPosition = companyData.get("result");
+                List<String> comSkill = companyData.get("extracted_skills");
                 List<Company> companies = companyRepository.findByCOMNameAndCOMPosition(comName, comPosition);
 
                 for (Company company : companies) {
@@ -64,6 +64,7 @@ public class companyService {
                     dto.setLocation(company.getCOMPlace());
                     dto.setPosition(company.getCOMPosition());
                     dto.setDescription(company.getCOMDescription());
+                    dto.setSkill(comSkill);
                     companyDTOList.add(dto);
                 }
             }
