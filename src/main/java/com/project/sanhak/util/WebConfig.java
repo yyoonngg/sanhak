@@ -20,7 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowCredentials(true);
     }
 
-    @Bean
+    @Bean("WebRestTemplate")
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
