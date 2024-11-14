@@ -49,12 +49,12 @@ public class companyService {
                     .block();
             System.out.println("Response data: " + response);
 
-            List<Map<String, String>> companyResponseList = (List<Map<String, String>>) response.get("companies");
+            List<Map<String, Object>> companyResponseList = (List<Map<String, Object>>) response.get("companies");
 
-            for (Map<String, String> companyData : companyResponseList) {
-                String comName = companyData.get("company_name");
-                String comPosition = companyData.get("result");
-                List<String> comSkill = companyData.get("extracted_skills");
+            for (Map<String, Object> companyData : companyResponseList) {
+                String comName = companyData.get("company_name").toString();
+                String comPosition = companyData.get("result").toString();
+                List<String> comSkill =(List<String>) companyData.get("extracted_skills");
                 List<Company> companies = companyRepository.findByCOMNameAndCOMPosition(comName, comPosition);
 
                 for (Company company : companies) {
