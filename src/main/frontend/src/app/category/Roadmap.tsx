@@ -54,7 +54,8 @@ type RoadmapProps = {
   roadmapSkills: RoadmapSkill[];
   handleUpdateSkill?: (newRoadmapSkill: RoadmapSkill) => void,
   onSelectDetail?: (id: number) => void,
-  detailContent?: SkillDetail 
+  detailContent?: SkillDetail,
+  style?: string
 };
 
 const Roadmap = ({
@@ -62,7 +63,8 @@ const Roadmap = ({
   roadmapSkills,
   handleUpdateSkill,
   onSelectDetail,
-  detailContent
+  detailContent,
+  style
 }: RoadmapProps) => {
   const [skills, setSkills] = useState(roadmapSkills);
   const [selectedSkillIds, setSelectedSkillIds] = useState<number[]>([]);
@@ -164,7 +166,7 @@ const Roadmap = ({
   };
 
   return (  
-    <div className='box-border flex flex-col items-end border border-2 border-dashed overflow-auto'>
+    <div className={`w-full ${style ? style : ''} box-border flex flex-col items-end rounded-xl shadow-[4px_4px_8px_rgba(0,0,0,0.3)] overflow-auto`}>
       {isEditMode && (
         <button
           onClick={increaseSize}

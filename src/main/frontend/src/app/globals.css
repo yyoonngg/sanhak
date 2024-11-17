@@ -42,7 +42,8 @@
 @layer components {
     .scrollbar {
       scrollbar-width: thin; 
-      scrollbar-color: rgba(255, 255, 255, 0.5) rgba(0, 0, 0, 0.1); 
+      scrollbar-color: rgba(255, 255, 255, 0.5) rgba(0, 0, 0, 0); 
+      border-radius: 10px;
     }
 
     .scrollbar-none {
@@ -77,7 +78,16 @@
   justify-content: center;
 }
 
-.slick-prev:before, .slick-next:before { 
+.slick-next:before { 
   color: #3D3D4E;
-  font-size: 30px;
+  font-size: 20px;
+  position: relative;
+  right: 10px;
+}
+
+.slick-prev:before { 
+  color: #3D3D4E;
+  font-size: 20px;
+  position: relative;
+  left: 10px;
 }
