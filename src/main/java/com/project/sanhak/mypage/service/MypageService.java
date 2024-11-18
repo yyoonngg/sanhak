@@ -1,17 +1,20 @@
 package com.project.sanhak.mypage.service;
 
 import com.project.sanhak.category.repository.categoryRepository;
+import com.project.sanhak.category.repository.masteryRepository;
+import com.project.sanhak.category.service.categoryService;
 import com.project.sanhak.domain.skil.code.CodeSkil;
 import com.project.sanhak.domain.skil.code.MasterySkil;
-import com.project.sanhak.domain.skil.user.*;
+import com.project.sanhak.domain.skil.user.UserMasterySkil;
+import com.project.sanhak.domain.skil.user.UserRoadmap;
+import com.project.sanhak.domain.skil.user.UserRoadmapSkil;
+import com.project.sanhak.domain.skil.user.UserRoadmapSkilPreque;
 import com.project.sanhak.domain.user.Badge;
 import com.project.sanhak.domain.user.User;
 import com.project.sanhak.lounge.service.LoungeService;
+import com.project.sanhak.main.service.MainService;
 import com.project.sanhak.mypage.dto.*;
 import com.project.sanhak.mypage.repository.*;
-import com.project.sanhak.main.service.MainService;
-import com.project.sanhak.category.service.categoryService;
-import com.project.sanhak.category.repository.masteryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -239,6 +242,16 @@ public class MypageService {
             dto.setId(userRoadmap.getURId());
             dto.setName(userRoadmap.getURName());
             dto.setState(userRoadmap.getState());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    public List<badgeDTO> showBadge(Integer uid) {
+        List <Badge> userBadges = badgeRepository.findByUBUid_UId(uid);
+        return userBadges.stream().map(userBadge ->{
+            badgeDTO dto = new badgeDTO();
+            dto.setId(userBadge.getUBCSid().getCSId());
+            dto.setName(userBadge.getUBCSid().getCSName());
             return dto;
         }).collect(Collectors.toList());
     }

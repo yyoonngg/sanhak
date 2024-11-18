@@ -1,7 +1,7 @@
 // ProfileRepository.java
 package com.project.sanhak.main.repository;
 
-import com.project.sanhak.domain.user.Profile;
+
 import com.project.sanhak.domain.user.User;
 import com.project.sanhak.domain.user.UserInfo;
 import org.springframework.data.jpa.repository.JpaRepository;

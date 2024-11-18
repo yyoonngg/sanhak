@@ -1,6 +1,7 @@
 package com.project.sanhak.main.service;
 
-import com.project.sanhak.domain.user.OAuthToken;
+import com.project.sanhak.card.dto.aiCardDTO;
+import com.project.sanhak.card.service.cardService;
 import com.project.sanhak.domain.user.User;
 import com.project.sanhak.main.dto.cardDTO;
 import com.project.sanhak.main.dto.rankDTO;
@@ -9,15 +10,15 @@ import com.project.sanhak.main.repository.UserInfoRepository;
 import com.project.sanhak.main.repository.UserRepository;
 import com.project.sanhak.mypage.repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MainService {
+    @Autowired
+    private cardService cardService;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -39,7 +40,7 @@ public class MainService {
         return null;
     }
 
-    public List<cardDTO> getCardList(String sort) {
-        return null;
+    public List<aiCardDTO> getCardList(int uid) {
+        return cardService.getAllMyCard(uid);
     }
 }

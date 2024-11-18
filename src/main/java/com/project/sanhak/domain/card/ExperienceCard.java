@@ -34,4 +34,6 @@ public class ExperienceCard {
     private String ECPdfUrl;
     @Lob
     private String ECLink;
+    @Column(columnDefinition = "LONGTEXT")
+    private String ECText;
 }

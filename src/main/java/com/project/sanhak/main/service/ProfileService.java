@@ -1,22 +1,21 @@
 package com.project.sanhak.main.service;
 
 import com.project.sanhak.card.repository.cardRepository;
-import com.project.sanhak.domain.card.ExperienceCard;
 import com.project.sanhak.domain.lounge.Lounges;
+import com.project.sanhak.domain.user.User;
+import com.project.sanhak.domain.user.UserInfo;
 import com.project.sanhak.lounge.repository.LoungeRepository;
 import com.project.sanhak.main.dto.profileDTO;
-import com.project.sanhak.domain.user.UserInfo;
-import com.project.sanhak.domain.user.User;
-import com.project.sanhak.main.repository.UserRepository;
 import com.project.sanhak.main.repository.ProfileRepository;
+import com.project.sanhak.main.repository.UserRepository;
 import com.project.sanhak.mypage.repository.BadgeRepository;
 import com.project.sanhak.mypage.repository.RoadmapRepository;
 import com.project.sanhak.util.s3.S3FileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 

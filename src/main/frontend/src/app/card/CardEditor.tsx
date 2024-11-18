@@ -4,7 +4,7 @@ import ButtonLabel from '@/components/ButtonLabel';
 import CardEditorFormSection from './CardEditorFormSection';
 import Input from '@/components/Input';
 import {AllKindOfSkills, Skill} from "@/models/skill";
-import {AiCard, AiCardWithNew} from "@/models/card";
+import {AiCard} from "@/models/card";
 
 type CardEditorProps = {
   selectedCard: AiCard | null,

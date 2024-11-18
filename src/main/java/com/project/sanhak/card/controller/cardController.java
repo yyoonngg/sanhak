@@ -25,6 +25,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@CrossOrigin(origins = "${cors.allowed.origin}")
 @RequestMapping("/api/card")
 public class cardController {
     @Autowired
@@ -39,7 +40,7 @@ public class cardController {
     @Operation(summary = "내 경험 카드 전체 호출")
     @ApiResponse(responseCode = "200", description = "전체 경험 카드 목록",
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = aiCardDTO.class))))
-    @GetMapping("/")
+    @GetMapping("/, /{uid}")
     public ResponseEntity<?> getAiCard(HttpSession session) {
         try {
             Integer uid = (Integer) session.getAttribute("uid");
@@ -88,7 +89,7 @@ public class cardController {
             }
             card.setECImageUrl(imageUrl);
             card.setECPdfUrl(pdfUrl);
-            String result = cardService.createAiCard(card, imageUrl);
+            String result = cardService.createAiCard(card, pdfUrl);
             if ("success".equals(result)) {
                 return ResponseEntity.ok("{\"status\":\"success\"}");
             } else {
@@ -140,10 +141,9 @@ public class cardController {
             if (updatedCardDTO.getReflection() != null) {
                 existingCard.setECReflection(updatedCardDTO.getReflection());
             }
-            String imageUrl = null;
-            if (imageFile != null && !imageFile.isEmpty()) {
+            if(imageFile != null &&!imageFile.isEmpty()){
                 S3FileService.deleteFileFromS3(updatedCardDTO.getImageUrl());
-                imageUrl = null;
+                String imageUrl = null;
                 if (!imageFile.isEmpty()) {
                     try {
                         imageUrl = S3FileService.upload(imageFile);
@@ -154,7 +154,7 @@ public class cardController {
                 }
                 card.setECImageUrl(imageUrl);
             }
-            if (pdfFile != null && !pdfFile.isEmpty()) {
+            if(pdfFile != null &&!pdfFile.isEmpty()){
                 S3FileService.deleteFileFromS3(updatedCardDTO.getPdfUrl());
                 String pdfUrl;
                 try {
@@ -168,14 +168,14 @@ public class cardController {
                 card.setECPdfUrl(pdfUrl);
             } else {
                 try {
-                    pdfFile = S3FileService.downloadFileAsMultipartFile(updatedCardDTO.getPdfUrl());
+                    pdfFile= S3FileService.downloadFileAsMultipartFile(updatedCardDTO.getPdfUrl());
                 } catch (Exception e) {
                     log.error("PDF 파일 다운로드 실패: {}", e.getMessage());
                     return ResponseEntity.status(500).body("PDF 파일 다운로드에 실패했습니다.");
                 }
             }
             // Call the service to update the card
-            String result = cardService.updateAiCard(user, card_id, existingCard, imageFile, imageUrl);
+            String result = cardService.updateAiCard(user, card_id, existingCard);
             if ("success".equals(result)) {
                 return ResponseEntity.ok("{\"status\":\"success\"}");
             } else {

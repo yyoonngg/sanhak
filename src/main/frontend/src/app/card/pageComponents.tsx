@@ -1,8 +1,8 @@
 "use client";
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import CardRetrieve from './CardRetrieve';
 import CardEditor from './CardEditor';
-import {AiCard, AiCardWithNew} from "@/models/card";
+import {AiCard} from "@/models/card";
 
 export default function CardPage() {
   const [isCreatePage, setIsCreatePage] = useState<Boolean>(false);
