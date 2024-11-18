@@ -11,6 +11,7 @@ import com.project.sanhak.domain.skil.user.UserRoadmapSkil;
 import com.project.sanhak.domain.skil.user.UserRoadmapSkilPreque;
 import com.project.sanhak.domain.user.Badge;
 import com.project.sanhak.domain.user.User;
+import com.project.sanhak.lounge.repository.LoungeRepository;
 import com.project.sanhak.lounge.service.LoungeService;
 import com.project.sanhak.main.service.MainService;
 import com.project.sanhak.mypage.dto.*;
@@ -52,6 +53,8 @@ public class MypageService {
     private categoryService categoryService;
     @Autowired
     private LoungeService loungeService;
+    @Autowired
+    private LoungeRepository loungeRepository;
     private final WebClient webClient;
     public MypageService(WebClient webClient) {
         this.webClient = webClient;
@@ -70,7 +73,9 @@ public class MypageService {
             badge.setUBCSid(codeSkil);
             badge.setUBUid(user);
             badgeRepository.save(badge);
-            loungeService.increaseBnum(user);
+            if(loungeRepository.findByLUid(user)!=null){
+                loungeService.increaseBnum(user);
+            }
         }
         UserMasterySkil userMasterySkil = new UserMasterySkil();
         userMasterySkil.setUMSuid(user);
@@ -197,7 +202,9 @@ public class MypageService {
         roadmap.setURuid(userService.getUserFromUid(uid));
         roadmap.setState(0);
         roadmapRepository.save(roadmap);
-        loungeService.increaseRnum(roadmap.getURuid());
+        if(loungeRepository.findByLUid(roadmap.getURuid())!=null){
+            loungeService.increaseRnum(roadmap.getURuid());
+        }
     }
 
     public List<roadmapDTO> getRoadmapsByUid(int uid, int ur_id) {
