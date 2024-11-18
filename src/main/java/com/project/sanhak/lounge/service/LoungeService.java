@@ -112,11 +112,11 @@ public class LoungeService {
         dto.setId(lounge.getLId());
         dto.setLikes(lounge.getLLikes());
         dto.setViewCount(lounge.getLView());
-        dto.setBadgeCount(lounge.getLBadge());
-        dto.setRoadmapCount(lounge.getLRoadmap());
-        dto.setCardCount(lounge.getLCard());
+        dto.setBadge_cnt(lounge.getLBadge());
+        dto.setRoadmap_cnt(lounge.getLRoadmap());
+        dto.setCard_cnt(lounge.getLCard());
         dto.setName(lounge.getLName());
-        dto.setPosition(lounge.getLPosition());
+        dto.setCategory(lounge.getLPosition());
         dto.setImageURL(lounge.getLImageURL());
         return dto;
     }

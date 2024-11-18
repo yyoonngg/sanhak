@@ -1,5 +1,7 @@
 package com.project.sanhak.login.config;
 
+import com.project.sanhak.login.service.JwtAuthenticationFilter;
+import com.project.sanhak.login.service.JwtService;
 import com.project.sanhak.login.service.OAuth2Service;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.List;
@@ -25,6 +29,8 @@ public class SecurityConfig {
     private String allowedOrigin;
 
     private final OAuth2Service oAuth2Service;
+
+    private final JwtService jwtService;
 
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
@@ -42,7 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/**", "/oauth2/authorization/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(AbstractHttpConfigurer::disable) // 폼 로그인 비활성화
+                .addFilterBefore(new JwtAuthenticationFilter(jwtService), UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2 -> oauth2
                         .defaultSuccessUrl("/", true)
                         .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2Service))
@@ -74,12 +80,14 @@ public class SecurityConfig {
             if (authentication instanceof OAuth2AuthenticationToken oauthToken) {
                 String provider = oauthToken.getAuthorizedClientRegistrationId();
                 request.getSession().setAttribute("provider", provider);
+
+                // JWT 생성 후 응답에 추가
+                String jwtToken = jwtService.generateToken(oauthToken);
+                response.setHeader("Authorization", "Bearer " + jwtToken);
             }
-            // allowedOrigin으로 리디렉션
             response.sendRedirect(allowedOrigin);
         };
     }
-
 }
 
 

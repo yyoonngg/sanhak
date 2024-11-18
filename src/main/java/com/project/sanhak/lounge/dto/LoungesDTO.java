@@ -14,15 +14,15 @@ public class LoungesDTO {
     @Schema(description = "Number of views the lounge has received")
     private int viewCount;
     @Schema(description = "Number of badges associated with the lounge")
-    private int badgeCount;
+    private int badge_cnt;
     @Schema(description = "Number of roadmaps associated with the lounge")
-    private int roadmapCount;
+    private int roadmap_cnt;
     @Schema(description = "Number of cards associated with the lounge")
-    private int cardCount;
+    private int card_cnt;
     @Schema(description = "The name of the lounge")
     private String name;
     @Schema(description = "Position or role associated with the lounge")
-    private String position;
+    private String category;
     @Schema(description = "URL of the lounge's image")
     private String imageURL;
 }
