@@ -8,7 +8,11 @@ type UserSkill = {
 type User = {
     id: number;
     name: string;
+    category: string;
     profile: string;
+    badge_cnt: number;
+    roadmap_cnt: number;
+    card_cnt: number;
     skill_list: UserSkill[];
 }
 
@@ -27,5 +31,15 @@ type MiniProfileInfo = {
     roadmap_cnt: number;
     card_cnt: number;
     imageURL : string;
+}
 
+// AI추천기업
+type UserRecommendCompany = {
+    id: number;
+    title: string;
+    name: string;
+    category: string;
+    congruence: number;
+    imgUrl: string;
+    openingUrl: string;
 }
