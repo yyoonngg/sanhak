@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
+@CrossOrigin(origins = "${cors.allowed.origin}")
 @RequestMapping("/api/lounge")
 public class LoungeController {
     @Autowired

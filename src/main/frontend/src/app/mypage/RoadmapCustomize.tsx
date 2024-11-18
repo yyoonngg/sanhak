@@ -88,7 +88,7 @@ const RoadmapCustomize = ({
         tag:defaultTag
       };
       handleUpdateRoadmap(newSkill);
-    };
+    }
   };
 
   // 상위 컴포넌트의 로드맵 업데이트 callback 함수 호출 -> API호출은 아님

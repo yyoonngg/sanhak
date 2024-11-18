@@ -18,7 +18,7 @@ public interface chatRepository extends JpaRepository<ChatRooms, Integer> {
 
     int findCRTypeByCRId(int chatId);
 
-    public ChatRooms findTopByCRuidOrderByCRIdDesc(User user);
+    ChatRooms findTopByCRuidOrderByCRIdDesc(User user);
 
     @Query("SELECT c.CRecid.ECId FROM ChatRooms c WHERE c.CRId = :chatId")
     int findCRecIdByCRId(@Param("chatId") int chatId);

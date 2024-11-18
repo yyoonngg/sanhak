@@ -8,15 +8,13 @@ import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Slf4j
 @RestController
+@CrossOrigin(origins = "${cors.allowed.origin}")
 @RequestMapping("/api/company")
 public class companyController {
     @Autowired
@@ -26,14 +24,17 @@ public class companyController {
 
     // 회사 추천 시스템
     // 내가 익힌 스킬을 모조리 모아서 던져주기.
-    @GetMapping("/recomand")
-    public ResponseEntity<?> getAiCard(HttpSession session) {
+    @GetMapping("/recomand, /recommand/{uid}")
+    public ResponseEntity<?> getAiCard(HttpSession session,
+                                       @PathVariable(required = false) Integer uid) {
         try {
-            Integer uidAttribute = (Integer) session.getAttribute("uid");
-            if (uidAttribute == null) {
-                throw new NullPointerException("UID is null");
+            if (uid == null) {
+                Integer uidAttribute = (Integer) session.getAttribute("uid");
+                if (uidAttribute == null) {
+                    throw new NullPointerException("UID is null");
+                }
+                uid = uidAttribute;
             }
-            int uid = uidAttribute;
             User user = userService.getUserFromUid(uid);
             List<companyDTO> companyList =companyService.recommandCompany(user);
             return ResponseEntity.status(200).body("");

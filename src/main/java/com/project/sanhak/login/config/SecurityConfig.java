@@ -3,6 +3,7 @@ package com.project.sanhak.login.config;
 import com.project.sanhak.login.service.JwtAuthenticationFilter;
 import com.project.sanhak.login.service.JwtService;
 import com.project.sanhak.login.service.OAuth2Service;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

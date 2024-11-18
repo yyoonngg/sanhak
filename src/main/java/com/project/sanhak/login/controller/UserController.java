@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
+@CrossOrigin(origins = "${cors.allowed.origin}")
 @RequestMapping("/api/oauth")
 @CrossOrigin(origins = "http://localhost:3000")
 public class UserController {

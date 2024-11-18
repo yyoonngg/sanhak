@@ -1,9 +1,7 @@
 package com.project.sanhak.company.service;
 
-import com.project.sanhak.card.dto.skill;
 import com.project.sanhak.company.dto.companyDTO;
 import com.project.sanhak.company.repository.companyRepository;
-import com.project.sanhak.category.repository.categoryRepository;
 import com.project.sanhak.domain.company.Company;
 import com.project.sanhak.domain.user.Badge;
 import com.project.sanhak.domain.user.User;
@@ -25,9 +23,6 @@ public class companyService {
     private companyRepository companyRepository;
     @Autowired
     private BadgeRepository badgeRepository;
-    @Autowired
-    private categoryRepository categoryRepository;
-
     private final WebClient webClient;
 
     public companyService(WebClient webClient) {
@@ -35,7 +30,7 @@ public class companyService {
     }
 
     public List<companyDTO> recommandCompany(User user) {
-        String url = apiBaseUrl +"/recommendCompanies";
+        String url = apiBaseUrl +"/recommand";
         Map<String, Object> requestData = new HashMap<>();
         List<Badge> badgeList = badgeRepository.findByUBUid(user);
         Set<String> skillList = badgeList.stream()
@@ -57,21 +52,29 @@ public class companyService {
             List<Map<String, Object>> companyResponseList = (List<Map<String, Object>>) response.get("companies");
 
             for (Map<String, Object> companyData : companyResponseList) {
-                String comName = companyData.get("company_name").toString();
-                String comPosition = companyData.get("result").toString();
-                List<skill> skills = categoryRepository.findByCSNameIn((List<String>) companyData.get("extracted_skills")).stream()
-                        .map(codeSkill -> new skill(codeSkill.getCSId(), codeSkill.getCSName()))
-                        .collect(Collectors.toList());
+                String comName = (String) companyData.get("company_names");
+                Integer comResult = (Integer) companyData.get("result");
+                String comSkills = (String) companyData.get("extracted_skills");
+                Double comSimilarity = Double.parseDouble(companyData.get("similarity").toString());
+                String comPosition = switch (comResult) {
+                    case 1 -> "app";
+                    case 2 -> "frontend";
+                    case 3 -> "data";
+                    case 4 -> "backend";
+                    case 5 -> "security";
+                    default -> "unknown";
+                };
                 List<Company> companies = companyRepository.findByCOMNameAndCOMPosition(comName, comPosition);
 
                 for (Company company : companies) {
                     companyDTO dto = new companyDTO();
                     dto.setId(company.getCOMId());
-                    dto.setName(company.getCOMName());
-                    dto.setLocation(company.getCOMPlace());
-                    dto.setPosition(company.getCOMPosition());
-                    dto.setDescription(company.getCOMDescription());
-                    dto.setSkill(skills);
+                    dto.setTitle(company.getCOMName());
+                    dto.setCategory(company.getCOMPosition());
+                    dto.setName(company.getCOMDescription());
+                    dto.setCongruence(comSimilarity*100);
+                    dto.setImgUrl(company.getCOMImgUrl());
+                    dto.setOpeningUrl(company.getCOMOpeningUrl());
                     companyDTOList.add(dto);
                 }
             }

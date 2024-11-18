@@ -13,9 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
+@CrossOrigin(origins = "${cors.allowed.origin}")
 @RequestMapping("/api/mypage")
 public class MypageController {
     @Autowired
@@ -27,10 +27,16 @@ public class MypageController {
                     description = "로드맵 목록 반환",
                     content = @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = roadmapListDTO.class)))))
-    @GetMapping("/roadmap/list")
-    public ResponseEntity<List<roadmapListDTO>> getMyRoadmapList(HttpSession session) {
-        // 세션에서 uid 가져오기
-        int uid = (int) session.getAttribute("uid");
+    @GetMapping("/roadmap/list/{uid},/roadmap/list")
+    public ResponseEntity<List<roadmapListDTO>> getMyRoadmapList(@PathVariable(required = false) Integer uid,
+                                                                 HttpSession session) {
+        if (uid == null) {
+            Integer uidAttribute = (Integer) session.getAttribute("uid");
+            if (uidAttribute == null) {
+                throw new NullPointerException("UID is null");
+            }
+            uid = uidAttribute;
+        }
         List<roadmapListDTO> roadmapList = mypageService.getRoadmapListByUid(uid);
         return ResponseEntity.ok(roadmapList);
     }
@@ -41,11 +47,17 @@ public class MypageController {
                     description = "로드맵 반환",
                     content = @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = roadmapDTO.class)))))
-    @GetMapping("/roadmap/{ur_id}")
+    @GetMapping("/roadmap/{ur_id},/roadmap/{ur_id}/{uid}")
     public ResponseEntity<List<roadmapDTO>> getMyRoadmap(HttpSession session,
+                                                         @PathVariable(required = false) Integer uid,
                                                          @PathVariable int ur_id) {
-        // 세션에서 uid 가져오기
-        int uid = (int) session.getAttribute("uid");
+        if (uid == null) {
+            Integer uidAttribute = (Integer) session.getAttribute("uid");
+            if (uidAttribute == null) {
+                throw new NullPointerException("UID is null");
+            }
+            uid = uidAttribute;
+        }
         List<roadmapDTO> roadmapList = mypageService.getRoadmapsByUid(uid,ur_id);
         return ResponseEntity.ok(roadmapList);
     }
@@ -106,5 +118,22 @@ public class MypageController {
         int uid = (int) session.getAttribute("uid");
         mypageService.masterSkill(uid, ms_id);
         return ResponseEntity.ok("스킬을 익혔습니다!");
+    }
+
+
+    @Operation(summary = "뱃지 호출",
+            responses = @ApiResponse(responseCode = "200", description = "뱃지 보여주기"))
+    @GetMapping("/badge")
+    public ResponseEntity<List<badgeDTO>> badge(HttpSession session,
+                                            @PathVariable(required = false) Integer uid) {
+        if (uid == null) {
+            Integer uidAttribute = (Integer) session.getAttribute("uid");
+            if (uidAttribute == null) {
+                throw new NullPointerException("UID is null");
+            }
+            uid = uidAttribute;
+        }
+        List <badgeDTO> badgeList = mypageService.showBadge(uid);
+        return ResponseEntity.ok(badgeList);
     }
 }
