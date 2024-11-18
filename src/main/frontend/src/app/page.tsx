@@ -7,7 +7,7 @@ export default function Home() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetch(`/test`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/main/test`, {
             method: 'GET',
             credentials: 'include', // Include cookies for session handling
         })
