@@ -40,19 +40,22 @@ public class cardController {
     @Operation(summary = "내 경험 카드 전체 호출")
     @ApiResponse(responseCode = "200", description = "전체 경험 카드 목록",
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = aiCardDTO.class))))
-    @GetMapping("/, /{uid}")
-    public ResponseEntity<?> getAiCard(HttpSession session) {
+    @GetMapping(value = {"/", "/{uid}"})
+    public ResponseEntity<?> getAiCard(HttpSession session, @PathVariable(required = false) Integer uid) {
         try {
-            Integer uid = (Integer) session.getAttribute("uid");
             if (uid == null) {
-                throw new NullPointerException("UID is null");
+                uid = (Integer) session.getAttribute("uid");
+                if (uid == null) {
+                    throw new NullPointerException("UID is null");
+                }
             }
-            List<aiCardDTO> cardList = cardService.getAllMyCard(uid);
-            return ResponseEntity.ok(cardList);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("오류가 발생했습니다: " + e.getMessage());
         }
+        List<aiCardDTO> cardList = cardService.getAllMyCard(uid);
+        return ResponseEntity.ok(cardList);
     }
+
 
     @Operation(summary = "내 경험 카드 생성")
     @ApiResponse(responseCode = "200", description = "경험 카드 생성 성공 메시지")

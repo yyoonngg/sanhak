@@ -47,9 +47,10 @@ public class MypageController {
                     description = "로드맵 반환",
                     content = @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = roadmapDTO.class)))))
-    @GetMapping("/roadmap/{ur_id},/roadmap/{ur_id}/{uid}")
+    @GetMapping("/roadmap/{ur_id},/roadmap/{ur_id2}/{uid}")
     public ResponseEntity<List<roadmapDTO>> getMyRoadmap(HttpSession session,
                                                          @PathVariable(required = false) Integer uid,
+                                                         @PathVariable(required = false) Integer ur_id2,
                                                          @PathVariable int ur_id) {
         if (uid == null) {
             Integer uidAttribute = (Integer) session.getAttribute("uid");
@@ -57,6 +58,9 @@ public class MypageController {
                 throw new NullPointerException("UID is null");
             }
             uid = uidAttribute;
+        }
+        if (ur_id2!=null){
+            ur_id=ur_id2;
         }
         List<roadmapDTO> roadmapList = mypageService.getRoadmapsByUid(uid,ur_id);
         return ResponseEntity.ok(roadmapList);
