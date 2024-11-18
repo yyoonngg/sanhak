@@ -55,8 +55,8 @@ public class cardService {
                 .orElse(null);
     }
 
-    public String createAiCard(ExperienceCard card, MultipartFile pdfFile) throws IOException {
-        String pdfText = extractTextFromPDF(pdfFile); // PDF에서 텍스트 추출
+    public String createAiCard(ExperienceCard card, String pdfUrl) throws IOException {
+
         String url = apiBaseUrl + "/createCard";
 
         // 요청 데이터 설정
@@ -67,7 +67,7 @@ public class cardService {
         requestData.put("tool", toolsList);
         requestData.put("position", positionList);
         requestData.put("reflection", card.getECReflection());
-        requestData.put("pdfText", pdfText);
+        requestData.put("pdfUrl", pdfUrl);
 
         System.out.println("Request data: " + requestData);
 
@@ -91,7 +91,9 @@ public class cardService {
         // 응답에서 summary 처리
         if (response != null && response.containsKey("summary")) {
             String summary = (String) response.get("summary");
+            String text = (String) response.get("pdfText");
             card.setECSummary(summary);
+            card.setECText(text);
             cardRepository.save(card);
             loungeService.increaseCnum(card.getECuid());
             // 채팅방 생성
@@ -122,10 +124,10 @@ public class cardService {
         }
     }
 
-    public String updateAiCard(User user, int cardId, ExperienceCard card, MultipartFile imageFile, MultipartFile pdfFile) throws IOException {
-        String pdfText = extractTextFromPDF(pdfFile);
+    public String updateAiCard(User user, int cardId, ExperienceCard card) throws IOException {
         // 외부 API 요청으로 요약 생성
         String url = apiBaseUrl + "/createCard";
+        String pdfUrl= card.getECPdfUrl();
         Map<String, Object> requestData = new HashMap<>();
         requestData.put("title", card.getECTitle());
         List<String> toolsList = card.getECTool() != null ? Arrays.asList(card.getECTool().split(", ")) : new ArrayList<>();
@@ -133,7 +135,7 @@ public class cardService {
         requestData.put("tool", toolsList);
         requestData.put("position", positionList);
         requestData.put("reflection", card.getECReflection());
-        requestData.put("pdfText", pdfText);
+        requestData.put("pdfUrl", pdfUrl);
 
         System.out.println("Request data: " + requestData);
 
@@ -157,7 +159,9 @@ public class cardService {
         // 응답에서 summary 처리
         if (response != null && response.containsKey("summary")) {
             String summary = (String) response.get("summary");
+            String text = (String) response.get("pdfText");
             card.setECSummary(summary);
+            card.setECText(text);
             cardRepository.save(card);
             return "success";
         } else {

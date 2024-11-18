@@ -1,6 +1,5 @@
 package com.project.sanhak.mypage.dto;
 
-import com.project.sanhak.category.dto.categoryDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;

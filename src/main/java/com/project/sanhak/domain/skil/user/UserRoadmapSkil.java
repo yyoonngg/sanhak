@@ -1,6 +1,5 @@
 package com.project.sanhak.domain.skil.user;
 
-import com.project.sanhak.domain.skil.code.CodeSkil;
 import jakarta.persistence.*;
 import lombok.Data;
 

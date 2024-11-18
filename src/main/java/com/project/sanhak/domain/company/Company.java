@@ -13,9 +13,9 @@ public class Company {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int COMId;
     private String COMName;
-    private String COMMoney;
-    private String COMPlace;
     private String COMPosition;
     private String COMDescription;
+    private String COMImgUrl;
+    private String COMOpeningUrl;
 }
 

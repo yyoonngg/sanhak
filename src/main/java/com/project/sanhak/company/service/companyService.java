@@ -49,21 +49,32 @@ public class companyService {
                     .block();
             System.out.println("Response data: " + response);
 
-            List<Map<String, String>> companyResponseList = (List<Map<String, String>>) response.get("companies");
+            List<Map<String, Object>> companyResponseList = (List<Map<String, Object>>) response.get("companies");
 
-            for (Map<String, String> companyData : companyResponseList) {
-                String comName = companyData.get("COMName");
-                String comPosition = companyData.get("COMPosition");
-
+            for (Map<String, Object> companyData : companyResponseList) {
+                String comName = (String) companyData.get("company_names");
+                Integer comResult = (Integer) companyData.get("result");
+                String comSkills = (String) companyData.get("extracted_skills");
+                Double comSimilarity = Double.parseDouble(companyData.get("similarity").toString());
+                String comPosition = switch (comResult) {
+                    case 1 -> "app";
+                    case 2 -> "frontend";
+                    case 3 -> "data";
+                    case 4 -> "backend";
+                    case 5 -> "security";
+                    default -> "unknown";
+                };
                 List<Company> companies = companyRepository.findByCOMNameAndCOMPosition(comName, comPosition);
 
                 for (Company company : companies) {
                     companyDTO dto = new companyDTO();
                     dto.setId(company.getCOMId());
-                    dto.setName(company.getCOMName());
-                    dto.setLocation(company.getCOMPlace());
-                    dto.setPosition(company.getCOMPosition());
-                    dto.setDescription(company.getCOMDescription());
+                    dto.setTitle(company.getCOMName());
+                    dto.setCategory(company.getCOMPosition());
+                    dto.setName(company.getCOMDescription());
+                    dto.setCongruence(comSimilarity*100);
+                    dto.setImgUrl(company.getCOMImgUrl());
+                    dto.setOpeningUrl(company.getCOMOpeningUrl());
                     companyDTOList.add(dto);
                 }
             }

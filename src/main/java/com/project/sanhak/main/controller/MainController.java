@@ -1,5 +1,6 @@
 package com.project.sanhak.main.controller;
 
+import com.project.sanhak.card.dto.aiCardDTO;
 import com.project.sanhak.main.dto.cardDTO;
 import com.project.sanhak.main.dto.profileDTO;
 import com.project.sanhak.main.dto.rankDTO;
@@ -15,10 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "${cors.allowed.origin}")
 @RequestMapping("/api/main")
 public class MainController {
     @Autowired
@@ -45,9 +48,17 @@ public class MainController {
                     description = "카드 목록 반환",
                     content = @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = cardDTO.class)))))
-    @GetMapping(value = {"/card/{sort}", "/card"})
-    public ResponseEntity<List<cardDTO>> getCard(@PathVariable(required = false) String sort) {
-        List<cardDTO> cardList = mainService.getCardList(sort);
+    @GetMapping(value = {"/card/{uid}", "/card"})
+    public ResponseEntity<List<aiCardDTO>> getCard(@PathVariable(required = false) Integer uid,
+                                                   HttpSession session) {
+        if (uid == null) {
+            Integer uidAttribute = (Integer) session.getAttribute("uid");
+            if (uidAttribute == null) {
+                throw new NullPointerException("UID is null");
+            }
+            uid = uidAttribute;
+        }
+        List<aiCardDTO> cardList = mainService.getCardList(uid);
         return ResponseEntity.ok(cardList);
     }
 

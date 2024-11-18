@@ -6,8 +6,6 @@ import com.project.sanhak.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface UserMasterySkilRepository extends JpaRepository<UserMasterySkil, Integer> {
     boolean findByUMSuidAndUMSmsid(User uid, MasterySkil masterySkil);

@@ -10,7 +10,9 @@ import com.project.sanhak.lounge.repository.LoungeRepository;
 import com.project.sanhak.lounge.repository.LoungeViewRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
