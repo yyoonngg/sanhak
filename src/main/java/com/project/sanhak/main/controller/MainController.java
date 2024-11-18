@@ -1,9 +1,13 @@
 package com.project.sanhak.main.controller;
 
 import com.project.sanhak.card.dto.aiCardDTO;
+import com.project.sanhak.domain.user.OAuthToken;
+import com.project.sanhak.domain.user.User;
 import com.project.sanhak.main.dto.cardDTO;
 import com.project.sanhak.main.dto.profileDTO;
 import com.project.sanhak.main.dto.rankDTO;
+import com.project.sanhak.main.repository.OAuthTokenRepository;
+import com.project.sanhak.main.repository.UserRepository;
 import com.project.sanhak.main.service.MainService;
 import com.project.sanhak.main.service.ProfileService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,6 +34,12 @@ public class MainController {
 
     @Autowired
     private ProfileService profileService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private OAuthTokenRepository oAuthTokenRepository;
 
     @Operation(summary = "랭킹 보여주는 파트. 정렬은 미구현.",
             responses = @ApiResponse(
@@ -98,5 +109,21 @@ public class MainController {
         int uid = uidAttribute;
         profileService.updateProfile(uid, profile, imageFile);
         return ResponseEntity.ok("프로필 수정 성공");
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<List<String>> testLogic(HttpSession session){
+        Integer uidAttribute = (Integer) session.getAttribute("uid");
+        if (uidAttribute == null) {
+            throw new NullPointerException("UID is null");
+        }
+        int uid = uidAttribute;
+        User user= userRepository.findByUId(uid);
+        String email=user.getUEmailId();
+        OAuthToken token = oAuthTokenRepository.findByEmail(email);
+        List<String> response= new ArrayList<>();
+        response.add(token.getUsername());
+        response.add(email);
+        return ResponseEntity.ok(response);
     }
 }
