@@ -1,46 +1,52 @@
 import React from 'react';
 import SkillBadge from './SkillBadge';
 
-// TODO: API 연결
-const user_info: User = {
-  id: 1,
-  name: "용용",
-  profile: "user_profile_1",
-  skill_list: [
-    {id: 1, name: "HTML"},
-    {id: 2, name: "CSS"},
-    {id: 3, name: "JavaScript"},
-    {id: 4, name: "Typescript"},
-    {id: 5, name: "React"},
-    {id: 6, name: "Tailwind"},
-    {id: 7, name: "BootStrap"},
-    {id: 8, name: "Axios"},
-    {id: 9, name: "ESLint"},
-    {id: 10, name: "Netlify"},
-  ]
-}
-export default function UserProfile() {
-  const profile_img_src = `/asset/png/profile/${user_info.profile}.png`;
+type UserProfileProps = {
+  userInfo: User
+};
+
+const categoryLabels: Record<string, string> = {
+  frontend: '웹/프론트엔드',
+  backend: '웹/백엔드',
+  data: '데이터사이언스',
+  security: '보안',
+  application: '어플리케이션',
+};
+
+export default function UserProfile({
+  userInfo
+}:UserProfileProps) {
+  const profile_img_src = `/asset/png/profile/${userInfo.profile}.png`;
 
   return (
-    <div className='w-full h-[300px] flex border rounded-xl'>
-        <div className="w-1/4 rounded-l-xl flex flex-col items-center justify-between">
-            <div className="w-full text-left h-1/6 pt-8 pl-8">
-                <div className='flex items-end'>
-                    <strong className="block text-xl font-bold">{user_info.name}</strong>
-                    <div>님의</div>
-                </div>
-                <strong className="text-2xl font-bold">개발뱃지</strong>
+    <div className='w-full h-fit min-h-64 flex justify-between border-b border-gray-cc pb-5'>
+      <div className='w-1/2 flex flex-row items-center '>
+        <img className='w-64 h-64 object-cover rounded-xl border border-gray-cc' src={profile_img_src} />
+        <div className='ml-4'>
+          <div className='text-3xl font-gmarketsansBold'>{userInfo.name}</div>
+          <div className='text-2xl font-gmarketsansMedium mt-1'>{categoryLabels[userInfo.category]} 개발자</div>
+          <div className='flex mt-2'>
+            <div className='flex gap-2 mr-6'>
+              <img className='w-6 h-6' src='asset/png/icon_filter_badge.png' />
+              <div>{userInfo.badge_cnt}</div>
             </div>
-            <div className='w-full h-4/6'>
-                <img className="w-full h-full object-contain" src={profile_img_src} alt="Profile" />
+            <div className='flex gap-2 mr-6'>
+              <img className='w-6 h-6' src='asset/png/icon_filter_roadmap.png' />
+              <div>{userInfo.roadmap_cnt}</div>
             </div>
+            <div className='flex gap-2 mr-6'>
+              <img className='w-6 h-6' src='asset/png/icon_filter_card.png' />
+              <div>{userInfo.card_cnt}</div>
+            </div>
+          </div>
         </div>
-        <div className='w-3/4 bg-primary rounded-r-xl flex flex-wrap content-start p-4'>
-            {user_info.skill_list.map((skill) => (
-                <SkillBadge key={skill.id} skill={skill} />
-            ))}
-        </div>
+      </div>
+      
+      <div className='w-[555px] max-h-[256px] bg-primary rounded-xl flex flex-wrap content-start p-4 overflow-y-auto scrollbar'>
+        {userInfo.skill_list.map((skill) => (
+            <SkillBadge key={skill.id} skill={skill} />
+        ))}
+      </div>
     </div>
   );
 }
