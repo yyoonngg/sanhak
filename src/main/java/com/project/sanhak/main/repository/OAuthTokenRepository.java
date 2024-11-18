@@ -8,5 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface OAuthTokenRepository extends JpaRepository<OAuthToken, Integer> {
-    Optional<OAuthToken> findByEmail(String email);
+
+    OAuthToken findByEmail(String uEmailId);
 }
