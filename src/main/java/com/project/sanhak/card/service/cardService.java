@@ -8,6 +8,7 @@ import com.project.sanhak.card.repository.cardRepository;
 import com.project.sanhak.domain.card.ExperienceCard;
 import com.project.sanhak.domain.chat.ChatRooms;
 import com.project.sanhak.domain.user.User;
+import com.project.sanhak.lounge.repository.LoungeRepository;
 import com.project.sanhak.lounge.service.LoungeService;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -38,6 +39,8 @@ public class cardService {
     private messageRepository messageRepository;
     @Autowired
     private LoungeService loungeService;
+    @Autowired
+    private LoungeRepository loungeRepository;
 
     public cardService(CardMapper cardMapper, WebClient webClient) {
         this.cardMapper = cardMapper;
@@ -95,7 +98,10 @@ public class cardService {
             card.setECSummary(summary);
             card.setECText(text);
             cardRepository.save(card);
-            loungeService.increaseCnum(card.getECuid());
+            if(loungeRepository.findByLUid(card.getECuid())!=null){
+                loungeService.increaseCnum(card.getECuid());
+            }
+
             // 채팅방 생성
             for (int type = 0; type < 3; type++) {
                 ChatRooms chatRoom = new ChatRooms();
