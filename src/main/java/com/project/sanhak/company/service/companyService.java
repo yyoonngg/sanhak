@@ -57,7 +57,7 @@ public class companyService {
                 String comSkills = (String) companyData.get("extracted_skills");
                 Double comSimilarity = Double.parseDouble(companyData.get("similarity").toString());
                 String comPosition = switch (comResult) {
-                    case 1 -> "app";
+                    case 1 -> "application";
                     case 2 -> "frontend";
                     case 3 -> "data";
                     case 4 -> "backend";

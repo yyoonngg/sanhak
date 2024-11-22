@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -115,7 +116,7 @@ public class MainController {
     public ResponseEntity<List<String>> testLogic(HttpSession session){
         Integer uidAttribute = (Integer) session.getAttribute("uid");
         if (uidAttribute == null) {
-            throw new NullPointerException("UID is null");
+            return ResponseEntity.ok(Collections.singletonList("null"));
         }
         int uid = uidAttribute;
         User user= userRepository.findByUId(uid);
