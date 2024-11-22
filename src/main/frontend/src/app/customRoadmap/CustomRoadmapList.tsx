@@ -1,11 +1,10 @@
 "use client";
 import React from 'react';
-import {AiCardChatRoom} from "@/models/card";
 
 type CustomRoadmapListProps = {
   roadmapData: CustomRoadmapName[];
   selectedRoadmapId: number;
-  onSelectRoadmap?: () => void;
+  onSelectRoadmap?: (id: number) => void;
 };
 
 export default function CustomRoadmapList({
@@ -14,27 +13,30 @@ export default function CustomRoadmapList({
   onSelectRoadmap
 }: CustomRoadmapListProps) {
 
-  const handleSelectedCard = () =>{
+  const handleSelectedCard = (id: number) =>{
     if(onSelectRoadmap){
-      onSelectRoadmap();
+      onSelectRoadmap(id);
     }
   }
   return (
-    <div className="w-1/3 h-full text-sm py-4 bg-gray-f8">
-      <div className="w-full mb-2 px-4 font-semibold">커스텀로드맵 목록</div>
-      {roadmapData.map((roadmap) => (
-        <div
-          key={roadmap.id}
-          className={`${
-            roadmap.id === selectedRoadmapId && "bg-white rounded-lg border-2 border-gray-99"
-          } w-11/12 h-7 bg-white border border-gray-d9 rounded-lg line-clamp-1 mb-2 mx-2 py-1 px-2 cursor-pointer`}
-          onClick={() => handleSelectedCard()}
-        >
-          {roadmap.name?.length && roadmap.name?.length > 15
-            ? roadmap.name?.substring(0, 15) + "..."
-            : roadmap.name}
-        </div>
-      ))}
+    <div className="w-[250px] h-full text-sm py-4 bg-gray-f8">
+      <div className="w-full mb-2 px-4 font-gmarketsansMedium text-lg">커스텀 로드맵 목록</div>
+      <div className='w-full h-full overflow-auto scrollbar flex flex-col'>
+        {roadmapData.map((roadmap) => (
+          <div
+            key={roadmap.id}
+            className={`${
+              roadmap.id === selectedRoadmapId && "bg-white rounded-lg border-2 border-gray-99"
+            } w-[220px] h-16 flex justify-start items-center bg-white border border-gray-d9 rounded-lg mb-2 mx-4 py-1 px-2 cursor-pointer`}
+            onClick={() => handleSelectedCard(roadmap.id)}
+          >
+            {roadmap.name?.length && roadmap.name?.length > 12
+              ? roadmap.name?.substring(0, 12) + "..."
+              : roadmap.name}
+          </div>
+        ))}
+      </div>
+      
     </div>
   );
 };
