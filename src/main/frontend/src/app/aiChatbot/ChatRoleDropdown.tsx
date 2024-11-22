@@ -35,7 +35,7 @@ export default function RoleDropdown({
         onClick={toggleDropdown}
       >
         {selectedRole?.label || "모델 선택"}
-        <span className="ml-2"><img className='w-2' src='asset/png/icon_angle_bottom.png'/></span>
+        <span className="ml-2"><img className='w-2' src='asset/png/icon/icon_angle_bottom.png'/></span>
       </button>
       
       {isOpen && (
@@ -49,7 +49,7 @@ export default function RoleDropdown({
             >
               <div className="flex justify-between items-center">
                 <span className='font-semibold'>{role.label}</span>
-                {selectedRole?.label === role.label && <img className='w-4' src='asset/png/icon_check.png'/>}
+                {selectedRole?.label === role.label && <img className='w-4' src='asset/png/icon/icon_check.png'/>}
               </div>
               <p className="text-gray-500 text-sm">{role.description}</p>
             </div>
