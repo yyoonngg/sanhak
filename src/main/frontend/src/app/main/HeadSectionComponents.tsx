@@ -4,17 +4,26 @@ import React, { useState, useEffect } from "react";
 
 export default function HeadSectionComponents() {
     const [currentPage, setCurrentPage] = useState(0); // 현재 페이지 상태
-    const pages = 2; // 페이지 개수
+    const pages = 4; // 페이지 개수
+    const [scrolling, setScrolling] = useState(false); // 스크롤 상태
 
     useEffect(() => {
         const handleScroll = (event: WheelEvent) => {
+            if (scrolling) return; // 스크롤 중이면 추가 작업 방지
+            setScrolling(true);
+
+            // 스크롤 다운
             if (event.deltaY > 0 && currentPage < pages - 1) {
-                // 스크롤 다운
                 setCurrentPage((prev) => prev + 1);
-            } else if (event.deltaY < 0 && currentPage > 0) {
-                // 스크롤 업
+            }
+            // 스크롤 업
+            else if (event.deltaY < 0 && currentPage > 0) {
                 setCurrentPage((prev) => prev - 1);
             }
+
+            setTimeout(() => {
+                setScrolling(false); // 일정 시간 후 스크롤 가능 상태로 변경
+            }, 500); // 사용자 환경에 맞춰 조정 가능
         };
 
         window.addEventListener("wheel", handleScroll, { passive: false });
@@ -22,8 +31,14 @@ export default function HeadSectionComponents() {
         return () => {
             window.removeEventListener("wheel", handleScroll);
         };
-    }, [currentPage]);
+    }, [currentPage, scrolling]);
 
+    useEffect(() => {
+        window.scrollTo({
+            top: currentPage * window.innerHeight,
+            behavior: "smooth",
+        });
+    }, [currentPage]);
     useEffect(() => {
         window.scrollTo({
             top: currentPage * window.innerHeight,
