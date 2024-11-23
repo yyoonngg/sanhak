@@ -35,7 +35,7 @@ const NavigationBar = () =>{
     return (
         <nav className="flex justify-center items-center py-5 border-b border-gray-d9">
             <div className="w-[1400px] flex justify-between items-center px-24">
-                <ul className="flex space-x-20 items-center">
+                <ul className="flex space-x-12 items-center">
                     <li>
                         <Link href="/main">
                             <img src="/asset/png/icon/service_full_logo.png" alt="logo" className="w-40" />
@@ -47,7 +47,7 @@ const NavigationBar = () =>{
                         </Link>
                     </li>
                     <li>
-                        <Link href="/careerLounge" className="hover:underline text-sm font-gmarketsansMedium">
+                        <Link href="/lounge" className="hover:underline text-sm font-gmarketsansMedium">
                             커리어라운지
                         </Link>
                     </li>
@@ -59,6 +59,11 @@ const NavigationBar = () =>{
                     <li>
                         <Link href={isAuthenticated ? "/aiChatbot" : "/signin"} className="hover:underline text-sm font-gmarketsansMedium">
                             AI경험Chat
+                        </Link>
+                    </li>
+                    <li>
+                        <Link href={isAuthenticated ? "/customRoadmap" : "/signin"} className="hover:underline text-sm font-gmarketsansMedium">
+                            커스텀로드맵
                         </Link>
                     </li>
                     <li>

@@ -55,7 +55,9 @@ type RoadmapProps = {
   handleUpdateSkill?: (newRoadmapSkill: RoadmapSkill) => void,
   onSelectDetail?: (id: number) => void,
   detailContent?: SkillDetail,
-  style?: string
+  style?: string,
+  onTriggerAction?: null | 'increase' | 'decrease'; // 단일 상태로 트리거 관리
+  onResetAction?: () => void; // 트리거 초기화 함수
 };
 
 const Roadmap = ({
@@ -64,7 +66,9 @@ const Roadmap = ({
   handleUpdateSkill,
   onSelectDetail,
   detailContent,
-  style
+  style,
+  onTriggerAction,
+  onResetAction,
 }: RoadmapProps) => {
   const [skills, setSkills] = useState(roadmapSkills);
   const [selectedSkillIds, setSelectedSkillIds] = useState<number[]>([]);
@@ -75,6 +79,17 @@ const Roadmap = ({
   const [dragging, setDragging] = useState(false); 
   const [startDrag, setStartDrag] = useState<{ x: number, y: number } | null>(null);
 
+  // 부모 페이지에서 확대하기 버튼을 클릭할 경우
+  useEffect(()=>{
+    if (onTriggerAction === 'increase' && onResetAction) {
+      increaseSize();
+      onResetAction(); // 트리거 초기화
+    } else if (onTriggerAction === 'decrease' && onResetAction) {
+      decreaseSize();
+      onResetAction(); // 트리거 초기화
+    }
+  }, [onTriggerAction, onResetAction]);
+  
   // 편집모드 -> 보기모드 변환할때 로드맵 위치 초기화
   useEffect(() => {
     if(isEditMode === false) {
@@ -139,6 +154,14 @@ const Roadmap = ({
   // 로드맵 바탕 격자무늬를 확장시켜주는 함수
   const increaseSize = () => {
     setDimensions(prevDimensions => ({
+      width: prevDimensions.width - ROADMAP_SCALE, 
+      height: prevDimensions.height - ROADMAP_SCALE,
+    }));
+  };
+
+  // 로드맵 바탕 격자무늬를 축소시켜주는 함수
+  const decreaseSize = () => {
+    setDimensions(prevDimensions => ({
       width: prevDimensions.width + ROADMAP_SCALE, 
       height: prevDimensions.height + ROADMAP_SCALE,
     }));
@@ -166,15 +189,7 @@ const Roadmap = ({
   };
 
   return (  
-    <div className={`w-full ${style ? style : ''} box-border flex flex-col items-end rounded-xl shadow-[4px_4px_8px_rgba(0,0,0,0.3)] overflow-auto`}>
-      {isEditMode && (
-        <button
-          onClick={increaseSize}
-          className="bg-primary text-white px-4 py-2 rounded-xl"
-        >
-          로드맵 확장하기
-        </button>
-      )}
+    <div className={`${style ? style : 'w-full'} box-border flex flex-col items-end rounded-xl shadow-[4px_4px_8px_rgba(0,0,0,0.3)] overflow-auto`}>
       <svg 
         width="100%" 
         height="95%" 

@@ -16,12 +16,6 @@ type User = {
     skill_list: UserSkill[];
 }
 
-// 마이페이지 로드맵 리스트
-type CustomRoadmap = {
-    id: number;
-    name: string;
-}
-
 // 라운지 미니 프로필
 type MiniProfileInfo = {
     id: number;
