@@ -94,12 +94,12 @@ public class LoungeService {
 
     public Page<LoungesDTO> getLounges(int sortOption, int page) {
         Sort sort = switch (sortOption) {
-            case 2 -> Sort.by(Sort.Direction.DESC, "badgeCount"); // 뱃지 많은 순
-            case 3 -> Sort.by(Sort.Direction.DESC, "roadmapCount"); // 로드맵 많은 순
-            case 4 -> Sort.by(Sort.Direction.DESC, "cardCount"); // 카드 많은 순
-            case 5 -> Sort.by(Sort.Direction.DESC, "likeCount"); // 좋아요 순
-            case 6 -> Sort.by(Sort.Direction.DESC, "viewCount"); // 조회수 순
-            default -> Sort.by(Sort.Direction.DESC, "createdDate"); // 최신순
+            case 2 -> Sort.by(Sort.Direction.DESC, "LBadge"); // 뱃지 많은 순
+            case 3 -> Sort.by(Sort.Direction.DESC, "LRoadmap"); // 로드맵 많은 순
+            case 4 -> Sort.by(Sort.Direction.DESC, "LCard"); // 카드 많은 순
+            case 5 -> Sort.by(Sort.Direction.DESC, "LLikes"); // 좋아요 순
+            case 6 -> Sort.by(Sort.Direction.DESC, "LView"); // 조회수 순
+            default -> Sort.by(Sort.Direction.DESC, "LId"); // 최신순
         };
 
         PageRequest pageRequest = PageRequest.of(page - 1, 20, sort);
