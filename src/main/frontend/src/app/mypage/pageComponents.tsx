@@ -32,7 +32,7 @@ const userInfo: User = {
 }
 
 // TODO: API 연결 -> 유저의 커스텀 로드맵 리스트
-const customRoadmapList: CustomRoadmap[] = [
+const customRoadmapList: CustomRoadmapName[] = [
   {id: 1, name: "나의 엄청난엄청난엄청난엄청난 로드맵"},
   {id: 2, name: "카카오 로드맵"},
   {id: 3, name: "삼성 로드맵"},

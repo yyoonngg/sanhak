@@ -4,7 +4,7 @@ import {ExitIcon} from '@/components/icon';
 import {AllKindOfRoadmapSkills, RoadmapSkill, SkillDetail, SkillSelectUnion} from "@/models/skill";
 
 type RoadmapCustomizeProps = {
-  customRoadmapList: CustomRoadmap[];
+  customRoadmapList: CustomRoadmapName[];
   allCategorySkills: AllKindOfRoadmapSkills[];
   skills: RoadmapSkill[];
   handleUpdateRoadmap: (newSkill: RoadmapSkill) => void, 
