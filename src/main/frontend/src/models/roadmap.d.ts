@@ -6,7 +6,7 @@ type CustomRoadmapName = {
 
 // 커스텀로드맵 페이지 - 커스텀 로드맵
 type CustomRoadmapDetail = {
-    id: number;
+    id?: number;
     name: string;
     skills: RoadmapSkill[];
 };

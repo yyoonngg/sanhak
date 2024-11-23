@@ -3,14 +3,16 @@ import React from 'react';
 
 type CustomRoadmapListProps = {
   roadmapData: CustomRoadmapName[];
-  selectedRoadmapId: number;
+  selectedRoadmapId: number | null;
   onSelectRoadmap?: (id: number) => void;
+  handleCreateBtn: () => void;
 };
 
 export default function CustomRoadmapList({
   roadmapData,
   selectedRoadmapId,
-  onSelectRoadmap
+  onSelectRoadmap,
+  handleCreateBtn
 }: CustomRoadmapListProps) {
 
   const handleSelectedCard = (id: number) =>{
@@ -20,7 +22,13 @@ export default function CustomRoadmapList({
   }
   return (
     <div className="w-[250px] h-full text-sm py-4 bg-gray-f8">
-      <div className="w-full mb-2 px-4 font-gmarketsansMedium text-lg">커스텀 로드맵 목록</div>
+      <div className='w-full flex justify-between items-center '>
+        <div className="w-full mb-2 px-4 font-gmarketsansMedium text-lg">커스텀 로드맵 목록</div>
+        <div 
+          className='w-[35px] h-[25px] flex items-center justify-center border-2 rounded-2xl pb-1 mx-4 mb-2 font-black cursor-pointer hover:bg-white'
+          onClick={handleCreateBtn}  
+        >{'+'}</div>
+      </div>
       <div className='w-full h-full overflow-auto scrollbar flex flex-col'>
         {roadmapData.map((roadmap) => (
           <div

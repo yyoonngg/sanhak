@@ -1,18 +1,18 @@
 'use client';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import CustomRoadmapList from './CustomRoadmapList';
 import Roadmap from '../category/Roadmap';
-import { AllKindOfSkills } from '@/models/skill';
+import { AllKindOfSkills, RoadmapSkill } from '@/models/skill';
 import CustomSkillList from './CustomSkillList';
 
-// TODO: API 연결 -> 유저의 커스텀 로드맵 리스트
+// TODO 1: API 연결 -> 유저의 커스텀 로드맵 리스트
 const customRoadmapList: CustomRoadmapName[] = [
   {id: 1, name: "나의 엄청난엄청난엄청난엄청난엄청난 로드맵"},
   {id: 2, name: "카카오 로드맵"},
   {id: 3, name: "삼성 로드맵"},
 ];
 
-
+// TODO 2: API 연결 -> 위에서 선택된 로드맵에 해당하는 디테일한 데이터
 const customRoadmap: CustomRoadmapDetail = {
   id: 1,
   name: "나의 엄청난엄청난엄청난엄청난엄청난 로드맵",
@@ -49,7 +49,7 @@ const customRoadmap: CustomRoadmapDetail = {
   ]
 };
 
-// TODO: API 연결 
+// TODO 3: API 연결 
 const allCategorySkills: AllKindOfSkills[] = [
   { category:"frontend",
     skills: [
@@ -297,33 +297,108 @@ export default function CustomRoadmapPage() {
   const [triggerAction, setTriggerAction] = useState<null | 'increase' | 'decrease'>(null);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
+  // TODO 4: 로드맵 GET API 호출
   const onSelectRoadmap = (roadmapId: number) => {
     const selected = customRoadmapList.find((roadmap) => roadmap.id === roadmapId);
     if (selected) {
       // setSelectedRoadmap(selected);
-      // TODO: 로드맵 GET API 호출
     }
   };
 
-  const handleIncreaseSize = () => {
-    setTriggerAction('increase'); // 확대 트리거
-  };
-
-  const handleDecreaseSize = () => {
-    setTriggerAction('decrease'); // 축소 트리거
-  };
-
-  const resetAction = () => {
-    setTriggerAction(null); // 트리거 초기화
-  };
-
+  // TODO 5: 로드맵 저장 API 호출
   const updateRoadmap = () => {
     setIsEditMode(false);
   };
-  
-  const onSelectSkill = () => {
-    console.log("선택");
+
+  // 로드맵 크기 관련 트리거 
+  // 1) 로드맵 확장 트리거
+  const handleIncreaseSize = () => {
+    setTriggerAction('increase'); 
   };
+  // 2) 로드맵 축소 트리거
+  const handleDecreaseSize = () => {
+    setTriggerAction('decrease'); 
+  };
+  // 3) 초기화 트리거
+  const resetAction = () => {
+    setTriggerAction(null);
+  };
+  
+  // (+) 버튼을 눌러서 로드맵을 새로 추가하려고 할때
+  const handleCreateBtn = () => {
+    setIsEditMode(true);
+    setSelectedRoadmap({
+      name: '',
+      skills: []
+    })
+  };
+
+  // 편집모드일때 로드맵 이름 onChange 이벤트
+  const handlerRoadmapNameInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target.value);
+    setSelectedRoadmap({
+      ...selectedRoadmap,
+      name: event.target.value
+    })
+  }
+
+  // 스킬을 새로 추가하거나, 선후관계를 설정할때
+  // 1) 스킬을 새로 추가
+  const onSelectSkill = (skillName: string) => {
+    const maxX = Math.max(...selectedRoadmap.skills.map(skill => skill.position[0]), 0);
+    const maxY = Math.max(...selectedRoadmap.skills.map(skill => skill.position[1]), 0);
+    let newPosition;
+
+    const generateUniquePosition = () => {
+      // 자연스러운 position 추가를 위해 랜덤값 활용
+      const getRandomOffset = () => Math.floor(Math.random() * 2) - 1; 
+      let x = maxX + getRandomOffset(); 
+      let y = maxY + getRandomOffset(); 
+      newPosition = [x, y];
+      
+      // 겹치는 스킬 있는지 확인
+      while (selectedRoadmap.skills.some(skill => skill.position[0] === x && skill.position[1] === y)) {
+        x += 1;
+        y += 1;
+        newPosition = [x, y];
+      }
+    };
+    generateUniquePosition();
+  
+    if(newPosition) {
+      const maxId = Math.max(...selectedRoadmap.skills.map(skill => skill.id), 0);
+      const newId = maxId + 1;
+      const newSkill: RoadmapSkill = {
+        // "저장하기" 버튼을 눌러 API콜을 하기 전까지, frontend에서 임시로 ID를 생성하여 사용
+        id: newId, 
+        name: skillName,
+        child: [],
+        position: newPosition,
+        tag: "none"
+      };
+      console.log(newSkill);
+      setSelectedRoadmap({
+        ...selectedRoadmap,
+        skills: [...selectedRoadmap.skills, newSkill]
+      });
+    };
+  };
+  // 2) 노드 2개를 선택해서 선후관계가 정해질 때
+  const handleUpdateSkill = (newSkill: RoadmapSkill) => {
+    setSelectedRoadmap((roadmap: CustomRoadmapDetail) => {
+      const skillExists = roadmap.skills.some(skill => skill.id === newSkill.id);
+      if(skillExists) { 
+        return {
+          ...roadmap,
+          skills: roadmap.skills.map(skill => 
+            skill.id === newSkill.id ? newSkill : skill
+          ),
+        }
+      }
+      return roadmap;
+    });
+  }
+  
   return (
     <div className='w-full h-full flex flex-col items-center'>
       <div className='w-[1400px] h-[90dvh]'>
@@ -336,38 +411,48 @@ export default function CustomRoadmapPage() {
           ) : (
             <CustomRoadmapList 
               roadmapData={customRoadmapList}
-              selectedRoadmapId={selectedRoadmap.id}
+              selectedRoadmapId={selectedRoadmap.id ? selectedRoadmap.id : null}
               onSelectRoadmap={onSelectRoadmap}
+              handleCreateBtn={handleCreateBtn}
             />
           )}
           <div className='w-4/5 flex flex-col pt-4 px-8'>
             <div className='font-gmarketsansMedium text-2xl mb-2'>나의 커스텀 로드맵</div>
             <div className='w-full flex items-center justify-between mb-2'>
-              <div className='font-gmarketsansBold text-lg'>{selectedRoadmap.name}</div>
               {isEditMode ? (
-                <div className='w-2/5 flex justify-between'>
-                  <div
-                    onClick={handleDecreaseSize}
-                    className="bg-primary text-white px-4 py-2 rounded-xl cursor-pointer"
-                  >
-                    {'축소하기(-)'}
+                <>
+                  <input 
+                    className='w-1/2 rounded-xl border-gray-d9 focus:outline-0 font-gmarketsansBold text-lg' 
+                    value={selectedRoadmap.name}
+                    onChange={handlerRoadmapNameInput}
+                  />
+                  <div className='w-2/5 flex justify-between'>
+                    <div
+                      onClick={handleDecreaseSize}
+                      className="bg-primary text-white px-4 py-2 rounded-xl cursor-pointer"
+                    >
+                      {'축소하기(-)'}
+                    </div>
+                    <div
+                      onClick={handleIncreaseSize}
+                      className="bg-primary text-white px-4 py-2 rounded-xl cursor-pointer"
+                    >
+                      {'확대하기(+)'}
+                    </div>
+                    <div   
+                      className='px-3 py-1 rounded-xl border-2 border-primary cursor-pointer hover:bg-gray-ec'
+                      onClick={()=>updateRoadmap()}
+                    >저장하기</div>
                   </div>
-                  <div
-                    onClick={handleIncreaseSize}
-                    className="bg-primary text-white px-4 py-2 rounded-xl cursor-pointer"
-                  >
-                    {'확대하기(+)'}
-                  </div>
-                  <div   
-                    className='px-3 py-1 rounded-xl border-2 border-primary cursor-pointer hover:bg-gray-ec'
-                    onClick={()=>updateRoadmap()}
-                  >저장하기</div>
-                </div>
+                </>
               ) : (
-                <div 
-                  className='px-3 py-1 rounded-xl border-2 border-primary cursor-pointer hover:bg-gray-ec'
-                  onClick={()=>setIsEditMode(true)}
-                >수정하기</div>
+                <>
+                  <div className='font-gmarketsansBold text-lg'>{selectedRoadmap.name}</div>
+                  <div 
+                    className='px-3 py-1 rounded-xl border-2 border-primary cursor-pointer hover:bg-gray-ec'
+                    onClick={()=>setIsEditMode(true)}
+                  >수정하기</div>
+                </>
               )}
             </div>
             <Roadmap 
@@ -375,6 +460,7 @@ export default function CustomRoadmapPage() {
               roadmapSkills={selectedRoadmap.skills} 
               style={'h-[75dvh] max-h-[600px] mb-4'} 
               onTriggerAction={triggerAction}
+              handleUpdateSkill={handleUpdateSkill}
               onResetAction={resetAction}
             />
           </div>

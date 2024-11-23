@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 
 type CustomSkillListProps = {
   skillData: AllKindOfSkills[];
-  onSelectSkill?: (id: number) => void;
+  onSelectSkill?: (skillName: string) => void;
 };
 
 const categoryLabels: Record<string, string> = {
@@ -33,6 +33,9 @@ export default function CustomSkillList({
 
   const handleSelectedSkill = (skillName: string) => {
     console.log(skillName);
+    if(onSelectSkill){
+      onSelectSkill(skillName);
+    }
   };
 
   return (
