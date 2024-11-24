@@ -1,5 +1,5 @@
 // // next.config.js
 // module.exports = {
-//     output: 'export',
-//     reactStrictMode: true,
-// };
+//    output: 'export',
+//    reactStrictMode: true,
+//};
