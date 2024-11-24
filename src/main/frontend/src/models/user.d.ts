@@ -21,6 +21,8 @@ type MiniProfileInfo = {
     id: number;
     name: string;
     category: string;
+    likes: number;
+    view_cnt: number;
     badge_cnt: number;
     roadmap_cnt: number;
     card_cnt: number;

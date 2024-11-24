@@ -27,4 +27,11 @@ public class profileDTO {
 
     @Schema(description = "희망 포지션", example="backend" )
     private String desirePosition;
+    @Schema(description = "Number of badges associated with the lounge")
+    private int badge_cnt;
+    @Schema(description = "Number of roadmaps associated with the lounge")
+    private int roadmap_cnt;
+    @Schema(description = "Number of cards associated with the lounge")
+    private int card_cnt;
+
 }

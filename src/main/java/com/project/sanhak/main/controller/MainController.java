@@ -10,6 +10,7 @@ import com.project.sanhak.main.repository.OAuthTokenRepository;
 import com.project.sanhak.main.repository.UserRepository;
 import com.project.sanhak.main.service.MainService;
 import com.project.sanhak.main.service.ProfileService;
+import com.project.sanhak.util.s3.S3FileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,15 +33,14 @@ import java.util.List;
 public class MainController {
     @Autowired
     private MainService mainService;
-
     @Autowired
     private ProfileService profileService;
-
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private OAuthTokenRepository oAuthTokenRepository;
+    @Autowired
+    private S3FileService s3FileService;
 
     @Operation(summary = "랭킹 보여주는 파트. 정렬은 미구현.",
             responses = @ApiResponse(
@@ -108,7 +108,12 @@ public class MainController {
             throw new NullPointerException("UID is null");
         }
         int uid = uidAttribute;
-        profileService.updateProfile(uid, profile, imageFile);
+
+        String imageUrl = null;
+        if (imageFile != null && !imageFile.isEmpty()) {
+            imageUrl=s3FileService.upload(imageFile);
+        }
+        profileService.updateProfile(uid, profile, imageUrl);
         return ResponseEntity.ok("프로필 수정 성공");
     }
 

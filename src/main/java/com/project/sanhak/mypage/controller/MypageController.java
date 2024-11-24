@@ -30,14 +30,16 @@ public class MypageController {
     @GetMapping("/roadmap/list/{uid},/roadmap/list")
     public ResponseEntity<List<roadmapListDTO>> getMyRoadmapList(@PathVariable(required = false) Integer uid,
                                                                  HttpSession session) {
+        boolean flag = false;
         if (uid == null) {
             Integer uidAttribute = (Integer) session.getAttribute("uid");
             if (uidAttribute == null) {
                 throw new NullPointerException("UID is null");
             }
             uid = uidAttribute;
+            flag=true;
         }
-        List<roadmapListDTO> roadmapList = mypageService.getRoadmapListByUid(uid);
+        List<roadmapListDTO> roadmapList = mypageService.getRoadmapListByUid(uid, flag);
         return ResponseEntity.ok(roadmapList);
     }
 

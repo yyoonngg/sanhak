@@ -2,10 +2,14 @@ package com.project.sanhak.login.service;
 
 import com.project.sanhak.domain.user.OAuthToken;
 import com.project.sanhak.domain.user.User;
+import com.project.sanhak.domain.user.UserInfo;
 import com.project.sanhak.login.domain.OAuthAttributes;
 import com.project.sanhak.login.dto.UserProfileDTO;
 import com.project.sanhak.login.repository.AuthRepository;
+import com.project.sanhak.main.dto.profileDTO;
+import com.project.sanhak.main.repository.ProfileRepository;
 import com.project.sanhak.main.repository.UserRepository;
+import com.project.sanhak.main.service.ProfileService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Map;
@@ -31,7 +36,10 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
 
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private ProfileService profileService;
+    @Autowired
+    private ProfileRepository profileRepository;
     private final AuthRepository userAuthRepository;
     private final OAuth2AuthorizedClientService authorizedClientService;
 
@@ -50,24 +58,18 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
         }
         // accessToken 가져오기
         String accessToken = userRequest.getAccessToken().getTokenValue();
-
         // refreshToken 가져오기
         String refreshToken = getRefreshToken(userRequest, oAuth2User.getName());
-
         // expireDate 가져오기
         LocalDateTime expireDate = getExpireDate(userRequest);
-
         // UserProfile에 토큰 정보 설정
         userProfileDTO.setAccessToken(accessToken);
         userProfileDTO.setRefreshToken(refreshToken);
         userProfileDTO.setExpireDate(expireDate);
-
         // 사용자 정보를 DB에 업데이트하거나 저장
         int uid = updateOrSaveUser(userProfileDTO);
-
         HttpSession session = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getSession();
         session.setAttribute("uid", uid);
-
         return oAuth2User;
     }
 
@@ -108,8 +110,16 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
                     newUser.setUCreate(LocalDateTime.now());
                     return userRepository.save(newUser);
                 });
-
-        return userInfo.getUId(); // User의 uid 반환
+        int uid = userInfo.getUId();
+        UserInfo profile = profileRepository.findByUIuid(userInfo);
+        if (profile == null) {
+            profileDTO profileDTO = new profileDTO();
+            profileDTO.setId(uid);
+            profileDTO.setName(userProfileDTO.getUsername());
+            profileDTO.setEmail(userProfileDTO.getEmail());
+            profileService.updateProfile(uid, profileDTO, "default");
+        }
+        return uid; // User의 uid 반환
     }
 
     private LocalDateTime getExpireDate(OAuth2UserRequest userRequest) {

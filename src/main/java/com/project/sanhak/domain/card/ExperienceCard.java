@@ -26,6 +26,7 @@ public class ExperienceCard {
     private String ECPosition;
     private String ECSkill;
     private String ECTool;
+    @Column(columnDefinition = "LONGTEXT")
     private String ECReflection;
     @Column(columnDefinition = "LONGTEXT")
     private String ECSummary;

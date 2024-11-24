@@ -13,4 +13,6 @@ public interface RoadmapRepository extends JpaRepository<UserRoadmap, Integer> {
     UserRoadmap findByURIdAndURuid(int urId, User user);
 
     int countByURuid(User user);
+
+    List<UserRoadmap> findByURuid_UIdAndState(int uid, int i);
 }

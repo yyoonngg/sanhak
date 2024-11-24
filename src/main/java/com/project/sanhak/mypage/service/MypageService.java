@@ -240,9 +240,13 @@ public class MypageService {
         }).collect(Collectors.toList());
     }
 
-    public List<roadmapListDTO> getRoadmapListByUid(int uid) {
-
-        List<UserRoadmap> userRoadmaps = roadmapRepository.findByURuid_UId(uid);
+    public List<roadmapListDTO> getRoadmapListByUid(int uid, boolean flag) {
+        List<UserRoadmap> userRoadmaps;
+        if (flag) {
+            userRoadmaps = roadmapRepository.findByURuid_UId(uid);
+        } else {
+            userRoadmaps = roadmapRepository.findByURuid_UIdAndState(uid, 1);
+        }
 
         return userRoadmaps.stream().map(userRoadmap -> {
             roadmapListDTO dto = new roadmapListDTO();

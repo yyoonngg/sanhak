@@ -1,23 +1,69 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LoungeFilter from './LoungeFilter';
 import MiniProfile from './MiniProfile';
+import { useRouter } from "next/navigation";
 
-// TODO: API 연결
-const profileMockData: MiniProfileInfo[] = [
-  { id: 1, name: "아이유", category: "backend", badge_cnt: 5, roadmap_cnt: 2, card_cnt: 1 , imageURL:"url"},
-  { id: 2, name: "제니", category: "frontend", badge_cnt: 3, roadmap_cnt: 5, card_cnt: 2 ,imageURL: "url"},
-  { id: 3, name: "지수", category: "data", badge_cnt: 4, roadmap_cnt: 1, card_cnt: 3 ,imageURL:"url"},
-  { id: 4, name: "로제", category: "security", badge_cnt: 6, roadmap_cnt: 3, card_cnt: 4, imageURL: "url" },
-  { id: 5, name: "유재석", category: "application", badge_cnt: 2, roadmap_cnt: 1, card_cnt: 1, imageURL:"url"}
-];
+const filterRecord: Record<string, number> = {
+  'time': 1,
+  'badge': 2,
+  'roadmap': 3,
+  'card': 4,
+  'click': 6
+};
 
 export default function LoungePage() {
+  const router = useRouter();
+
+  const handleProfileClick = () => {
+    router.push("/mypage"); // `/mypage` 경로로 이동
+  };
+
+  const [profileData, setProfileData] = useState<MiniProfileInfo[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<string>('time');
   const handleClickFilter = (filter: string) => {
     setSelectedFilter(filter);  
   };
 
+  const fetchProfileData = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/lounge/all/${filterRecord[selectedFilter]}/${1}`, { // page는 일단 1로 고정
+        method: 'GET',
+        credentials: 'include',
+      });
+      if (response.ok) {
+        const data = await response.json();
+  
+        const formattedData: MiniProfileInfo[] = data.content.map((profile: any) => ({
+          id: profile.id,
+          name: profile.name,
+          category: profile.category,
+          likes: profile.likes,
+          view_cnt: profile.view_cnt,
+          badge_cnt: profile.badge_cnt,
+          roadmap_cnt: profile.roadmap_cnt,
+          card_cnt: profile.card_cnt,
+          imageURL: profile.imageURL,
+        }));
+        console.log(formattedData);
+
+        setProfileData(formattedData);
+      } else {
+        throw new Error('라운지 데이터를 불러오는 중 오류가 발생했습니다.');
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      } else {
+        console.error("An unknown error occurred");
+      }
+    }
+  };
+  
+  useEffect(() => {
+    fetchProfileData();
+  }, [selectedFilter]);
+  
   return (
     <div className='w-full h-full flex flex-col items-center mt-5'>
       <div className='w-[1400px] h-full'>
@@ -28,15 +74,11 @@ export default function LoungePage() {
         </div>
         <div className='w-full h-full flex flex-col px-24 pt-10 mb-10'>
           <div className='w-full h-full flex justify-between'>
-          <div className='w-full grid grid-cols-4 gap-4'>
-            {profileMockData.map((profile) => (
+          <div className='w-full grid grid-cols-4 gap-4 cursor-pointer' onClick={handleProfileClick}>
+            {profileData.map((profile) => (
               <MiniProfile
                 key={profile.id}
-                name={profile.name}
-                category={profile.category}
-                badge_cnt={profile.badge_cnt}
-                roadmap_cnt={profile.roadmap_cnt}
-                card_cnt={profile.card_cnt}
+                profile={profile}
               />
             ))}
           </div>
