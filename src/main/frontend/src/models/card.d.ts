@@ -1,6 +1,6 @@
 import {Skill} from "@/models/skill";
 
-type AiCard = {
+export type AiCard = {
     id?: number;
     fromDate?: string,
     toDate?: string,
@@ -17,23 +17,23 @@ type AiCard = {
     summary?: String | null;
 };
 
-type AiCardChatRoom = {
+export type AiCardChatRoom = {
     id: number;
     cardId: number;
     title: string;
     role: string;
 };
 
-type AiCardChat = {
-    id: number;
-    isUser: number; // 0: AI, 1: User
-    content: string;
-};
-
-type ChatRoleOption = {
+export type ChatRoleOption = {
     label: string;
     description: string;
     guideNotice: string;
 };
 
-type AiCardWithNew = AiCard & { isNew?: boolean };
+export type ChatMessage = {
+    id: number;
+    isUser: number; // 0: AI, 1: User
+    content: string;
+};
+
+export type AiCardWithNew = AiCard & { isNew?: boolean };

@@ -1,55 +1,49 @@
-import React, {useEffect, useRef, useState} from 'react';
-import RoleDropdown from './ChatRoleDropdown';
-import {AiCardChat, ChatRoleOption} from "@/models/card";
+import React, { useEffect, useRef, useState } from "react";
+import RoleDropdown from "./ChatRoleDropdown";
+import { ChatMessage, ChatRoleOption } from "@/models/card";
 
 type ChatInterfaceProps = {
   roles: ChatRoleOption[];
-  chatData: AiCardChat[];
+  chatData: ChatMessage[];
   chatInput: string;
   selectedCardTitle: string | undefined;
-  onSendChat: (userMessage: { id: number; isUser: number; content: string }) => void;
+  onSendChat: (userMessage: ChatMessage) => void;
   onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onKeyDown: (event: React.KeyboardEvent) => void;
+  onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onResetChat: () => void;
   selectedChatId: number;
   selectedChatType: string | undefined;
-  selectedRole: ChatRoleOption; // 추가된 속성
-  handleSelectRole: (role: ChatRoleOption) => void; // 추가된 속성
+  selectedRole: ChatRoleOption;
+  handleSelectRole: (role: ChatRoleOption) => void;
 };
 
-const aiRoles: ChatRoleOption[] = [
-  { label: "AI 면접관", description: "경험카드를 바탕으로 예상 면접질문 및 답변 생성", guideNotice: "어떤 예상질문을 뽑아드릴까요?" },
-  { label: "AI 자소서 도우미", description: "경험카드를 기반으로 자기소개서 문항 생성", guideNotice: "어떤 자기소개서 문항을 작성해드릴까요?" },
-  { label: "AI 포지션 질문", description: "포지션을 바탕으로 해당 직무와 언어에 대한 설명 생성", guideNotice: "해당 직무와 언어에 대해 어떤 점이 궁금한가요?" },
-];
+const ChatInterface: React.FC<ChatInterfaceProps> = ({
+                                                       roles,
+                                                       chatData,
+                                                       chatInput,
+                                                       selectedCardTitle,
+                                                       onSendChat,
+                                                       onInputChange,
+                                                       onKeyDown,
+                                                       onResetChat,
+                                                       selectedChatId,
+                                                       selectedChatType,
+                                                       selectedRole,
+                                                       handleSelectRole,
+                                                     }) => {
+  const chatEndRef = useRef<HTMLDivElement | null>(null); // 메시지 끝 참조
+  const [loading, setLoading] = useState(false); // 로딩 상태 관리
 
-export default function ChatInterface({
-                                        chatData,
-                                        chatInput,
-                                        selectedCardTitle,
-                                        onSendChat,
-                                        onInputChange,
-                                        onKeyDown,
-                                        onResetChat,
-                                        selectedChatId,
-                                        selectedChatType,
-                                      }: ChatInterfaceProps) {
-  const chatEndRef = useRef<HTMLDivElement | null>(null);
-  const [roles, setRoles] = useState<ChatRoleOption[]>(aiRoles);
-  const [selectedRole, setSelectedRole] = useState<ChatRoleOption>(roles[0]);
-  const [loading, setLoading] = useState(false);
+  // 메시지 목록 끝으로 스크롤
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatData]);
 
-  const handleSelectRole = (role: ChatRoleOption) => {
-    console.log("is role",role);
-    setSelectedRole(role);
-  };
-
+  // 메시지 전송 핸들러
   const handleSendChat = async () => {
-    console.log("Send button clicked");
     if (!chatInput.trim()) return;
 
     if (selectedChatId == null || selectedChatType == null) {
-      console.error("채팅방이 선택되지 않았습니다.");
       const errorMessage = { id: chatData.length + 1, isUser: 0, content: "채팅방을 선택해 주세요." };
       onSendChat(errorMessage);
       return;
@@ -61,61 +55,42 @@ export default function ChatInterface({
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat/${selectedChatId}/send/${selectedChatType}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ question: chatInput }),
       });
 
-      if (!response.ok) {
-        throw new Error('서버 응답 실패');
-      }
+      if (!response.ok) throw new Error("서버 응답 실패");
 
       const responseData = await response.json();
       const aiMessage = { id: chatData.length + 2, isUser: 0, content: responseData };
-
       onSendChat(aiMessage);
     } catch (error) {
-      console.error('채팅 전송 중 오류:', error);
-      const errorMessage = { id: chatData.length + 2, isUser: 0, content: '오류가 발생했습니다. 다시 시도해 주세요.' };
+      console.error("채팅 전송 중 오류:", error);
+      const errorMessage = { id: chatData.length + 2, isUser: 0, content: "오류가 발생했습니다. 다시 시도해 주세요." };
       onSendChat(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    if (chatEndRef.current) {
-      if ("scrollIntoView" in chatEndRef.current) {
-        chatEndRef.current.scrollIntoView({behavior: 'smooth'});
-      }
-    }
-  }, [chatData]);
-
   return (
       <div className="w-full h-full flex flex-col">
         <div className="w-full">
-          <RoleDropdown roles={roles}
-                        selectedRole={selectedRole}
-                        onResetChat={() => {
-                          console.log("onResetChat function passed to RoleDropdown");
-                          onResetChat();
-                        }}
-                        handleSelectRole={(role) => {
-                          console.log("handleSelectRole function passed to RoleDropdown with role:", role);
-                          handleSelectRole(role);
-                        }}
+          <RoleDropdown
+              roles={roles}
+              selectedRole={selectedRole}
+              onResetChat={onResetChat}
+              handleSelectRole={handleSelectRole}
           />
         </div>
-        <div className={`w-full h-full flex flex-col items-center ${chatData.length > 0 ? 'justify-between' : 'justify-center'}`}>
+        <div className={`w-full h-full flex flex-col items-center ${chatData.length > 0 ? "justify-between" : "justify-center"}`}>
           {chatData.length > 0 ? (
               <div className="w-5/6 h-full overflow-y-auto scrollbar-none pt-4">
                 {chatData.map((chat) => (
-                    <div
-                        key={chat.id}
-                        className={`w-full mb-2 flex ${chat.isUser === 1 ? 'justify-end' : 'justify-start'}`}
-                    >
-                      <div className={`${chat.isUser === 1 ? 'bg-primary text-white' : 'bg-gray-ec text-black'} p-2 rounded-lg max-w-xs`}>
+                    <div key={chat.id} className={`w-full mb-2 flex ${chat.isUser === 1 ? "justify-end" : "justify-start"}`}>
+                      <div className={`${chat.isUser === 1 ? "bg-primary text-white" : "bg-gray-ec text-black"} p-2 rounded-lg max-w-xs`}>
                         <div>{chat.content}</div>
                       </div>
                     </div>
@@ -144,7 +119,7 @@ export default function ChatInterface({
             />
             <div
                 className="w-8 h-7 flex justify-center items-center bg-primary rounded-full text-white font-semibold cursor-pointer text-xs mr-2 py-1"
-                onClick={handleSendChat}  // 여기서 `await`을 제거하고 함수 참조를 전달
+                onClick={handleSendChat}
             >
               전송
             </div>
@@ -152,8 +127,6 @@ export default function ChatInterface({
         </div>
       </div>
   );
-}
+};
 
-function setChatRoomData(data: any) {
-  throw new Error('Function not implemented.');
-}
+export default ChatInterface;
