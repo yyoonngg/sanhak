@@ -35,14 +35,15 @@ public class ProfileService {
     private cardRepository cardRepository;
     @Autowired
     private LoungeRepository loungeRepository;
-    @Autowired
-    private S3FileService s3FileService;
 
     public profileDTO getProfile(int uid) {
         User user = userService.getUserFromUid(uid);
         UserInfo profile = profileRepository.findByUIuid(user);
+        Lounges lounge= new Lounges();
         if (profile == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "프로필을 찾을 수 없습니다.");
+        } else{
+            lounge=loungeRepository.findByLUid(user);
         }
         profileDTO profileDTO = new profileDTO();
         profileDTO.setId(profile.getUIid());
@@ -51,15 +52,19 @@ public class ProfileService {
         profileDTO.setBio(profile.getUIBio());
         profileDTO.setProfileImgURL(profile.getUIProfileImg());
         profileDTO.setDesirePosition(profile.getUIDesirePosition());
+        profileDTO.setBadge_cnt(lounge.getLBadge());
+        profileDTO.setCard_cnt(lounge.getLCard());
+        profileDTO.setRoadmap_cnt(lounge.getLRoadmap());
         return profileDTO;
     }
 
-    public void updateProfile(int uid, profileDTO profileDTO, MultipartFile imageFile) throws IOException {
+    public void updateProfile(int uid, profileDTO profileDTO, String imageUrl){
         User user = userService.getUserFromUid(uid);
         UserInfo profile = profileRepository.findByUIuid(user);
         if (profile == null) {
             profile = new UserInfo();
             profile.setUIuid(user);
+            profile.setUIDesirePosition("frontend");
             Lounges lounge =new Lounges();
             lounge.setLUid(user);
             lounge.setLRoadmap(roadmapRepository.countByURuid(user));
@@ -73,8 +78,7 @@ public class ProfileService {
         profile.setUIUserEmail(profileDTO.getEmail());
         profile.setUIBio(profileDTO.getBio());
         profile.setUIDesirePosition(profileDTO.getDesirePosition());
-        if (imageFile != null && !imageFile.isEmpty()) {
-            String imageUrl = s3FileService.upload(imageFile);
+        if (imageUrl != null && !imageUrl.isEmpty()) {
             profile.setUIProfileImg(imageUrl);
         }
         Lounges lounge = loungeRepository.findByLUid(user);
