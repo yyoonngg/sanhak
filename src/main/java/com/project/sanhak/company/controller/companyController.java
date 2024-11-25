@@ -24,7 +24,7 @@ public class companyController {
 
     // 회사 추천 시스템
     // 내가 익힌 스킬을 모조리 모아서 던져주기.
-    @GetMapping("/recomand, /recommand/{uid}")
+    @GetMapping({"/recommend", "/recommend/{uid}"})
     public ResponseEntity<?> getAiCard(HttpSession session,
                                        @PathVariable(required = false) Integer uid) {
         try {
@@ -33,11 +33,10 @@ public class companyController {
                 if (uidAttribute == null) {
                     throw new NullPointerException("UID is null");
                 }
-                uid = uidAttribute;
             }
             User user = userService.getUserFromUid(uid);
             List<companyDTO> companyList =companyService.recommandCompany(user);
-            return ResponseEntity.status(200).body("");
+            return ResponseEntity.status(200).body(companyList);
         } catch (Exception e) {
             log.error("서비스 실행 중 오류 발생: {}", e.getMessage());
             return ResponseEntity.status(500).body("서버 오류가 발생했습니다. 다시 시도해주세요.");

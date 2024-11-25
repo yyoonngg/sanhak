@@ -8,9 +8,11 @@ import com.project.sanhak.domain.user.User;
 import com.project.sanhak.mypage.repository.BadgeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,28 +32,29 @@ public class companyService {
     }
 
     public List<companyDTO> recommandCompany(User user) {
-        String url = apiBaseUrl +"/recommand";
+        String url = apiBaseUrl + "/recommendCompanies";
         Map<String, Object> requestData = new HashMap<>();
         List<Badge> badgeList = badgeRepository.findByUBUid(user);
-        Set<String> skillList = badgeList.stream()
-                .map(badge -> badge.getUBCSid().getCSName())  // Get CSName from CodeSkil
-                .collect(Collectors.toSet());  // Use a Set to avoid duplicates
+        List<String> skillList = badgeList.stream()
+                .map(badge -> badge.getUBCSid().getCSName())
+                .distinct()
+                .collect(Collectors.toList());
+
+        requestData.put("skills", skillList);
         List<companyDTO> companyDTOList = new ArrayList<>();
-        requestData.put("skill", skillList);
-        Map<String, Object> response;
+
         try {
-            response = webClient.post()
+            // 외부 API 호출 및 응답 처리
+            List<Map<String, Object>> response = webClient.post()
                     .uri(url)
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(requestData)
                     .retrieve()
-                    .bodyToMono(Map.class)
+                    .bodyToMono(new ParameterizedTypeReference<List<Map<String, Object>>>() {})
                     .block();
             System.out.println("Response data: " + response);
 
-            List<Map<String, Object>> companyResponseList = (List<Map<String, Object>>) response.get("companies");
-
-            for (Map<String, Object> companyData : companyResponseList) {
+            for (Map<String, Object> companyData : response) {
                 String comName = (String) companyData.get("company_names");
                 Integer comResult = (Integer) companyData.get("result");
                 String comSkills = (String) companyData.get("extracted_skills");
@@ -72,17 +75,21 @@ public class companyService {
                     dto.setTitle(company.getCOMName());
                     dto.setCategory(company.getCOMPosition());
                     dto.setName(company.getCOMDescription());
-                    dto.setCongruence(comSimilarity*100);
+                    dto.setCongruence(comSimilarity * 100); // Similarity를 백분율로 변환
                     dto.setImgUrl(company.getCOMImgUrl());
                     dto.setOpeningUrl(company.getCOMOpeningUrl());
                     companyDTOList.add(dto);
                 }
             }
             System.out.println("Matching Company DTOs: " + companyDTOList);
-        } catch (Exception e) {
-            System.out.println("API 호출 오류: " + e);
+
+        } catch (WebClientResponseException e) {
+            System.err.println("API 호출 오류: " + e.getResponseBodyAsString());
             throw new RuntimeException("외부 API 호출 실패: " + e.getMessage(), e);
+        } catch (Exception e) {
+            System.err.println("API 호출 오류: " + e.getMessage());
+            throw new RuntimeException("외부 API 처리 중 오류 발생", e);
         }
-        return null;
+        return companyDTOList;
     }
 }
