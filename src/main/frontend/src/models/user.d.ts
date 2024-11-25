@@ -8,12 +8,18 @@ type UserSkill = {
 type User = {
     id: number;
     name: string;
-    category: string;
-    profile: string;
+    bio?: string;
+    desirePosition: string;
+    profileImgURL: string;
+    email: string;
     badge_cnt: number;
     roadmap_cnt: number;
     card_cnt: number;
-    skill_list: UserSkill[];
+}
+
+type UpdateUserProfile = {
+    profile: User;
+    image: string;
 }
 
 // 라운지 미니 프로필
