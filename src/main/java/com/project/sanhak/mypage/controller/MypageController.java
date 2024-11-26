@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -27,7 +28,7 @@ public class MypageController {
                     description = "로드맵 목록 반환",
                     content = @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = roadmapListDTO.class)))))
-    @GetMapping("/roadmap/list/{uid},/roadmap/list")
+    @GetMapping({"/roadmap/list", "/roadmap/list/{uid}"})
     public ResponseEntity<List<roadmapListDTO>> getMyRoadmapList(@PathVariable(required = false) Integer uid,
                                                                  HttpSession session) {
         boolean flag = false;
@@ -49,10 +50,9 @@ public class MypageController {
                     description = "로드맵 반환",
                     content = @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = roadmapDTO.class)))))
-    @GetMapping("/roadmap/{ur_id},/roadmap/{ur_id2}/{uid}")
+    @GetMapping("/roadmap/{ur_id}")
     public ResponseEntity<List<roadmapDTO>> getMyRoadmap(HttpSession session,
                                                          @PathVariable(required = false) Integer uid,
-                                                         @PathVariable(required = false) Integer ur_id2,
                                                          @PathVariable int ur_id) {
         if (uid == null) {
             Integer uidAttribute = (Integer) session.getAttribute("uid");
@@ -61,14 +61,42 @@ public class MypageController {
             }
             uid = uidAttribute;
         }
-        if (ur_id2!=null){
-            ur_id=ur_id2;
-        }
         List<roadmapDTO> roadmapList = mypageService.getRoadmapsByUid(uid,ur_id);
         return ResponseEntity.ok(roadmapList);
     }
 
-        @Operation(summary = "새 로드맵 추가",
+    @Operation(summary = "내 로드맵 호출",
+            responses = @ApiResponse(
+                    responseCode = "200",
+                    description = "로드맵 반환",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = roadmapDTO.class)))))
+    @GetMapping({"/roadmap/all", "/roadmap/all/{uid}"})
+    public ResponseEntity<List<mergeRoadmapDTO>> getAllRoadmap(HttpSession session,
+                                                         @PathVariable(required = false) Integer uid) {
+        boolean flag = false;
+        if (uid == null) {
+            Integer uidAttribute = (Integer) session.getAttribute("uid");
+            if (uidAttribute == null) {
+                throw new NullPointerException("UID is null");
+            }
+            uid = uidAttribute;
+            flag=true;
+        }
+        List<mergeRoadmapDTO> roadmapList = new ArrayList<>();
+        List<roadmapListDTO> list = mypageService.getRoadmapListByUid(uid, flag);
+        for (roadmapListDTO roadmap : list) {
+            List<roadmapDTO> skills = mypageService.getRoadmapsByUid(uid, roadmap.getId());
+            mergeRoadmapDTO mergedRoadmap = new mergeRoadmapDTO();
+            mergedRoadmap.setId(roadmap.getId());
+            mergedRoadmap.setName(roadmap.getName());
+            mergedRoadmap.setNode(skills);
+            roadmapList.add(mergedRoadmap);
+        }
+        return ResponseEntity.ok(roadmapList);
+    }
+
+    @Operation(summary = "새 로드맵 추가",
             responses = @ApiResponse(responseCode = "200", description = "새 로드맵 추가 성공"))
     @GetMapping("/roadmap/add")
     public ResponseEntity<String> addNewRoadmap(HttpSession session) {
@@ -129,7 +157,7 @@ public class MypageController {
 
     @Operation(summary = "뱃지 호출",
             responses = @ApiResponse(responseCode = "200", description = "뱃지 보여주기"))
-    @GetMapping("/badge")
+    @GetMapping({"/badge","/badge/{uid}"})
     public ResponseEntity<List<badgeDTO>> badge(HttpSession session,
                                             @PathVariable(required = false) Integer uid) {
         if (uid == null) {

@@ -30,9 +30,12 @@ public class companyController {
         try {
             if (uid == null) {
                 Integer uidAttribute = (Integer) session.getAttribute("uid");
+                log.info("Session ID: {}", session.getId());
+                log.info("Session UID Attribute: {}", session.getAttribute("uid"));
                 if (uidAttribute == null) {
                     throw new NullPointerException("UID is null");
                 }
+                uid = uidAttribute;
             }
             User user = userService.getUserFromUid(uid);
             List<companyDTO> companyList =companyService.recommandCompany(user);

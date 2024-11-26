@@ -70,12 +70,16 @@ public class companyService {
                 List<Company> companies = companyRepository.findByCOMNameAndCOMPosition(comName, comPosition);
 
                 for (Company company : companies) {
+                    if (companyDTOList.size() >= 4) {
+                        return companyDTOList;
+                    }
                     companyDTO dto = new companyDTO();
                     dto.setId(company.getCOMId());
                     dto.setTitle(company.getCOMName());
                     dto.setCategory(company.getCOMPosition());
                     dto.setName(company.getCOMDescription());
-                    dto.setCongruence(comSimilarity * 100); // Similarity를 백분율로 변환
+                    double similarityPercentage = Math.round(comSimilarity * 10000) / 100.0;
+                    dto.setCongruence(similarityPercentage);
                     dto.setImgUrl(company.getCOMImgUrl());
                     dto.setOpeningUrl(company.getCOMOpeningUrl());
                     companyDTOList.add(dto);

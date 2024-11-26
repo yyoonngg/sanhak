@@ -1,93 +1,27 @@
 "use client";
 import React, {useEffect, useState} from 'react';
 import UserProfile from './UserProfile';
-import { RoadmapSkill } from "@/models/skill";
 import Roadmap from '../category/Roadmap';
 import Slider from 'react-slick';
 import Card from '../card/Card';
 import { AiCard } from '@/models/card';
 import RecommendCompany from './RecommendCompany';
-import Cookies from 'js-cookie';
+import {CustomRoadmapDetail} from "@/models/roadmap";
+import {UpdateUserProfile, User, UserRecommendCompany, UserSkill} from '@/models/user';
 
 // TODO: API 연결 -> 유저의 커스텀 로드맵 리스트
-const customRoadmapList: CustomRoadmapName[] = [
-  {id: 1, name: "나의 엄청난엄청난엄청난엄청난 로드맵"},
-  {id: 2, name: "카카오 로드맵"},
-  {id: 3, name: "삼성 로드맵"},
-];
-
 // TODO: API 연결 -> customRoadmapList에서 선택된 로드맵의 id로 api호출
-const allRoadmapSkills: RoadmapSkill[][] = [
-  [
-    { id: 1, name: 'HTML', child: [27, 28, 29], position: [0, 0] ,tag:'basic'},
-    { id: 2, name: 'CSS', child: [5, 6], position: [1, 0] ,tag:'basic'},
-    { id: 3, name: 'JavaScript', child: [4, 7, 8, 9], position: [3, 0],tag:'basic' },
-    { id: 4, name: 'TypeScript', parent:[3], child: [7, 8, 9], position: [4, 0] ,tag:'framework'},
-    { id: 5, name: 'Tailwind', parent: [2], child:[10], position: [1, 1] ,tag:'framework'},
-    { id: 6, name: 'Bootstrap', parent: [2], position: [2, 1] ,tag:'framework'},
-    { id: 7, name: 'React', parent: [3], child:[11, 12, 13], position: [3, 1],tag:'framework' },
-    { id: 8, name: 'Angular', parent: [3], child:[14], position: [6, 1] ,tag:'framework'},
-    { id: 9, name: 'Vue.js', parent: [3], child:[15, 16, 17], position: [7, 1] ,tag:'framework'},
-    { id: 10, name: 'SASS', parent: [5], child:[18], position: [1, 2] ,tag:'framework'},
-    { id: 11, name: 'React Hooks', parent: [7],  child:[19, 20, 21], position: [3, 2],tag:'none' },
-    { id: 12, name: 'Redux', parent: [7], child:[19, 20, 21], position: [4, 2] ,tag:'none'},
-    { id: 13, name: 'Recoil', parent: [7], child:[19, 20, 21], position: [5, 2] ,tag:'none'},
-    { id: 14, name: 'RxJS', parent: [8], child:[19, 20, 21], position: [6, 2] ,tag:'none'},
-    { id: 15, name: 'VueX', parent: [9], child:[19, 20, 21], position: [7, 2] ,tag:'none'},
-    { id: 16, name: 'Pinia', parent: [9], child:[19, 20, 21], position: [8, 2] ,tag:'none'},
-    { id: 17, name: 'Vite', parent: [9], child:[19, 20, 21], position: [9, 2] ,tag:'none'}
-  ],
-  [
-    { id: 1, name: 'HTML', child: [27, 28, 29], position: [0, 0] ,tag:'basic'},
-    { id: 2, name: 'CSS', child: [5, 6], position: [1, 0] ,tag:'basic'},
-    { id: 3, name: 'JavaScript', child: [4, 7, 8, 9], position: [3, 0],tag:'basic' },
-    { id: 4, name: 'TypeScript', parent:[3], child: [7, 8, 9], position: [4, 0] ,tag:'framework'},
-    { id: 5, name: 'Tailwind', parent: [2], child:[10], position: [1, 1] ,tag:'framework'},
-    { id: 6, name: 'Bootstrap', parent: [2], position: [2, 1] ,tag:'framework'},
-    { id: 7, name: 'React', parent: [3], child:[11, 12, 13], position: [3, 1],tag:'framework' },
-    { id: 8, name: 'Angular', parent: [3], child:[14], position: [6, 1] ,tag:'framework'},
-    { id: 9, name: 'Vue.js', parent: [3], child:[15, 16, 17], position: [7, 1] ,tag:'framework'},
-    { id: 10, name: 'SASS', parent: [5], child:[18], position: [1, 2] ,tag:'framework'},
-    { id: 11, name: 'React Hooks', parent: [7],  child:[19, 20, 21], position: [3, 2],tag:'none' },
-    { id: 12, name: 'Redux', parent: [7], child:[19, 20, 21], position: [4, 2] ,tag:'none'},
-    { id: 13, name: 'Recoil', parent: [7], child:[19, 20, 21], position: [5, 2] ,tag:'none'},
-    { id: 14, name: 'RxJS', parent: [8], child:[19, 20, 21], position: [6, 2] ,tag:'none'},
-    { id: 15, name: 'VueX', parent: [9], child:[19, 20, 21], position: [7, 2] ,tag:'none'},
-    { id: 16, name: 'Pinia', parent: [9], child:[19, 20, 21], position: [8, 2] ,tag:'none'},
-    { id: 17, name: 'Vite', parent: [9], child:[19, 20, 21], position: [9, 2] ,tag:'none'},
-    { id: 18, name: 'PostCSS', parent: [10], child:[27, 28, 29], position: [1, 3],tag:'none' },
-    { id: 19, name: 'Axios', parent: [11, 12, 13, 14, 15, 16, 17], child:[22, 23], position: [3, 3] ,tag:'connection'},
-    { id: 20, name: 'Web Socket', parent: [11, 12, 13, 14, 15, 16, 17], child:[22, 23], position: [4, 3] ,tag:'none'},
-    { id: 21, name: 'ESLint', parent: [11, 12, 13, 14, 15, 16, 17], child:[22, 23], position: [5, 3] ,tag:'none'},
-
-    { id: 22, name: 'Webpack', parent: [19, 20, 21], child:[24, 25, 26], position: [3, 4] ,tag:'none'},
-    { id: 23, name: 'GraphQL', parent: [19, 20, 21], child:[24, 25, 26], position: [4, 4] ,tag:'connection'},
-
-    { id: 24, name: 'Cypress', parent: [22, 23], child:[27, 28, 29], position: [3, 5],tag:'test' },
-    { id: 25, name: 'Jest', parent: [22, 23], child:[27, 28, 29], position: [4, 5] ,tag:'test'},
-    { id: 26, name: 'MobX', parent: [22, 23], child:[27, 28, 29], position: [5, 5] ,tag:'none'},
-
-    { id: 27, name: 'Vercel', parent: [1, 18, 24, 25, 26], position: [1, 6],tag:'none' },
-    { id: 28, name: 'AWS S3', parent: [1, 18, 24, 25, 26], position: [2, 6] ,tag:'none'},
-    { id: 29, name: 'Netlify', parent: [1, 18, 24, 25, 26], position: [3, 6] ,tag:'none'}
-  ]
-];
-
 // TODO: API 연결
-const recommendCompanyList: UserRecommendCompany[] = [
-  { id: 1, name: '카카오페이', title: "카카오페이 신입개발자 채용", category: 'frontend', congruence: 90, imgUrl: 'https://image.wanted.co.kr/optimize?src=https%3A%2F%2Fstatic.wanted.co.kr%2Fimages%2Fcompany%2F20947%2Fizyvwevuqdjqkvwu__1080_790.png&w=700&q=100', openingUrl: "https://www.wanted.co.kr/wd/224130"},
-  { id: 2, name: '토스뱅크', title: "ML Engineer", category: 'data', congruence: 78, imgUrl: 'https://image.wanted.co.kr/optimize?src=https%3A%2F%2Fstatic.wanted.co.kr%2Fimages%2Fcompany%2F24000%2Ffslrv5khtj5xfswl__1080_790.png&w=700&q=100', openingUrl: "https://www.wanted.co.kr/wd/203912" },
-  { id: 3, name: '중고나라', title: "프론트엔드 개발자 채용", category: 'frontend', congruence: 65, imgUrl: 'https://image.wanted.co.kr/optimize?src=https%3A%2F%2Fstatic.wanted.co.kr%2Fimages%2Fcompany%2F4857%2Fqrczj1slonz0klmz__1080_790.png&w=700&q=100', openingUrl: "https://www.wanted.co.kr/wd/242157" },
-  { id: 4, name: '넥슨코리아', title: "[글로벌보안본부] 탐지솔루션실 백엔드 개발자", category: 'backend', congruence: 30, imgUrl: 'https://image.wanted.co.kr/optimize?src=https%3A%2F%2Fstatic.wanted.co.kr%2Fimages%2Fcompany%2F886%2Fbx7zxeirqqeboq0q__1080_790.jpg&w=700&q=100', openingUrl: "https://www.wanted.co.kr/wd/251529" }
-];
 
 export default function MypagePage() {
   const [userInfo, setUserInfo] = useState<User>();
   const [badgeInfo, setBadgeInfo] = useState<UserSkill[]>([]);
   const [cardInfos, setCardInfos] = useState<AiCard[]>([]);
-  const [roadmapInfo, setRoadmapInfo] = useState<RoadmapSkill[][]>([]);
+  const [roadmapInfos, setRoadmapInfos]=useState<CustomRoadmapDetail[]>([]);
   const [currentRoadmap, setCurrentRoadmap] = useState(0); 
-  const [currentCard, setCurrentCard] = useState(0); 
+  const [currentCard, setCurrentCard] = useState(0);
+  const [recommendCompanyList, setRecommendCompanyList] = useState<UserRecommendCompany[]>([]);
+  const [isLoadingRoadmaps, setIsLoadingRoadmaps] = useState(true);
 
   const roadmapSlideSettings = {
     dots: true, // 슬라이더 하단에 점 표시
@@ -166,32 +100,49 @@ export default function MypagePage() {
 
     fetchBadges();
 
-  //   const fetchRoadmaps = async () => {
-  //     try {
-  //       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mypage/roadmap`, {
-  //         credentials: 'include',
-  //       });
-  //       if (!response.ok) {
-  //         throw new Error('Failed to fetch cards');
-  //       }
-  //       const data = await response.json();
-  //       console.log("data: ", data);
-  //       setRoadmapInfo(data);
-  //     } catch (error) {
-  //       console.error('Error fetching cards:', error);
-  //     }
-  //   };
+    const fetchRoadmaps = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mypage/roadmap/all`, {
+          credentials: 'include',
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch roadmaps');
+        }
+        const data = await response.json();
+        setRoadmapInfos(data);
+      } catch (error) {
+        console.error('Error fetching roadmaps:', error);
+      } finally {
+        setIsLoadingRoadmaps(false);
+      }
+    };
+    fetchRoadmaps();
 
-  //   fetchRoadmaps();
-    
+    const fetchRecommendCompanies = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/company/recommend`, {
+          credentials: 'include',
+        });
+        if (!response.ok) throw new Error('Failed to fetch recommended companies');
+        setRecommendCompanyList(await response.json());
+      } catch (error) {
+        console.error('Error fetching recommended companies:', error);
+      }
+    };
+    fetchRecommendCompanies();
   }, []);
 
   const onSaveProfile = async(data: UpdateUserProfile) => {
     console.log(data);
       try {
+        const formData = new FormData();
+        formData.append('profile', new Blob([JSON.stringify(data.profile)], { type: 'application/json' }));
+        if (data.image) {
+          formData.append('image', data.image);
+        }
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/main/profile/update`, {
           method: 'POST',
-          body: data as any,
+          body: formData as any,
           credentials: 'include'
         });
         if (response.ok) {
@@ -218,14 +169,20 @@ export default function MypagePage() {
           <div className='w-3/5 flex flex-col justify-start'>
             <div className='flex flex-col'>
               <div className='flex items-center text-center text-2xl font-gmarketsansMedium'><img className='w-6 h-6 mb-1 mr-1' src='asset/png/icon_filter_roadmap.png' alt='커스텀로드맵' />커스텀 로드맵</div>
-              <div className='text-xl font-gmarketsansMedium'>{customRoadmapList[currentRoadmap]?.name || ''}</div>
+              <div className='text-xl font-gmarketsansMedium'>{roadmapInfos[currentRoadmap]?.name || ''}</div>
             </div>
-            <Slider {...roadmapSlideSettings} className="w-full mx-auto"> 
-              {allRoadmapSkills.map((roadmap, index) => (
-                <div key={index} className="w-full h-full flex justify-center items-center p-5">
-                  <Roadmap isEditMode={false} roadmapSkills={roadmap} style={'h-[75dvh] max-h-[600px] mb-4'} />
-                </div>
-              ))}
+            <Slider {...roadmapSlideSettings} className="w-full mx-auto">
+              {isLoadingRoadmaps ? (
+                  <div>Loading...</div>
+              ) : roadmapInfos.length > 0 ? (
+                  roadmapInfos.map((roadmap, index) => (
+                      <div key={index} className="w-full h-full flex justify-center items-center p-5">
+                        <Roadmap isEditMode={false} roadmapSkills={roadmap.skills} style={'h-[75dvh] max-h-[600px] mb-4'} />
+                      </div>
+                  ))
+              ) : (
+                  <div>No roadmaps available</div>
+              )}
             </Slider>
           </div>
           <div className='w-[435px] flex flex-col'>
@@ -233,7 +190,7 @@ export default function MypagePage() {
               <div className='flex items-center text-center text-2xl font-gmarketsansMedium'><img className='w-6 h-6 mb-1 mr-1' src='asset/png/icon_filter_card.png' alt='AI 경험 카드' />AI경험카드</div>
               <div className='text-xl font-gmarketsansMedium'>{cardInfos[currentCard]?.title || ''}</div>
             </div>
-            <Slider {...cardSlideSettings} className="w-full mx-auto"> 
+            <Slider {...cardSlideSettings} className="w-full mx-auto">
               {cardInfos.map((card, index) => (
                 <div key={index} className="w-full h-full flex justify-center items-center p-5"> 
                   <Card card={card} />

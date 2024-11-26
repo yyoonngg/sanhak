@@ -23,9 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "${cors.allowed.origin}")
@@ -100,8 +98,8 @@ public class MainController {
                     @ApiResponse(responseCode = "400", description = "프로필 수정 실패")
             })
     @PostMapping("/profile/update")
-    public ResponseEntity<String> updateProfile(@RequestPart profileDTO profile,
-                                                @RequestPart("image") MultipartFile imageFile,
+    public ResponseEntity <?> updateProfile(@RequestPart profileDTO profile,
+                                                @RequestPart(value="image", required = false) MultipartFile imageFile,
                                                 HttpSession session) throws IOException {
         Integer uidAttribute = (Integer) session.getAttribute("uid");
         if (uidAttribute == null) {
@@ -114,7 +112,9 @@ public class MainController {
             imageUrl=s3FileService.upload(imageFile);
         }
         profileService.updateProfile(uid, profile, imageUrl);
-        return ResponseEntity.ok("프로필 수정 성공");
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "프로필 수정 성공");
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/test")

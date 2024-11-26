@@ -1,52 +1,35 @@
 'use client';
-import React, { ReactElement, useState } from 'react';
+import React, {ReactElement, useEffect, useState} from 'react';
 import CustomRoadmapList from './CustomRoadmapList';
 import Roadmap from '../category/Roadmap';
 import { AllKindOfSkills, RoadmapSkill } from '@/models/skill';
 import CustomSkillList from './CustomSkillList';
+import {CustomRoadmapDetail, CustomRoadmapName} from "@/models/roadmap";
 
 // TODO 1: API 연결 -> 유저의 커스텀 로드맵 리스트
-const customRoadmapList: CustomRoadmapName[] = [
-  {id: 1, name: "나의 엄청난엄청난엄청난엄청난엄청난 로드맵"},
-  {id: 2, name: "카카오 로드맵"},
-  {id: 3, name: "삼성 로드맵"},
-];
+const fetchCustomRoadmapList = async (): Promise<CustomRoadmapName[]> => {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mypage/roadmap/list`, {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error('로드맵 목록 데이터를 가져오는 데 실패했습니다.');
+  }
+  return response.json();
+};
 
 // TODO 2: API 연결 -> 위에서 선택된 로드맵에 해당하는 디테일한 데이터
-const customRoadmap: CustomRoadmapDetail = {
-  id: 1,
-  name: "나의 엄청난엄청난엄청난엄청난엄청난 로드맵",
-  skills: [
-    { id: 1, name: 'HTML', child: [27, 28, 29], position: [0, 0] ,tag:'basic'},
-    { id: 2, name: 'CSS', child: [5, 6], position: [1, 0] ,tag:'basic'},
-    { id: 3, name: 'JavaScript', child: [4, 7, 8, 9], position: [3, 0],tag:'basic' },
-    { id: 4, name: 'TypeScript', parent:[3], child: [7, 8, 9], position: [4, 0] ,tag:'framework'},
-    { id: 5, name: 'Tailwind', parent: [2], child:[10], position: [1, 1] ,tag:'framework'},
-    { id: 6, name: 'Bootstrap', parent: [2], position: [2, 1] ,tag:'framework'},
-    { id: 7, name: 'React', parent: [3], child:[11, 12, 13], position: [3, 1],tag:'framework' },
-    { id: 8, name: 'Angular', parent: [3], child:[14], position: [6, 1] ,tag:'framework'},
-    { id: 9, name: 'Vue.js', parent: [3], child:[15, 16, 17], position: [7, 1] ,tag:'framework'},
-    { id: 10, name: 'SASS', parent: [5], child:[18], position: [1, 2] ,tag:'framework'},
-    { id: 11, name: 'React Hooks', parent: [7],  child:[19, 20, 21], position: [3, 2],tag:'none' },
-    { id: 12, name: 'Redux', parent: [7], child:[19, 20, 21], position: [4, 2] ,tag:'none'},
-    { id: 13, name: 'Recoil', parent: [7], child:[19, 20, 21], position: [5, 2] ,tag:'none'},
-    { id: 14, name: 'RxJS', parent: [8], child:[19, 20, 21], position: [6, 2] ,tag:'none'},
-    { id: 15, name: 'VueX', parent: [9], child:[19, 20, 21], position: [7, 2] ,tag:'none'},
-    { id: 16, name: 'Pinia', parent: [9], child:[19, 20, 21], position: [8, 2] ,tag:'none'},
-    { id: 17, name: 'Vite', parent: [9], child:[19, 20, 21], position: [9, 2] ,tag:'none'},
-    { id: 18, name: 'PostCSS', parent: [10], child:[27, 28, 29], position: [1, 3],tag:'none' },
-    { id: 19, name: 'Axios', parent: [11, 12, 13, 14, 15, 16, 17], child:[22, 23], position: [3, 3] ,tag:'connection'},
-    { id: 20, name: 'Web Socket', parent: [11, 12, 13, 14, 15, 16, 17], child:[22, 23], position: [4, 3] ,tag:'none'},
-    { id: 21, name: 'ESLint', parent: [11, 12, 13, 14, 15, 16, 17], child:[22, 23], position: [5, 3] ,tag:'none'},
-    { id: 22, name: 'Webpack', parent: [19, 20, 21], child:[24, 25, 26], position: [3, 4] ,tag:'none'},
-    { id: 23, name: 'GraphQL', parent: [19, 20, 21], child:[24, 25, 26], position: [4, 4] ,tag:'connection'},
-    { id: 24, name: 'Cypress', parent: [22, 23], child:[27, 28, 29], position: [3, 5],tag:'test' },
-    { id: 25, name: 'Jest', parent: [22, 23], child:[27, 28, 29], position: [4, 5] ,tag:'test'},
-    { id: 26, name: 'MobX', parent: [22, 23], child:[27, 28, 29], position: [5, 5] ,tag:'none'},
-    { id: 27, name: 'Vercel', parent: [1, 18, 24, 25, 26], position: [1, 6],tag:'none' },
-    { id: 28, name: 'AWS S3', parent: [1, 18, 24, 25, 26], position: [2, 6] ,tag:'none'},
-    { id: 29, name: 'Netlify', parent: [1, 18, 24, 25, 26], position: [3, 6] ,tag:'none'}
-  ]
+const fetchRoadmapDetail = async (roadmapId: number): Promise<CustomRoadmapDetail> => {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mypage/roadmap/${roadmapId}`, {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error('로드맵 데이터를 가져오는 데 실패했습니다.');
+  }
+  return response.json();
 };
 
 // TODO 3: API 연결 
@@ -293,15 +276,40 @@ const allCategorySkills: AllKindOfSkills[] = [
 ];
 
 export default function CustomRoadmapPage() {
-  const [selectedRoadmap, setSelectedRoadmap] = useState<CustomRoadmapDetail>(customRoadmap);
+  const [customRoadmapList, setCustomRoadmapList] = useState<CustomRoadmapName[]>([]);
+  const [selectedRoadmap, setSelectedRoadmap] = useState<CustomRoadmapDetail>({
+    id: undefined,
+    name: '',
+    skills: [],
+  });
   const [triggerAction, setTriggerAction] = useState<null | 'increase' | 'decrease'>(null);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
-  // TODO 4: 로드맵 GET API 호출
-  const onSelectRoadmap = (roadmapId: number) => {
-    const selected = customRoadmapList.find((roadmap) => roadmap.id === roadmapId);
-    if (selected) {
-      // setSelectedRoadmap(selected);
+  // 로드맵 리스트 불러오기
+  useEffect(() => {
+    const loadRoadmapList = async () => {
+      try {
+        const roadmapList = await fetchCustomRoadmapList();
+        setCustomRoadmapList(roadmapList);
+
+        // 기본 선택 로드맵 설정
+        if (roadmapList.length > 0) {
+          onSelectRoadmap(roadmapList[0].id);
+        }
+      } catch (error) {
+        console.error('로드맵 리스트 로드 실패:', error);
+      }
+    };
+    loadRoadmapList();
+  }, []);
+
+  // 로드맵 선택 시 호출
+  const onSelectRoadmap = async (roadmapId: number) => {
+    try {
+      const roadmapData = await fetchRoadmapDetail(roadmapId);
+      setSelectedRoadmap(roadmapData);
+    } catch (error) {
+      console.error('로드맵 선택 실패:', error);
     }
   };
 

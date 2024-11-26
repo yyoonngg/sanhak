@@ -1,5 +1,6 @@
 "use client";
 import React from 'react';
+import {CustomRoadmapName} from "@/models/roadmap";
 
 type CustomRoadmapListProps = {
   roadmapData: CustomRoadmapName[];

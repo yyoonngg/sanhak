@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import Roadmap from '../category/Roadmap';
 import {ExitIcon} from '@/components/icon';
 import {AllKindOfRoadmapSkills, RoadmapSkill, SkillDetail, SkillSelectUnion} from "@/models/skill";
+import {CustomRoadmapName} from "@/models/roadmap";
 
 type RoadmapCustomizeProps = {
   customRoadmapList: CustomRoadmapName[];

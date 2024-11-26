@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import SkillBadge from './SkillBadge';
+import {UpdateUserProfile, User, UserSkill} from "@/models/user";
 
 type UserProfileProps = {
   userInfo?: User

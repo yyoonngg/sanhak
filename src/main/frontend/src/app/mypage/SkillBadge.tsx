@@ -1,4 +1,5 @@
 import React from 'react';
+import {UserSkill} from "@/models/user";
 
 type SkillBadgeProps = {
   skill: UserSkill

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import LoungeFilter from './LoungeFilter';
 import MiniProfile from './MiniProfile';
 import { useRouter } from "next/navigation";
+import {MiniProfileInfo} from "@/models/user";
 
 const filterRecord: Record<string, number> = {
   'time': 1,
