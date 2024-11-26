@@ -1,4 +1,5 @@
-// 마이페이지 로드맵 리스트
+import {RoadmapSkill} from "@/models/skill";
+
 type CustomRoadmapName = {
     id: number;
     name: string;

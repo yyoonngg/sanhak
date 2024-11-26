@@ -36,7 +36,7 @@ type MiniProfileInfo = {
 }
 
 // AI추천기업
-type UserRecommendCompany = {
+export type UserRecommendCompany = {
     id: number;
     title: string;
     name: string;

@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import {MiniProfileInfo} from "@/models/user";
 
 type MiniProfileProps = {
   profile: MiniProfileInfo

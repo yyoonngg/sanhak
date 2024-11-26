@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect } from 'react';
+import {UserRecommendCompany} from "@/models/user";
 
 type RecommendCompanyProps = {
   company: UserRecommendCompany;

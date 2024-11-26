@@ -27,6 +27,7 @@ declare type RoadmapSkill = {
 };
 
 
+type SkillStatus = 'not-started' | 'in-progress' | 'completed';
 
 // 스킬 목차 구성
 type SkillTopic = {
