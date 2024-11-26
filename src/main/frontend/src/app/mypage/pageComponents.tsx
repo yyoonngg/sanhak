@@ -7,29 +7,7 @@ import Slider from 'react-slick';
 import Card from '../card/Card';
 import { AiCard } from '@/models/card';
 import RecommendCompany from './RecommendCompany';
-
-// TODO: API 연결
-const userInfo: User = {
-  id: 1,
-  name: "용용",
-  category: "frontend",
-  profile: "user_profile_1",
-  skill_list: [
-    {id: 1, name: "HTML"},
-    {id: 2, name: "CSS"},
-    {id: 3, name: "JavaScript"},
-    {id: 4, name: "Typescript"},
-    {id: 5, name: "React"},
-    {id: 6, name: "Tailwind"},
-    {id: 7, name: "BootStrap"},
-    {id: 8, name: "Axios"},
-    {id: 9, name: "ESLint"},
-    {id: 10, name: "Netlify"},
-  ],
-  badge_cnt: 5, 
-  roadmap_cnt: 2, 
-  card_cnt: 1
-}
+import Cookies from 'js-cookie';
 
 // TODO: API 연결 -> 유저의 커스텀 로드맵 리스트
 const customRoadmapList: CustomRoadmapName[] = [
@@ -104,13 +82,16 @@ const recommendCompanyList: UserRecommendCompany[] = [
 ];
 
 export default function MypagePage() {
+  const [userInfo, setUserInfo] = useState<User>();
+  const [badgeInfo, setBadgeInfo] = useState<UserSkill[]>([]);
   const [cardInfos, setCardInfos] = useState<AiCard[]>([]);
+  const [roadmapInfo, setRoadmapInfo] = useState<RoadmapSkill[][]>([]);
   const [currentRoadmap, setCurrentRoadmap] = useState(0); 
   const [currentCard, setCurrentCard] = useState(0); 
 
   const roadmapSlideSettings = {
     dots: true, // 슬라이더 하단에 점 표시
-    infinite: true, // 무한 반복
+    infinite: false, // 무한 반복
     speed: 500, // 슬라이딩 속도
     slidesToShow: 1, // 한 번에 보여줄 슬라이드 개수
     slidesToScroll: 1, // 스크롤할 슬라이드 개수
@@ -122,7 +103,7 @@ export default function MypagePage() {
 
   const cardSlideSettings = {
     dots: true, // 슬라이더 하단에 점 표시
-    infinite: true, // 무한 반복
+    infinite: false, // 무한 반복
     speed: 500, // 슬라이딩 속도
     slidesToShow: 1, // 한 번에 보여줄 슬라이드 개수
     slidesToScroll: 1, // 스크롤할 슬라이드 개수
@@ -133,6 +114,22 @@ export default function MypagePage() {
   };
 
   useEffect(() => {
+    const fetchProfileInfo = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/main/profile`, {
+          credentials: 'include',
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch cards');
+        }
+        const data = await response.json();
+        setUserInfo(data);
+      } catch (error) {
+        console.error('Error fetching cards:', error);
+      }
+    };
+
+    fetchProfileInfo();
     // 백엔드에서 데이터 가져오기
     const fetchCards = async () => {
       try {
@@ -143,7 +140,6 @@ export default function MypagePage() {
           throw new Error('Failed to fetch cards');
         }
         const data = await response.json();
-        console.log("data: ", data);
         setCardInfos(data); // 카드 데이터를 상태에 저장
       } catch (error) {
         console.error('Error fetching cards:', error);
@@ -151,13 +147,72 @@ export default function MypagePage() {
     };
 
     fetchCards();
+
+    const fetchBadges = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mypage/badge`, {
+          credentials: 'include',
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch cards');
+        }
+        const data = await response.json();
+        console.log("data: ", data);
+        setBadgeInfo(data);
+      } catch (error) {
+        console.error('Error fetching cards:', error);
+      }
+    };
+
+    fetchBadges();
+
+  //   const fetchRoadmaps = async () => {
+  //     try {
+  //       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mypage/roadmap`, {
+  //         credentials: 'include',
+  //       });
+  //       if (!response.ok) {
+  //         throw new Error('Failed to fetch cards');
+  //       }
+  //       const data = await response.json();
+  //       console.log("data: ", data);
+  //       setRoadmapInfo(data);
+  //     } catch (error) {
+  //       console.error('Error fetching cards:', error);
+  //     }
+  //   };
+
+  //   fetchRoadmaps();
+    
   }, []);
+
+  const onSaveProfile = async(data: UpdateUserProfile) => {
+    console.log(data);
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/main/profile/update`, {
+          method: 'POST',
+          body: data as any,
+          credentials: 'include'
+        });
+        if (response.ok) {
+          const result = await response.json();
+          console.log(result);
+        } else {
+          console.error("프로필 수정에 실패했습니다.");
+        }
+      } catch (error) {
+        console.error("오류 발생:", error);
+      } finally {
+      }
+  };
+
+  useEffect(()=>{console.log(userInfo)},[userInfo])
 
   return (
     <div className="w-full h-full flex flex-col items-center mt-5">
       <div className='w-[1400px] h-full px-24'>
         <div className='w-full flex flex-col pb-5'>
-          <UserProfile userInfo={userInfo}/>
+          <UserProfile userInfo={userInfo} badgeInfo={badgeInfo} onSave={onSaveProfile}/>
         </div>
         <div className='w-full flex justify-between mb-10 border-b border-gray-cc pb-10'>
           <div className='w-3/5 flex flex-col justify-start'>
@@ -190,7 +245,7 @@ export default function MypagePage() {
         <div>
           <div className='text-2xl font-gmarketsansMedium'>AI추천기업</div>
           <div className='flex text-lg'>
-            <div className='font-gmarketsansBold'>{userInfo.name}</div>
+            <div className='font-gmarketsansBold'>{userInfo?.name}</div>
             <div className='font-gmarketsansMedium'>님의 커리어를 바탕으로 AI가 추천하는 맞춤형기업 TOP4</div>
           </div>
           <div className='flex justify-between items-center my-5'>
