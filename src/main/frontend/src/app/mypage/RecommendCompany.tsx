@@ -29,7 +29,7 @@ export default function RecommendCompany({
       <div className="line-clamp-1 mb-2 relative z-10">{company.title}</div>
       <div className="mb-1 relative z-10">{categoryLabels[company.category]}</div>
       <div className="mb-5 relative z-10">기업 적합도: {company.congruence}%</div>
-      <div className="cursor-pointer text-xs relative z-10 ml-auto" onClick={() => window.open(`${company.openingUrl}`, '_blank')}>{'원티드에서 공고 확인하기 ->'}</div>
+      <div className="cursor-pointer text-xs relative z-10 ml-auto" onClick={() => window.open(`${company.openingUrl}`, '_blank')}>{'기업 홈페이지에서 확인하기 ->'}</div>
     </div>
   );
 }

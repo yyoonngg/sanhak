@@ -21,7 +21,6 @@ export default function MypagePage() {
   const [currentRoadmap, setCurrentRoadmap] = useState(0); 
   const [currentCard, setCurrentCard] = useState(0);
   const [recommendCompanyList, setRecommendCompanyList] = useState<UserRecommendCompany[]>([]);
-  const [isLoadingRoadmaps, setIsLoadingRoadmaps] = useState(true);
 
   const roadmapSlideSettings = {
     dots: true, // 슬라이더 하단에 점 표시
@@ -112,9 +111,7 @@ export default function MypagePage() {
         setRoadmapInfos(data);
       } catch (error) {
         console.error('Error fetching roadmaps:', error);
-      } finally {
-        setIsLoadingRoadmaps(false);
-      }
+      } 
     };
     fetchRoadmaps();
 
@@ -161,7 +158,7 @@ export default function MypagePage() {
 
   return (
     <div className="w-full h-full flex flex-col items-center mt-5">
-      <div className='w-[1400px] h-full px-24'>
+      <div className='max-w-[1400px] h-full px-24 xl:px-20 lg:px-12'>
         <div className='w-full flex flex-col pb-5'>
           <UserProfile userInfo={userInfo} badgeInfo={badgeInfo} onSave={onSaveProfile}/>
         </div>
@@ -169,34 +166,40 @@ export default function MypagePage() {
           <div className='w-3/5 flex flex-col justify-start'>
             <div className='flex flex-col'>
               <div className='flex items-center text-center text-2xl font-gmarketsansMedium'><img className='w-6 h-6 mb-1 mr-1' src='asset/png/icon_filter_roadmap.png' alt='커스텀로드맵' />커스텀 로드맵</div>
-              <div className='text-xl font-gmarketsansMedium'>{roadmapInfos[currentRoadmap]?.name || ''}</div>
+              <div className='text-xl font-gmarketsansMedium'>{roadmapInfos[currentRoadmap]?.name || '-'}</div>
             </div>
-            <Slider {...roadmapSlideSettings} className="w-full mx-auto">
-              {isLoadingRoadmaps ? (
-                  <div>Loading...</div>
-              ) : roadmapInfos.length > 0 ? (
-                  roadmapInfos.map((roadmap, index) => (
-                      <div key={index} className="w-full h-full flex justify-center items-center p-5">
-                        <Roadmap isEditMode={false} roadmapSkills={roadmap.skills} style={'h-[75dvh] max-h-[600px] mb-4'} />
-                      </div>
-                  ))
-              ) : (
-                  <div>No roadmaps available</div>
-              )}
-            </Slider>
+            {roadmapInfos.length > 0 ? (
+              <Slider {...roadmapSlideSettings} className="w-full mx-auto">
+                {roadmapInfos.map((roadmap, index) => (
+                  <div key={index} className="w-full h-full flex justify-center items-center p-5">
+                    <Roadmap isEditMode={false} roadmapSkills={roadmap.skills} style={'h-[75dvh] max-h-[600px] mb-4'} />
+                  </div>
+                ))}
+              </Slider>
+            ) : (
+              <div className="w-full h-full flex justify-center items-center p-5">
+                <div className='w-full h-[75dvh] max-h-[600px] mb-4 box-border flex flex-col items-center justify-center rounded-xl shadow-[4px_4px_8px_rgba(0,0,0,0.3)] font-gmarketsansMedium'>빈 커스텀 로드맵</div>
+              </div>
+            )}
           </div>
           <div className='w-[435px] flex flex-col'>
             <div className='flex flex-col'>
               <div className='flex items-center text-center text-2xl font-gmarketsansMedium'><img className='w-6 h-6 mb-1 mr-1' src='asset/png/icon_filter_card.png' alt='AI 경험 카드' />AI경험카드</div>
-              <div className='text-xl font-gmarketsansMedium'>{cardInfos[currentCard]?.title || ''}</div>
+              <div className='text-xl font-gmarketsansMedium'>{cardInfos[currentCard]?.title || '-'}</div>
             </div>
-            <Slider {...cardSlideSettings} className="w-full mx-auto">
-              {cardInfos.map((card, index) => (
-                <div key={index} className="w-full h-full flex justify-center items-center p-5"> 
-                  <Card card={card} />
-                </div>
-              ))}
-            </Slider>
+            {cardInfos.length > 0 ? (
+              <Slider {...cardSlideSettings} className="w-full mx-auto">
+                {cardInfos.map((card, index) => (
+                  <div key={index} className="w-full h-full flex justify-center items-center p-5"> 
+                    <Card card={card} />
+                  </div>
+                ))}
+              </Slider>
+            ) : (
+              <div className="w-full h-full flex justify-center items-center p-5"> 
+                <div className='w-[400px] h-[75dvh] max-h-[600px] flex items-center justify-center relative mb-4 font-gmarketsansMedium bg-white rounded-xl shadow-[4px_4px_8px_rgba(0,0,0,0.3)]'>빈 AI경험카드</div>
+              </div>
+            )}
           </div>
         </div>
         <div>
