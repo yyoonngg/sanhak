@@ -19,7 +19,7 @@ export default function RecommendCompany({
 }: RecommendCompanyProps) {
   return (
     <div
-      className='w-[250px] h-[180px] flex flex-col items-start text-white rounded-xl shadow-[4px_4px_8px_rgba(0,0,0,0.3)] p-4 font-gmarketsansMedium relative bg-cover bg-center'
+      className='w-48 h-48 sm:w-52 sm:h-48 xl:w-64 xl:h-48 flex flex-col items-start text-white rounded-xl shadow-[4px_4px_8px_rgba(0,0,0,0.3)] p-4 font-gmarketsansMedium relative bg-cover bg-center'
       style={{
         backgroundImage: `url(${company.imgUrl})`,
       }}
@@ -28,8 +28,8 @@ export default function RecommendCompany({
       <div className="line-clamp-1 text-xl font-semibold relative z-10">{company.name}</div>
       <div className="line-clamp-1 mb-2 relative z-10">{company.title}</div>
       <div className="mb-1 relative z-10">{categoryLabels[company.category]}</div>
-      <div className="mb-5 relative z-10">기업 적합도: {company.congruence}%</div>
-      <div className="cursor-pointer text-xs relative z-10 ml-auto" onClick={() => window.open(`${company.openingUrl}`, '_blank')}>{'기업 홈페이지에서 확인하기 ->'}</div>
+      <div className="mb-8 text-[0.75rem] sm:text-medium relative z-10">기업 적합도: {company.congruence}%</div>
+      <div className="cursor-pointer text-[0.5rem] sm:text-[0.7rem] relative z-10 ml-auto" onClick={() => window.open(`${company.openingUrl}`, '_blank')}>{'기업 홈페이지에서 확인하기 ->'}</div>
     </div>
   );
 }

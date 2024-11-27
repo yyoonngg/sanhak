@@ -44,10 +44,11 @@ public class cardController {
     public ResponseEntity<?> getAiCard(HttpSession session, @PathVariable(required = false) Integer uid) {
         try {
             if (uid == null) {
-                uid = (Integer) session.getAttribute("uid");
-                if (uid == null) {
+                Integer uidAttribute = (Integer) session.getAttribute("uid");
+                if (uidAttribute == null) {
                     throw new NullPointerException("UID is null");
                 }
+                uid = uidAttribute;
             }
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("오류가 발생했습니다: " + e.getMessage());

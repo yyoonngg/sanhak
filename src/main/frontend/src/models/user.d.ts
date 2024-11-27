@@ -19,7 +19,7 @@ type User = {
 
 type UpdateUserProfile = {
     profile: User;
-    image: string;
+    image: File|null;
 }
 
 // 라운지 미니 프로필

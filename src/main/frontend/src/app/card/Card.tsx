@@ -112,7 +112,7 @@ export default function Card({
   // }
 
   return (
-    <div className={`${style ? style : ''} w-[400px] h-[75dvh] max-h-[600px] relative mb-4`}>
+    <div className={`${style ? style : ''} w-full h-[65dvh] xs:w-[400px] xs:h-[75dvh] max-h-[600px] relative mb-4`}>
       <motion.div
         className='w-full h-full relative'
         initial={false}

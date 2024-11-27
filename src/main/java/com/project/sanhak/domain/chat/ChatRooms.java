@@ -21,5 +21,4 @@ public class ChatRooms {
     private User CRuid;
 
     private int CRType;
-    private String CRLastmessage;
 }

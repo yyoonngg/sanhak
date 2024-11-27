@@ -197,20 +197,20 @@ public class MypageService {
         }
     }
 
-    public void addNewRoadmap(int uid) {
+    public roadmapListDTO addNewRoadmap(int uid) {
         UserRoadmap roadmap = new UserRoadmap();
         roadmap.setURuid(userService.getUserFromUid(uid));
+        roadmap.setURName("새 로드맵");
         roadmap.setState(0);
-        roadmapRepository.save(roadmap);
+        UserRoadmap newRoadmap = roadmapRepository.save(roadmap);
         if(loungeRepository.findByLUid(roadmap.getURuid())!=null){
             loungeService.increaseRnum(roadmap.getURuid());
         }
+        roadmapListDTO dto=new roadmapListDTO(newRoadmap.getURId(),newRoadmap.getURName(),newRoadmap.getState());
+        return dto;
     }
 
-    public List<roadmapDTO> getRoadmapsByUid(int uid, int ur_id) {
-        User user = userService.getUserFromUid(uid);
-        UserRoadmap userRoadmap = roadmapRepository.findByURIdAndURuid(ur_id, user);
-
+    public List<roadmapDTO> getRoadmaps(UserRoadmap userRoadmap) {
         List<UserRoadmapSkil> userRoadmapSkils = roadmapSkilRepository.findByURSurid(userRoadmap);
 
         Set<Integer> userRoadmapSkilIds = userRoadmapSkils.stream()
@@ -238,6 +238,12 @@ public class MypageService {
 
             return dto;
         }).collect(Collectors.toList());
+    }
+
+    public UserRoadmap getRoadmapNameByuid(int uid, int ur_id){
+        User user = userService.getUserFromUid(uid);
+        UserRoadmap userRoadmap = roadmapRepository.findByURIdAndURuid(ur_id, user);
+        return userRoadmap;
     }
 
     public List<roadmapListDTO> getRoadmapListByUid(int uid, boolean flag) {
