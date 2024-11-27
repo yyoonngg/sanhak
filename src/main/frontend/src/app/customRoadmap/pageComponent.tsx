@@ -274,6 +274,9 @@ export default function CustomRoadmapPage() {
   });
   const [triggerAction, setTriggerAction] = useState<null | 'increase' | 'decrease'>(null);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [selectedSkills, setSelectedSkills] = useState<(RoadmapSkill | null)[]>([null, null]);
+  const [relationBuffer, setRelationBuffer] = useState<[string, string][]>([]);
+
   // 로드맵 리스트 불러오기
   useEffect(() => {
     const loadRoadmapList = async () => {
@@ -304,9 +307,62 @@ export default function CustomRoadmapPage() {
   };
 
   // TODO 5: 로드맵 저장 API 호출
-  const updateRoadmap = () => {
-    setIsEditMode(false);
+  const updateRoadmap = async () => {
+    try {
+      const roadmapUpdatePayload = {
+        name: selectedRoadmap.name,
+        updates: [
+          ...selectedRoadmap.skills.flatMap(skill => {
+            const updates: ChangeRoadmapDTO[] = [];
+            // 1. 노드 추가
+            if (skill.tag != null) {
+              updates.push({
+                actionType: 'add_node',
+                id: null,
+                name: skill.name,
+                position: skill.position,
+                csId: skill.tag,
+              });
+            } else {
+              // 2. 노드 이동
+              updates.push({
+                actionType: 'move_node',
+                id: skill.id,
+                position: skill.position,
+              });
+            }
+            return updates;
+          }),
+          // 3. 부모-자식 관계 설정 -> prevBuffer
+          ...relationBuffer.map(([parent, child]) => ({
+            actionType: 'add_line',
+            mapping: [parent, child],
+          })),
+        ],
+      };
+
+      // API 호출
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mypage/roadmap/update/${selectedRoadmap.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(roadmapUpdatePayload),
+      });
+
+      if (!response.ok) {
+        throw new Error('로드맵 저장 실패');
+      }
+
+      console.log('로드맵 저장 성공');
+      setRelationBuffer([]);
+      setIsEditMode(false);
+    } catch (error) {
+      console.error('로드맵 저장 중 오류 발생:', error);
+    }
   };
+
 
   // 로드맵 크기 관련 트리거 
   // 1) 로드맵 확장 트리거
@@ -357,6 +413,23 @@ export default function CustomRoadmapPage() {
   // 스킬을 새로 추가하거나, 선후관계를 설정할때
   // 1) 스킬을 새로 추가
   const onSelectSkill = (skillName: string) => {
+    const skill = allCategorySkills.flatMap(category => category.skills)
+        .find(skill => skill.name === skillName);
+
+    if (!skill) {
+      console.error(`스킬 이름 '${skillName}'에 해당하는 ID를 찾을 수 없습니다.`);
+      return;
+    }
+
+    const skillId = skill.id;
+
+    // 중복 불가
+    const isDuplicateId = selectedRoadmap.skills.some(s => s.id === skillId);
+    if (isDuplicateId) {
+      console.error(`이미 존재하는 스킬: ${skillName} (ID: ${skillId})`);
+      return;
+    }
+
     const maxX = Math.max(...selectedRoadmap.skills.map(skill => skill.position[0]), 0);
     const maxY = Math.max(...selectedRoadmap.skills.map(skill => skill.position[1]), 0);
     let newPosition;
@@ -376,7 +449,7 @@ export default function CustomRoadmapPage() {
       }
     };
     generateUniquePosition();
-  
+
     if(newPosition) {
       const maxId = Math.max(...selectedRoadmap.skills.map(skill => skill.id), 0);
       const newId = maxId + 1;
@@ -386,12 +459,28 @@ export default function CustomRoadmapPage() {
         name: skillName,
         child: [],
         position: newPosition,
-        tag: "null",
+        tag: skillId.toString(),
       };
       console.log(newSkill);
       setSelectedRoadmap({
         ...selectedRoadmap,
         skills: [...selectedRoadmap.skills, newSkill]
+      });
+
+      setSelectedSkills(prev => {
+        if (!prev[0]) {
+          return [newSkill, null];
+        } else if (!prev[1]) {
+          const firstSkill = prev[0];
+          const secondSkill = newSkill;
+          const a = firstSkill
+              ? (firstSkill.tag ? firstSkill.tag : firstSkill.id?.toString() || '')
+              : '';
+          const b = secondSkill.tag ? secondSkill.tag : secondSkill.id?.toString() || '';
+          setRelationBuffer(prevBuffer => [...prevBuffer, [a, b]]);
+          return [null, null];
+        }
+        return prev;
       });
     }
   };
@@ -399,10 +488,10 @@ export default function CustomRoadmapPage() {
   const handleUpdateSkill = (newSkill: RoadmapSkill) => {
     setSelectedRoadmap((roadmap: CustomRoadmapDetail) => {
       const skillExists = roadmap.skills.some(skill => skill.id === newSkill.id);
-      if(skillExists) { 
+      if(skillExists) {
         return {
           ...roadmap,
-          skills: roadmap.skills.map(skill => 
+          skills: roadmap.skills.map(skill =>
             skill.id === newSkill.id ? newSkill : skill
           ),
         }
@@ -410,7 +499,6 @@ export default function CustomRoadmapPage() {
       return roadmap;
     });
   }
-  
   return (
     <div className='w-full h-full flex flex-col items-center'>
       <div className='w-[1400px] h-[90dvh]'>

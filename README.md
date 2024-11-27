@@ -2,6 +2,8 @@
 
 ##### 개발기간
 
+#### 서비스 소개
+
 ---
 
 ##### Service Architecture
@@ -13,7 +15,7 @@
 ##### 멤버
 
 - 권용현 : FE(PL)
-- 노기범 : BE(PL)
+- 노기범 : BE
 - 서보승 : AI, DATA
 - 서재현 : AI, DATA
 - 이희정 : PM, FE
