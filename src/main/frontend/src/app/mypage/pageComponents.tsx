@@ -158,14 +158,14 @@ export default function MypagePage() {
 
   return (
     <div className="w-full h-full flex flex-col items-center mt-5">
-      <div className='max-w-[1400px] h-full px-24 xl:px-20 lg:px-12'>
+      <div className='max-w-[1400px] h-full px-4 xl:px-20 lg:px-10'>
         <div className='w-full flex flex-col pb-5'>
           <UserProfile userInfo={userInfo} badgeInfo={badgeInfo} onSave={onSaveProfile}/>
         </div>
-        <div className='w-full flex justify-between mb-10 border-b border-gray-cc pb-10'>
-          <div className='w-3/5 flex flex-col justify-start'>
+        <div className='w-full flex flex-col lg:flex-row justify-between mb-10 border-b border-gray-cc pb-10'>
+          <div className='w-full lg:w-3/5 flex flex-col justify-start'>
             <div className='flex flex-col'>
-              <div className='flex items-center text-center text-2xl font-gmarketsansMedium'><img className='w-6 h-6 mb-1 mr-1' src='asset/png/icon_filter_roadmap.png' alt='커스텀로드맵' />커스텀 로드맵</div>
+              <div className='flex items-center text-center text-lg md:text-2xl font-gmarketsansMedium'><img className='w-4 h-4 md:w-6 md:h-6 mb-1 mr-1' src='asset/png/icon_filter_roadmap.png' alt='커스텀로드맵' />커스텀 로드맵</div>
               <div className='text-xl font-gmarketsansMedium'>{roadmapInfos[currentRoadmap]?.name || '-'}</div>
             </div>
             {roadmapInfos.length > 0 ? (
@@ -182,9 +182,9 @@ export default function MypagePage() {
               </div>
             )}
           </div>
-          <div className='w-[435px] flex flex-col'>
+          <div className='w-full lg:w-2/5 flex flex-col'>
             <div className='flex flex-col'>
-              <div className='flex items-center text-center text-2xl font-gmarketsansMedium'><img className='w-6 h-6 mb-1 mr-1' src='asset/png/icon_filter_card.png' alt='AI 경험 카드' />AI경험카드</div>
+              <div className='flex items-center text-center text-lg md:text-2xl font-gmarketsansMedium'><img className='w-4 h-4 md:w-6 md:h-6 mb-1 mr-1' src='asset/png/icon_filter_card.png' alt='AI경험카드' />AI경험카드</div>
               <div className='text-xl font-gmarketsansMedium'>{cardInfos[currentCard]?.title || '-'}</div>
             </div>
             {cardInfos.length > 0 ? (
@@ -197,23 +197,22 @@ export default function MypagePage() {
               </Slider>
             ) : (
               <div className="w-full h-full flex justify-center items-center p-5"> 
-                <div className='w-[400px] h-[75dvh] max-h-[600px] flex items-center justify-center relative mb-4 font-gmarketsansMedium bg-white rounded-xl shadow-[4px_4px_8px_rgba(0,0,0,0.3)]'>빈 AI경험카드</div>
+                <div className='w-full h-[65dvh] xs:w-[400px] xs:h-[75dvh] max-h-[600px] flex items-center justify-center relative mb-4 font-gmarketsansMedium bg-white rounded-xl shadow-[4px_4px_8px_rgba(0,0,0,0.3)]'>빈 AI경험카드</div>
               </div>
             )}
           </div>
         </div>
         <div>
-          <div className='text-2xl font-gmarketsansMedium'>AI추천기업</div>
-          <div className='flex text-lg'>
-            <div className='font-gmarketsansBold'>{userInfo?.name}</div>
-            <div className='font-gmarketsansMedium'>님의 커리어를 바탕으로 AI가 추천하는 맞춤형기업 TOP4</div>
+          <div className='flex items-center text-center text-lg md:text-2xl font-gmarketsansMedium'><img className='w-4 h-4 md:w-6 md:h-6 mb-1 mr-1' src='asset/png/icon_company.png' alt='AI추천기업' />AI추천기업</div>
+          <div className='flex text-sm md:text-lg mb-2'>
+            <div className='font-gmarketsansMedium'><strong className='w-fit font-gmarketsansBold'>{userInfo?.name}</strong>님의 커리어를 바탕으로 AI가 추천하는 맞춤형기업 TOP4</div>
           </div>
-          <div className='flex justify-between items-center my-5'>
-              {recommendCompanyList.map((company, index) => (
-                <div key={index}>
-                  <RecommendCompany company={company} />
-                </div>
-              ))}
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            {recommendCompanyList.map((company, index) => (
+              <div key={index} className='flex justify-center items-center'>
+                <RecommendCompany company={company} />
+              </div>
+            ))}
           </div>
         </div>
       </div>

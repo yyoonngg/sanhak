@@ -12,11 +12,11 @@ const SkillBadge = ({
   const bg_shadow = 'shadow-[4px_4px_10px_#8247FF,4px_4px_20px_#EF39FF,4px_4px_30px_#FFC839]';
   
   return (
-    <div className={`w-[70px] h-[70px] flex flex-col items-center justify-between bg-white p-2 m-4 bg-gray-200 rounded-3xl ${bg_shadow}`}>
-      <div className='w-10 h-10'>
-        <img className='w-full h-full object-contain' src={image_src} alt={skill.name}/>
+    <div className={`w-[60px] h-[60px] md:w-[66px] md:h-[66px] xl:w-[72px] xl:h-[72px] flex flex-col items-center justify-between bg-white p-2 m-2 md:m-4 bg-gray-200 rounded-3xl ${bg_shadow}`}>
+      <div className='w-10 h-10 flex justify-center items-center'>
+        <img className='w-[30px] h-[30px] md:w-[40px] md:h-[40px] object-contain text-xs xl:text-sm' src={image_src} alt={skill.name}/>
       </div>
-      <div className='h-4 font-bold text-xs'>{skill.name}</div>
+      <div className='h-4 font-bold text-[0.6rem] md:text-xs'>{skill.name}</div>
     </div>
   )
 };
