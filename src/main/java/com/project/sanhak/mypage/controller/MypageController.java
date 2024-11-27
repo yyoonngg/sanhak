@@ -51,7 +51,7 @@ public class MypageController {
                     content = @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = roadmapDTO.class)))))
     @GetMapping("/roadmap/{ur_id}")
-    public ResponseEntity<List<roadmapDTO>> getMyRoadmap(HttpSession session,
+    public ResponseEntity<mergeRoadmapDTO> getMyRoadmap(HttpSession session,
                                                          @PathVariable(required = false) Integer uid,
                                                          @PathVariable int ur_id) {
         if (uid == null) {
@@ -62,7 +62,8 @@ public class MypageController {
             uid = uidAttribute;
         }
         List<roadmapDTO> roadmapList = mypageService.getRoadmapsByUid(uid,ur_id);
-        return ResponseEntity.ok(roadmapList);
+        mergeRoadmapDTO roadmap = new mergeRoadmapDTO(ur_id,null,roadmapList);
+        return ResponseEntity.ok(roadmap);
     }
 
     @Operation(summary = "내 로드맵 호출",

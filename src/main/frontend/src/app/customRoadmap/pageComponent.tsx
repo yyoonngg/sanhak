@@ -1,5 +1,5 @@
 'use client';
-import React, {ReactElement, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import CustomRoadmapList from './CustomRoadmapList';
 import Roadmap from '../category/Roadmap';
 import { AllKindOfSkills, RoadmapSkill } from '@/models/skill';
@@ -278,7 +278,7 @@ const allCategorySkills: AllKindOfSkills[] = [
 export default function CustomRoadmapPage() {
   const [customRoadmapList, setCustomRoadmapList] = useState<CustomRoadmapName[]>([]);
   const [selectedRoadmap, setSelectedRoadmap] = useState<CustomRoadmapDetail>({
-    id: undefined,
+    id: null,
     name: '',
     skills: [],
   });
