@@ -108,7 +108,6 @@ public class cardService {
                 chatRoom.setCRType(type);
                 chatRoom.setCRuid(card.getECuid());
                 chatRoom.setCRecid(card);
-                chatRoom.setCRLastmessage("채팅방이 개설되었습니다.");
                 chatRepository.save(chatRoom);
             }
             return "success";

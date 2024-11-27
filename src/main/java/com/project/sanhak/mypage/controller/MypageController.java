@@ -1,5 +1,6 @@
 package com.project.sanhak.mypage.controller;
 
+import com.project.sanhak.domain.skil.user.UserRoadmap;
 import com.project.sanhak.mypage.dto.*;
 import com.project.sanhak.mypage.service.MypageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,8 +62,9 @@ public class MypageController {
             }
             uid = uidAttribute;
         }
-        List<roadmapDTO> roadmapList = mypageService.getRoadmapsByUid(uid,ur_id);
-        mergeRoadmapDTO roadmap = new mergeRoadmapDTO(ur_id,null,roadmapList);
+        UserRoadmap roadmapName=mypageService.getRoadmapNameByuid(uid,ur_id);
+        List<roadmapDTO> roadmapList = mypageService.getRoadmaps(roadmapName);
+        mergeRoadmapDTO roadmap = new mergeRoadmapDTO(ur_id,roadmapName.getURName(),roadmapList);
         return ResponseEntity.ok(roadmap);
     }
 
@@ -87,7 +89,8 @@ public class MypageController {
         List<mergeRoadmapDTO> roadmapList = new ArrayList<>();
         List<roadmapListDTO> list = mypageService.getRoadmapListByUid(uid, flag);
         for (roadmapListDTO roadmap : list) {
-            List<roadmapDTO> skills = mypageService.getRoadmapsByUid(uid, roadmap.getId());
+            UserRoadmap roadmapName=mypageService.getRoadmapNameByuid(uid, roadmap.getId());
+            List<roadmapDTO> skills = mypageService.getRoadmaps(roadmapName);
             mergeRoadmapDTO mergedRoadmap = new mergeRoadmapDTO();
             mergedRoadmap.setId(roadmap.getId());
             mergedRoadmap.setName(roadmap.getName());
@@ -100,10 +103,10 @@ public class MypageController {
     @Operation(summary = "새 로드맵 추가",
             responses = @ApiResponse(responseCode = "200", description = "새 로드맵 추가 성공"))
     @GetMapping("/roadmap/add")
-    public ResponseEntity<String> addNewRoadmap(HttpSession session) {
+    public ResponseEntity<roadmapListDTO> addNewRoadmap(HttpSession session) {
         int uid = (int) session.getAttribute("uid");
-        mypageService.addNewRoadmap(uid);
-        return ResponseEntity.ok("새 로드맵 추가 성공");
+        roadmapListDTO newRoadmap=mypageService.addNewRoadmap(uid);
+        return ResponseEntity.ok(newRoadmap);
     }
 
     @Operation(summary = "특정 로드맵 정보 업데이트",

@@ -14,7 +14,9 @@ import java.util.List;
 @Schema(description = "로드맵 변경 정보 객체")
 public class changeRoadmapDTO {
     @Schema(description = "코드 스킬 ID. 만약 이게 라인이면 0", example = "1")
-    private int id;
+    private Integer id;
+
+    private int cs_id;
 
     @Schema(description = "상태 -> add는 1, delete는 0", example = "1")
     private int state;
