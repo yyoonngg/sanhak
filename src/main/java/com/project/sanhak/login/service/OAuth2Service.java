@@ -70,6 +70,7 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
         int uid = updateOrSaveUser(userProfileDTO);
         HttpSession session = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getSession();
         session.setAttribute("uid", uid);
+        System.out.println("UID 저장 후 확인: " + session.getAttribute("uid"));
         return oAuth2User;
     }
 

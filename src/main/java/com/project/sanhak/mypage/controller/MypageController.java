@@ -28,7 +28,7 @@ public class MypageController {
                     description = "로드맵 목록 반환",
                     content = @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = roadmapListDTO.class)))))
-    @GetMapping({"/roadmap/list", "/roadmap/list/{uid}"})
+    @GetMapping({"/roadmap/list/{uid}", "/roadmap/list"})
     public ResponseEntity<List<roadmapListDTO>> getMyRoadmapList(@PathVariable(required = false) Integer uid,
                                                                  HttpSession session) {
         boolean flag = false;
