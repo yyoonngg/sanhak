@@ -43,17 +43,17 @@ const config: Config = {
       white: '#FFFFFF',
       transparent: 'transparent',
     },
-    screens: {
-      'sm': '980px',
-      'md': '1098px',
-      'lg': '1280px',
-      'desktop': '1440px',
-      'custom-928': '928px',
-      'custom-min': '723px',
-    },
     extend: {
       maxWidth: {
         'custom': '1400px',
+      },
+      screens: {
+        '2xl': { max: '1400px' }, // 기존 2xl을 1400px로 변경
+        'xl': { max: '1280px' },    // 데스크톱
+        'lg': { max: '1024px' },    // 태블릿 (가로)
+        'md': { max: '768px' },     // 태블릿 (세로)
+        'sm': { max: '640px' },     // 작은 화면
+        'xs': { max: '480px' },     // 모바일
       },
       fontFamily: {
         pretendard: ["pretendard",'sans-serif'],
