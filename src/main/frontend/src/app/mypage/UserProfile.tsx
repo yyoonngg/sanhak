@@ -107,8 +107,8 @@ export default function UserProfile({
   },[userInfo])
 
   return (
-    <div className='w-full h-fit min-h-64 flex justify-between border-b border-gray-cc pb-5'>
-      <div className='w-1/2 flex flex-row items-center justify-between'>
+    <div className='w-full h-fit min-h-64 flex lg:flex-col justify-between border-b border-gray-cc pb-5 lg:px-10'>
+      <div className='w-1/2 flex flex-row items-center justify-between lg:w-full'>
         <div className='w-full flex items-center'>
           <div className="w-64 h-64 object-cover rounded-xl border border-gray-cc">
             {isEditing ? (
@@ -193,9 +193,9 @@ export default function UserProfile({
         </div>
       </div>
       
-      <div className='w-[555px] max-h-[256px] bg-primary rounded-xl flex flex-wrap content-start p-4 overflow-y-auto scrollbar'>
+      <div className='w-1/2 max-h-[256px] bg-primary rounded-xl flex flex-wrap content-start p-4 ml-4 overflow-y-auto scrollbar xl:w-3/7 lg:w-full'>
         {badgeInfo?.map((skill) => (
-            <SkillBadge key={skill.id} skill={skill} />
+          <SkillBadge key={skill.id} skill={skill} />
         ))}
       </div>
     </div>
