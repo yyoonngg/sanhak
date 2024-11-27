@@ -4,6 +4,7 @@ import com.project.sanhak.category.dto.categoryDTO;
 import com.project.sanhak.category.repository.SkilPrequeRepository;
 import com.project.sanhak.category.repository.categoryRepository;
 import com.project.sanhak.domain.skil.code.CodeSkil;
+import com.project.sanhak.domain.skil.code.SkilPrequeCateFlags;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,15 +43,17 @@ public class categoryService {
 
             // 부모 설정
             List<Integer> parents = skilPrequeRepository.findBySPChildcsid(codeSkil).stream()
+                    .filter(preque -> isCategoryMatched(preque.getSpCateFlags(), csCate)) // 카테고리에 맞는지 확인
                     .map(preque -> preque.getSPParentscsid().getCSId())
-                    .filter(codeSkilIds::contains)
+                    .filter(codeSkilIds::contains) // 같은 csname에 해당하는 ID만 포함
                     .collect(Collectors.toList());
             dto.setParent(parents);
 
             // 자식 설정
             List<Integer> children = skilPrequeRepository.findBySPParentscsid(codeSkil).stream()
+                    .filter(preque -> isCategoryMatched(preque.getSpCateFlags(), csCate)) // 카테고리에 맞는지 확인
                     .map(preque -> preque.getSPChildcsid().getCSId())
-                    .filter(codeSkilIds::contains)
+                    .filter(codeSkilIds::contains) // 같은 csname에 해당하는 ID만 포함
                     .collect(Collectors.toList());
             dto.setChild(children);
 
@@ -102,6 +105,22 @@ public class categoryService {
             default -> new int[]{0, 0}; // 기본값 반환
         };
     }
+
+    private boolean isCategoryMatched(SkilPrequeCateFlags flags, String csCate) {
+        if (flags == null || csCate == null) {
+            return false;
+        }
+
+        return switch (csCate.toLowerCase()) {
+            case "frontend" -> flags.isFrontend();
+            case "backend" -> flags.isBackend();
+            case "data" -> flags.isData();
+            case "security" -> flags.isSecurity();
+            case "application" -> flags.isApplication();
+            default -> false;
+        };
+    }
+
 
     //특정 스킬 ID로 CodeSkil 엔티티 가져오기
     public CodeSkil getCodeSkilFromCSId(int CSId) {

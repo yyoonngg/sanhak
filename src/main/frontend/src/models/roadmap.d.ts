@@ -12,3 +12,10 @@ type CustomRoadmapDetail = {
     name: string;
     skills: RoadmapSkill[];
 };
+
+type ChangeRoadmapDTO= {
+    id?: number|null;
+    csId?:number;
+    state: number;
+    mapping: [number, number];
+}
