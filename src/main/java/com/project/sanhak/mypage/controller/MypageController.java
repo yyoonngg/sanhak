@@ -90,7 +90,7 @@ public class MypageController {
             mergeRoadmapDTO mergedRoadmap = new mergeRoadmapDTO();
             mergedRoadmap.setId(roadmap.getId());
             mergedRoadmap.setName(roadmap.getName());
-            mergedRoadmap.setNode(skills);
+            mergedRoadmap.setSkills(skills);
             roadmapList.add(mergedRoadmap);
         }
         return ResponseEntity.ok(roadmapList);
