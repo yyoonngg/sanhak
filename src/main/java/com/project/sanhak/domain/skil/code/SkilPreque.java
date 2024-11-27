@@ -12,12 +12,13 @@ public class SkilPreque {
     private int SPId;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "CSId")
+    @JoinColumn(name = "parent_csid", referencedColumnName = "CSId")
     private CodeSkil SPParentscsid;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "CSId")
+    @JoinColumn(name = "child_csid", referencedColumnName = "CSId")
     private CodeSkil SPChildcsid;
+
+    @Embedded
+    private SkilPrequeCateFlags spCateFlags;
 }
-
-
