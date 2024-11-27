@@ -8,6 +8,5 @@ import java.util.List;
 
 @Repository
 public interface categoryRepository extends JpaRepository<CodeSkil, Integer> {
-    List<CodeSkil> findByCSCate(String csCate);
     List<CodeSkil> findByCSNameIn(List<String> names);
 }

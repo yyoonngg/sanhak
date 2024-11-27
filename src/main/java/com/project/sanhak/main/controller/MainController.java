@@ -61,6 +61,7 @@ public class MainController {
     @GetMapping(value = {"/card/{uid}", "/card"})
     public ResponseEntity<List<aiCardDTO>> getCard(@PathVariable(required = false) Integer uid,
                                                    HttpSession session) {
+        System.out.println("session uid is "+session.getAttribute("uid"));
         if (uid == null) {
             Integer uidAttribute = (Integer) session.getAttribute("uid");
             if (uidAttribute == null) {
@@ -68,6 +69,7 @@ public class MainController {
             }
             uid = uidAttribute;
         }
+        System.out.println("uid is "+uid);
         List<aiCardDTO> cardList = mainService.getCardList(uid);
         return ResponseEntity.ok(cardList);
     }

@@ -27,7 +27,7 @@ export default function UserProfile({
   const [selectedCategory, setSelectedCategory] = useState(userInfo?.desirePosition || ''); 
   const categories = ['웹/프론트엔드', '웹/백엔드', '데이터사이언스', '보안', '어플리케이션', '예비'];
   const [profileImg, setProfileImg] = useState(userInfo?.profileImgURL || '/asset/png/profile_default_image.png');
-  const [profileImgBlob, setProfileImgBlob] = useState('');
+  const [profileImgBlob, setProfileImgBlob] = useState<File|null>(null);
 
   const changeProfileMode = () => {
     setIsEditing((prev) => !prev); 
@@ -49,7 +49,7 @@ export default function UserProfile({
 
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfileImgBlob(reader.result as string);
+        setProfileImgBlob(file);
       };
       reader.readAsDataURL(file);
     }
@@ -90,7 +90,7 @@ export default function UserProfile({
 
   useEffect(()=>{
     if(userInfo?.name){
-      setEditedName(userInfo?.name); 
+      setEditedName(userInfo.name);
     }
 
     if (userInfo?.desirePosition != null) {
