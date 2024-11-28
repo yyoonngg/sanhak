@@ -28,6 +28,6 @@ public class changeRoadmapDTO {
     private List<Integer> position;
 
     @Schema(description = "라인 추가 시 부모, 자식 매핑", example = "[parentId, childId]")
-    private List<Integer> mapping;
+    private List<String> mapping;
 }
 

@@ -312,34 +312,60 @@ export default function CustomRoadmapPage() {
       const roadmapUpdatePayload = {
         name: selectedRoadmap.name,
         updates: [
+          // 신규 노드 연결 정보 (relationBuffer)
+          ...relationBuffer.map(([parent, child]) => ({
+            actionType: 'add_line',
+            mapping: [parent, child],
+          })),
+
+          // 기존 노드 연결 정보 (selectedRoadmap.skills 기반)
           ...selectedRoadmap.skills.flatMap(skill => {
             const updates: ChangeRoadmapDTO[] = [];
-            // 1. 노드 추가
+            if (skill.tag == null) {
+              if (skill.child && skill.child.length > 0) {
+                skill.child.forEach(childId => {
+                  const childSkill = selectedRoadmap.skills.find(s => s.id === childId);
+                  if (childSkill) {
+                    // 부모-자식 관계 추가
+                    updates.push({
+                      actionType: 'add_line',
+                      mapping: [
+                        skill.tag ? skill.tag : skill.id?.toString() || skill.name,
+                        childSkill.tag ? childSkill.tag : childSkill.id?.toString() || childSkill.name,
+                      ],
+                    });
+                  }
+                });
+              }
+            }
+            return updates;
+          }),
+
+          // 노드 추가 및 위치 업데이트
+          ...selectedRoadmap.skills.map(skill => {
             if (skill.tag != null) {
-              updates.push({
+              // 신규 노드 추가
+              return {
                 actionType: 'add_node',
                 id: null,
                 name: skill.name,
                 position: skill.position,
                 csId: skill.tag,
-              });
+              };
             } else {
-              // 2. 노드 이동
-              updates.push({
+              // 기존 노드 위치 이동
+              return {
                 actionType: 'move_node',
                 id: skill.id,
+                name: skill.name,
                 position: skill.position,
-              });
+              };
             }
-            return updates;
           }),
-          // 3. 부모-자식 관계 설정 -> prevBuffer
-          ...relationBuffer.map(([parent, child]) => ({
-            actionType: 'add_line',
-            mapping: [parent, child],
-          })),
         ],
       };
+      console.log("현재 relationBuffer 상태:", relationBuffer);
+      console.log('처리 중인 요청 데이터:', roadmapUpdatePayload);
 
       // API 호출
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mypage/roadmap/update/${selectedRoadmap.id}`, {
@@ -358,6 +384,9 @@ export default function CustomRoadmapPage() {
       console.log('로드맵 저장 성공');
       setRelationBuffer([]);
       setIsEditMode(false);
+      if (selectedRoadmap.id != null) {
+        onSelectRoadmap(selectedRoadmap.id);
+      }
     } catch (error) {
       console.error('로드맵 저장 중 오류 발생:', error);
     }
@@ -424,9 +453,9 @@ export default function CustomRoadmapPage() {
     const skillId = skill.id;
 
     // 중복 불가
-    const isDuplicateId = selectedRoadmap.skills.some(s => s.id === skillId);
-    if (isDuplicateId) {
-      console.error(`이미 존재하는 스킬: ${skillName} (ID: ${skillId})`);
+    const isDuplicateName = selectedRoadmap.skills.some(s => s.name === skillName);
+    if (isDuplicateName) {
+      console.error(`이미 존재하는 스킬 이름: ${skillName}`);
       return;
     }
 
@@ -474,9 +503,9 @@ export default function CustomRoadmapPage() {
           const firstSkill = prev[0];
           const secondSkill = newSkill;
           const a = firstSkill
-              ? (firstSkill.tag ? firstSkill.tag : firstSkill.id?.toString() || '')
+              ? (firstSkill.tag ? firstSkill.name : firstSkill.id?.toString() || '')
               : '';
-          const b = secondSkill.tag ? secondSkill.tag : secondSkill.id?.toString() || '';
+          const b = secondSkill.tag ? secondSkill.name : secondSkill.id?.toString() || '';
           setRelationBuffer(prevBuffer => [...prevBuffer, [a, b]]);
           return [null, null];
         }
@@ -489,6 +518,7 @@ export default function CustomRoadmapPage() {
     setSelectedRoadmap((roadmap: CustomRoadmapDetail) => {
       const skillExists = roadmap.skills.some(skill => skill.id === newSkill.id);
       if(skillExists) {
+        console.log("Updated roadmap:", selectedRoadmap);
         return {
           ...roadmap,
           skills: roadmap.skills.map(skill =>
@@ -496,6 +526,7 @@ export default function CustomRoadmapPage() {
           ),
         }
       }
+      console.log("Received newSkill:", newSkill);
       return roadmap;
     });
   }

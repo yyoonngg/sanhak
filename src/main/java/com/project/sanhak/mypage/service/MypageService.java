@@ -149,6 +149,7 @@ public class MypageService {
         UserRoadmap userRoadmap = roadmapRepository.findById(urId)
                 .orElseThrow(() -> new IllegalArgumentException("로드맵을 찾을 수 없습니다."));
 
+        // 신규 노드의 csId와 저장된 URSId 매핑
         Map<Integer, Integer> csIdToURSIdMap = new HashMap<>();
 
         // 1. add_node 작업 처리
@@ -172,7 +173,7 @@ public class MypageService {
         // 2. add_line 및 move_node 작업 처리
         for (changeRoadmapDTO dto : requestData) {
             if ("add_line".equals(dto.getActionType())) {
-                addLine(dto, csIdToURSIdMap);
+                addLine(dto, urId, csIdToURSIdMap);
             } else if ("move_node".equals(dto.getActionType())) {
                 if (dto.getId() == null && dto.getCsId() != null) {
                     dto.setId(csIdToURSIdMap.get(dto.getCsId()));
@@ -181,22 +182,66 @@ public class MypageService {
             }
         }
     }
-
-    private void addLine(changeRoadmapDTO dto, Map<Integer, Integer> csIdToURSIdMap) {
-        Integer parentId = csIdToURSIdMap.getOrDefault(dto.getMapping().get(0), dto.getMapping().get(0));
-        Integer childId = csIdToURSIdMap.getOrDefault(dto.getMapping().get(1), dto.getMapping().get(1));
-
-        UserRoadmapSkil parent = roadmapSkilRepository.findById(parentId)
-                .orElseThrow(() -> new IllegalArgumentException("부모 스킬을 찾을 수 없습니다."));
-        UserRoadmapSkil child = roadmapSkilRepository.findById(childId)
-                .orElseThrow(() -> new IllegalArgumentException("자식 스킬을 찾을 수 없습니다."));
-
-        UserRoadmapSkilPreque preque = new UserRoadmapSkilPreque();
-        preque.setURSPparentscsid(parent);
-        preque.setURSPchildcsid(child);
-        roadmapSkilPrequeRepository.save(preque);
+    private Integer parseIdOrName(String value, Integer urId, Map<Integer, Integer> csIdToURSIdMap) {
+        try {
+            // 숫자로 변환 가능하면 기존 노드의 ID
+            Integer id = Integer.parseInt(value);
+            System.out.println("ID로 처리됨: " + id);
+            return id;
+        } catch (NumberFormatException e) {
+            // 숫자가 아니면 URScsName으로 검색
+            System.out.println("이름으로 검색 중: " + value);
+            return roadmapSkilRepository.findByURSurid_URIdAndURScsName(urId, value)
+                    .map(UserRoadmapSkil::getURSId)
+                    .orElseGet(() -> {
+                        Integer mappedId = csIdToURSIdMap.get(value.hashCode());
+                        if (mappedId == null) {
+                            System.err.println("매핑할 수 없는 값: " + value + ", UR ID: " + urId);
+                            throw new IllegalArgumentException("매핑할 수 없는 값: " + value + ", UR ID: " + urId);
+                        }
+                        System.out.println("csIdToURSIdMap에서 찾은 값: " + mappedId);
+                        return mappedId;
+                    });
+        }
     }
 
+    private void addLine(changeRoadmapDTO dto, Integer urId, Map<Integer, Integer> csIdToURSIdMap) {
+        List<String> mapping = dto.getMapping();
+        if (mapping == null || mapping.size() != 2) {
+            throw new IllegalArgumentException("매핑 데이터가 올바르지 않습니다.");
+        }
+        System.out.println("addLine 작업 시작: " + mapping);
+
+        // 부모와 자식 ID 변환 처리
+        Integer parentId = parseIdOrName(mapping.get(0), urId, csIdToURSIdMap);
+        Integer childId = parseIdOrName(mapping.get(1), urId, csIdToURSIdMap);
+
+        if (parentId == null || childId == null) {
+            System.err.println("부모 또는 자식 노드가 null입니다. parentId: " + parentId + ", childId: " + childId);
+            throw new IllegalArgumentException("부모 또는 자식 노드를 찾을 수 없습니다.");
+        }
+
+        System.out.println("부모 ID: " + parentId + ", 자식 ID: " + childId);
+
+        // 부모-자식 관계 저장
+        UserRoadmapSkil parent = roadmapSkilRepository.findById(parentId)
+                .orElseThrow(() -> new IllegalArgumentException("부모 노드를 찾을 수 없습니다. ID: " + parentId));
+        UserRoadmapSkil child = roadmapSkilRepository.findById(childId)
+                .orElseThrow(() -> new IllegalArgumentException("자식 노드를 찾을 수 없습니다. ID: " + childId));
+
+        // 중복 관계 확인
+        boolean exists = roadmapSkilPrequeRepository.existsByURSPparentscsidAndURSPchildcsid(parent.getURSId(), child.getURSId());
+        if (exists) {
+            System.out.println("이미 존재하는 부모-자식 관계: parentId=" + parentId + ", childId=" + childId);
+            return;
+        }
+        // 중복이 아닌 경우에만 추가
+        UserRoadmapSkilPreque preque = new UserRoadmapSkilPreque();
+        preque.setURSPparentscsid(parent.getURSId());
+        preque.setURSPchildcsid(child.getURSId());
+        roadmapSkilPrequeRepository.save(preque);
+        System.out.println("부모-자식 관계 추가됨: parentId=" + parentId + ", childId=" + childId);
+    }
 
     private void moveNode(changeRoadmapDTO dto) {
         if (dto.getId() == null) {
@@ -236,14 +281,14 @@ public class MypageService {
             dto.setPosition(new int[]{userRoadmapSkil.getURScsX(), userRoadmapSkil.getURScsY()});
             dto.setTag(userRoadmapSkil.getURSTag());
 
-            List<Integer> parents = roadmapSkilPrequeRepository.findByURSPchildcsid(userRoadmapSkil).stream()
-                    .map(preque -> preque.getURSPparentscsid().getURSId())
+            List<Integer> parents = roadmapSkilPrequeRepository.findByURSPchildcsid(userRoadmapSkil.getURSId()).stream()
+                    .map(UserRoadmapSkilPreque::getURSPparentscsid)
                     .filter(userRoadmapSkilIds::contains)
                     .collect(Collectors.toList());
             dto.setParent(parents);
 
-            List<Integer> children = roadmapSkilPrequeRepository.findByURSPparentscsid(userRoadmapSkil).stream()
-                    .map(preque -> preque.getURSPchildcsid().getURSId())
+            List<Integer> children = roadmapSkilPrequeRepository.findByURSPparentscsid(userRoadmapSkil.getURSId()).stream()
+                    .map(UserRoadmapSkilPreque::getURSPchildcsid)
                     .filter(userRoadmapSkilIds::contains)
                     .collect(Collectors.toList());
             dto.setChild(children);
