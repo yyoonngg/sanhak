@@ -25,6 +25,7 @@ type UpdateUserProfile = {
 // 라운지 미니 프로필
 type MiniProfileInfo = {
     id: number;
+    user_id: number;
     name: string;
     category: string;
     likes: number;
