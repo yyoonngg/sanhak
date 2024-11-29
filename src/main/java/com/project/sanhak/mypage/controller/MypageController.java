@@ -113,10 +113,10 @@ public class MypageController {
             responses = @ApiResponse(responseCode = "200", description = "로드맵 정보 업데이트 성공"))
     @PostMapping("/roadmap/update/{ur_id}")
     public ResponseEntity<String> updateTargetRoadmap(@PathVariable int ur_id,
-                                                      @RequestBody List<changeRoadmapDTO> requestData,
-                                                      HttpSession session) {
-        int uid = (int) session.getAttribute("uid");
-        mypageService.updateRoadmap(ur_id, requestData);
+                                                      @RequestBody roadmapUpdateRequest requestData) {
+        System.out.println("처리 중인 요청 데이터: " + requestData);
+        mypageService.updateRoadmapName(ur_id, requestData.getName());
+        mypageService.updateRoadmap(ur_id, requestData.getUpdates());
         return ResponseEntity.ok("로드맵 정보 업데이트 성공");
     }
 

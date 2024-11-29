@@ -16,6 +16,7 @@ import com.project.sanhak.lounge.service.LoungeService;
 import com.project.sanhak.main.service.MainService;
 import com.project.sanhak.mypage.dto.*;
 import com.project.sanhak.mypage.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -143,58 +144,114 @@ public class MypageService {
         return masteryList;
     }
 
+    @Transactional
     public void updateRoadmap(int urId, List<changeRoadmapDTO> requestData) {
-        // 로드맵 가져오기
-        Optional<UserRoadmap> userRoadmapOptional = roadmapRepository.findById(urId);
-        if (userRoadmapOptional.isEmpty()) {
-            throw new IllegalArgumentException("로드맵을 찾을 수 없습니다.");
-        }
-        UserRoadmap userRoadmap = userRoadmapOptional.get();
+        UserRoadmap userRoadmap = roadmapRepository.findById(urId)
+                .orElseThrow(() -> new IllegalArgumentException("로드맵을 찾을 수 없습니다."));
 
-        // 각 요청 데이터 처리
+        // 신규 노드의 csId와 저장된 URSId 매핑
+        Map<Integer, Integer> csIdToURSIdMap = new HashMap<>();
+
+        // 1. add_node 작업 처리
         for (changeRoadmapDTO dto : requestData) {
-            if (dto.getState() == 1) { // 추가 상태
-                if (dto.getId() != 0) { // 부모-자식 관계 (라인)
-                    int parentId = dto.getMapping().get(0);
-                    int childId = dto.getMapping().get(1);
-                    Optional<UserRoadmapSkil> parentSkill = roadmapSkilRepository.findById(parentId);
-                    Optional<UserRoadmapSkil> childSkill = roadmapSkilRepository.findById(childId);
+            if ("add_node".equals(dto.getActionType()) && dto.getId() == null) {
+                UserRoadmapSkil newSkill = new UserRoadmapSkil();
+                newSkill.setURSurid(userRoadmap);
+                newSkill.setURScsName(dto.getName());
+                newSkill.setURScsX(dto.getPosition().get(0));
+                newSkill.setURScsY(dto.getPosition().get(1));
+                newSkill.setURScsid(dto.getCsId());
 
-                    if (parentSkill.isPresent() && childSkill.isPresent()) {
-                        UserRoadmapSkilPreque preque = new UserRoadmapSkilPreque();
-                        preque.setURSPparentscsid(parentSkill.get());
-                        preque.setURSPchildcsid(childSkill.get());
-                        roadmapSkilPrequeRepository.save(preque);
-                    } else {
-                        throw new IllegalArgumentException("부모 또는 자식 스킬을 찾을 수 없습니다.");
-                    }
-                } else { // 노드 (x, y 좌표)
-                    int x = dto.getMapping().get(0);
-                    int y = dto.getMapping().get(1);
-
-                    UserRoadmapSkil skill = new UserRoadmapSkil();
-                    skill.setURSurid(userRoadmap);
-                    skill.setURScsid(dto.getId());
-                    skill.setURScsName("스킬 이름"); // 실제 이름은 필요에 따라 설정
-                    skill.setURScsX(x);
-                    skill.setURScsY(y);
-                    roadmapSkilRepository.save(skill);
-                }
-            } else if (dto.getState() == 0) { // 삭제 상태
-                if (dto.getId() == 0) { // 부모-자식 관계 (라인)
-                    int parentId = dto.getMapping().get(0);
-                    int childId = dto.getMapping().get(1);
-                    Optional<UserRoadmapSkil> parentOptional=roadmapSkilRepository.findById(parentId);
-                    Optional<UserRoadmapSkil> childOptional=roadmapSkilRepository.findById(childId);
-                    UserRoadmapSkil parent=parentOptional.get();
-                    UserRoadmapSkil child=childOptional.get();
-                    roadmapSkilPrequeRepository.deleteByURSPparentscsidAndURSPchildcsid(parent, child);
-                } else { // 노드 (x, y 좌표)
-                    int skillId = dto.getId();
-                    roadmapSkilRepository.deleteById(skillId);
-                }
+                UserRoadmapSkil savedSkill = roadmapSkilRepository.save(newSkill);
+                System.out.println("새로운 노드 저장: " + savedSkill.getURSId() + " (csId: " + dto.getCsId() + ")");
+                csIdToURSIdMap.put(dto.getCsId(), savedSkill.getURSId());
             }
         }
+
+        System.out.println("csIdToURSIdMap 상태: " + csIdToURSIdMap);
+
+        // 2. add_line 및 move_node 작업 처리
+        for (changeRoadmapDTO dto : requestData) {
+            if ("add_line".equals(dto.getActionType())) {
+                addLine(dto, urId, csIdToURSIdMap);
+            } else if ("move_node".equals(dto.getActionType())) {
+                if (dto.getId() == null && dto.getCsId() != null) {
+                    dto.setId(csIdToURSIdMap.get(dto.getCsId()));
+                }
+                moveNode(dto);
+            }
+        }
+    }
+    private Integer parseIdOrName(String value, Integer urId, Map<Integer, Integer> csIdToURSIdMap) {
+        try {
+            // 숫자로 변환 가능하면 기존 노드의 ID
+            Integer id = Integer.parseInt(value);
+            System.out.println("ID로 처리됨: " + id);
+            return id;
+        } catch (NumberFormatException e) {
+            // 숫자가 아니면 URScsName으로 검색
+            System.out.println("이름으로 검색 중: " + value);
+            return roadmapSkilRepository.findByURSurid_URIdAndURScsName(urId, value)
+                    .map(UserRoadmapSkil::getURSId)
+                    .orElseGet(() -> {
+                        Integer mappedId = csIdToURSIdMap.get(value.hashCode());
+                        if (mappedId == null) {
+                            System.err.println("매핑할 수 없는 값: " + value + ", UR ID: " + urId);
+                            throw new IllegalArgumentException("매핑할 수 없는 값: " + value + ", UR ID: " + urId);
+                        }
+                        System.out.println("csIdToURSIdMap에서 찾은 값: " + mappedId);
+                        return mappedId;
+                    });
+        }
+    }
+
+    private void addLine(changeRoadmapDTO dto, Integer urId, Map<Integer, Integer> csIdToURSIdMap) {
+        List<String> mapping = dto.getMapping();
+        if (mapping == null || mapping.size() != 2) {
+            throw new IllegalArgumentException("매핑 데이터가 올바르지 않습니다.");
+        }
+        System.out.println("addLine 작업 시작: " + mapping);
+
+        // 부모와 자식 ID 변환 처리
+        Integer parentId = parseIdOrName(mapping.get(0), urId, csIdToURSIdMap);
+        Integer childId = parseIdOrName(mapping.get(1), urId, csIdToURSIdMap);
+
+        if (parentId == null || childId == null) {
+            System.err.println("부모 또는 자식 노드가 null입니다. parentId: " + parentId + ", childId: " + childId);
+            throw new IllegalArgumentException("부모 또는 자식 노드를 찾을 수 없습니다.");
+        }
+
+        System.out.println("부모 ID: " + parentId + ", 자식 ID: " + childId);
+
+        // 부모-자식 관계 저장
+        UserRoadmapSkil parent = roadmapSkilRepository.findById(parentId)
+                .orElseThrow(() -> new IllegalArgumentException("부모 노드를 찾을 수 없습니다. ID: " + parentId));
+        UserRoadmapSkil child = roadmapSkilRepository.findById(childId)
+                .orElseThrow(() -> new IllegalArgumentException("자식 노드를 찾을 수 없습니다. ID: " + childId));
+
+        // 중복 관계 확인
+        boolean exists = roadmapSkilPrequeRepository.existsByURSPparentscsidAndURSPchildcsid(parent.getURSId(), child.getURSId());
+        if (exists) {
+            System.out.println("이미 존재하는 부모-자식 관계: parentId=" + parentId + ", childId=" + childId);
+            return;
+        }
+        // 중복이 아닌 경우에만 추가
+        UserRoadmapSkilPreque preque = new UserRoadmapSkilPreque();
+        preque.setURSPparentscsid(parent.getURSId());
+        preque.setURSPchildcsid(child.getURSId());
+        roadmapSkilPrequeRepository.save(preque);
+        System.out.println("부모-자식 관계 추가됨: parentId=" + parentId + ", childId=" + childId);
+    }
+
+    private void moveNode(changeRoadmapDTO dto) {
+        if (dto.getId() == null) {
+            throw new IllegalArgumentException("노드 ID가 null입니다. 이동 작업 전에 노드가 추가되어야 합니다.");
+        }
+        UserRoadmapSkil skill = roadmapSkilRepository.findById(dto.getId())
+                .orElseThrow(() -> new IllegalArgumentException("노드를 찾을 수 없습니다. ID: " + dto.getId()));
+        skill.setURScsX(dto.getPosition().get(0));
+        skill.setURScsY(dto.getPosition().get(1));
+        roadmapSkilRepository.save(skill);
     }
 
     public roadmapListDTO addNewRoadmap(int uid) {
@@ -224,14 +281,14 @@ public class MypageService {
             dto.setPosition(new int[]{userRoadmapSkil.getURScsX(), userRoadmapSkil.getURScsY()});
             dto.setTag(userRoadmapSkil.getURSTag());
 
-            List<Integer> parents = roadmapSkilPrequeRepository.findByURSPchildcsid(userRoadmapSkil).stream()
-                    .map(preque -> preque.getURSPparentscsid().getURSId())
+            List<Integer> parents = roadmapSkilPrequeRepository.findByURSPchildcsid(userRoadmapSkil.getURSId()).stream()
+                    .map(UserRoadmapSkilPreque::getURSPparentscsid)
                     .filter(userRoadmapSkilIds::contains)
                     .collect(Collectors.toList());
             dto.setParent(parents);
 
-            List<Integer> children = roadmapSkilPrequeRepository.findByURSPparentscsid(userRoadmapSkil).stream()
-                    .map(preque -> preque.getURSPchildcsid().getURSId())
+            List<Integer> children = roadmapSkilPrequeRepository.findByURSPparentscsid(userRoadmapSkil.getURSId()).stream()
+                    .map(UserRoadmapSkilPreque::getURSPchildcsid)
                     .filter(userRoadmapSkilIds::contains)
                     .collect(Collectors.toList());
             dto.setChild(children);
@@ -271,5 +328,17 @@ public class MypageService {
             dto.setName(userBadge.getUBCSid().getCSName());
             return dto;
         }).collect(Collectors.toList());
+    }
+
+    public void updateRoadmapName(int urId, String name) {
+        // 1. 로드맵 조회
+        UserRoadmap userRoadmap = roadmapRepository.findById(urId)
+                .orElseThrow(() -> new IllegalArgumentException("로드맵을 찾을 수 없습니다."));
+
+        // 2. 로드맵 이름 변경
+        if (name != null && !name.isEmpty()) {
+            userRoadmap.setURName(name);
+            roadmapRepository.save(userRoadmap);
+        }
     }
 }

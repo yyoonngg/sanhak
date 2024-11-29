@@ -10,12 +10,8 @@ public class UserRoadmapSkilPreque {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int URSPId;
 
-    @ManyToOne
-    @JoinColumn(name = "URSPparentscsid", referencedColumnName = "URSid")
-    private UserRoadmapSkil URSPparentscsid;
+    private int URSPparentscsid;
 
-    @ManyToOne
-    @JoinColumn(name = "URSPchildcsid", referencedColumnName = "URSid")
-    private UserRoadmapSkil URSPchildcsid;
+    private int URSPchildcsid;
 
 }

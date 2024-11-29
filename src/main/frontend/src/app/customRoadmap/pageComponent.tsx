@@ -274,6 +274,9 @@ export default function CustomRoadmapPage() {
   });
   const [triggerAction, setTriggerAction] = useState<null | 'increase' | 'decrease'>(null);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [selectedSkills, setSelectedSkills] = useState<(RoadmapSkill | null)[]>([null, null]);
+  const [relationBuffer, setRelationBuffer] = useState<[string, string][]>([]);
+
   // 로드맵 리스트 불러오기
   useEffect(() => {
     const loadRoadmapList = async () => {
@@ -304,9 +307,91 @@ export default function CustomRoadmapPage() {
   };
 
   // TODO 5: 로드맵 저장 API 호출
-  const updateRoadmap = () => {
-    setIsEditMode(false);
+  const updateRoadmap = async () => {
+    try {
+      const roadmapUpdatePayload = {
+        name: selectedRoadmap.name,
+        updates: [
+          // 신규 노드 연결 정보 (relationBuffer)
+          ...relationBuffer.map(([parent, child]) => ({
+            actionType: 'add_line',
+            mapping: [parent, child],
+          })),
+
+          // 기존 노드 연결 정보 (selectedRoadmap.skills 기반)
+          ...selectedRoadmap.skills.flatMap(skill => {
+            const updates: ChangeRoadmapDTO[] = [];
+            if (skill.tag == null) {
+              if (skill.child && skill.child.length > 0) {
+                skill.child.forEach(childId => {
+                  const childSkill = selectedRoadmap.skills.find(s => s.id === childId);
+                  if (childSkill) {
+                    // 부모-자식 관계 추가
+                    updates.push({
+                      actionType: 'add_line',
+                      mapping: [
+                        skill.tag ? skill.tag : skill.id?.toString() || skill.name,
+                        childSkill.tag ? childSkill.tag : childSkill.id?.toString() || childSkill.name,
+                      ],
+                    });
+                  }
+                });
+              }
+            }
+            return updates;
+          }),
+
+          // 노드 추가 및 위치 업데이트
+          ...selectedRoadmap.skills.map(skill => {
+            if (skill.tag != null) {
+              // 신규 노드 추가
+              return {
+                actionType: 'add_node',
+                id: null,
+                name: skill.name,
+                position: skill.position,
+                csId: skill.tag,
+              };
+            } else {
+              // 기존 노드 위치 이동
+              return {
+                actionType: 'move_node',
+                id: skill.id,
+                name: skill.name,
+                position: skill.position,
+              };
+            }
+          }),
+        ],
+      };
+      console.log("현재 relationBuffer 상태:", relationBuffer);
+      console.log('처리 중인 요청 데이터:', roadmapUpdatePayload);
+
+      // API 호출
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mypage/roadmap/update/${selectedRoadmap.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(roadmapUpdatePayload),
+      });
+
+      if (!response.ok) {
+        throw new Error('로드맵 저장 실패');
+      }
+
+      console.log('로드맵 저장 성공');
+      setRelationBuffer([]);
+      setIsEditMode(false);
+      if (selectedRoadmap.id != null) {
+        onSelectRoadmap(selectedRoadmap.id);
+      }
+    } catch (error) {
+      console.error('로드맵 저장 중 오류 발생:', error);
+    }
   };
+
 
   // 로드맵 크기 관련 트리거 
   // 1) 로드맵 확장 트리거
@@ -357,6 +442,23 @@ export default function CustomRoadmapPage() {
   // 스킬을 새로 추가하거나, 선후관계를 설정할때
   // 1) 스킬을 새로 추가
   const onSelectSkill = (skillName: string) => {
+    const skill = allCategorySkills.flatMap(category => category.skills)
+        .find(skill => skill.name === skillName);
+
+    if (!skill) {
+      console.error(`스킬 이름 '${skillName}'에 해당하는 ID를 찾을 수 없습니다.`);
+      return;
+    }
+
+    const skillId = skill.id;
+
+    // 중복 불가
+    const isDuplicateName = selectedRoadmap.skills.some(s => s.name === skillName);
+    if (isDuplicateName) {
+      console.error(`이미 존재하는 스킬 이름: ${skillName}`);
+      return;
+    }
+
     const maxX = Math.max(...selectedRoadmap.skills.map(skill => skill.position[0]), 0);
     const maxY = Math.max(...selectedRoadmap.skills.map(skill => skill.position[1]), 0);
     let newPosition;
@@ -376,7 +478,7 @@ export default function CustomRoadmapPage() {
       }
     };
     generateUniquePosition();
-  
+
     if(newPosition) {
       const maxId = Math.max(...selectedRoadmap.skills.map(skill => skill.id), 0);
       const newId = maxId + 1;
@@ -386,12 +488,28 @@ export default function CustomRoadmapPage() {
         name: skillName,
         child: [],
         position: newPosition,
-        tag: "null",
+        tag: skillId.toString(),
       };
       console.log(newSkill);
       setSelectedRoadmap({
         ...selectedRoadmap,
         skills: [...selectedRoadmap.skills, newSkill]
+      });
+
+      setSelectedSkills(prev => {
+        if (!prev[0]) {
+          return [newSkill, null];
+        } else if (!prev[1]) {
+          const firstSkill = prev[0];
+          const secondSkill = newSkill;
+          const a = firstSkill
+              ? (firstSkill.tag ? firstSkill.name : firstSkill.id?.toString() || '')
+              : '';
+          const b = secondSkill.tag ? secondSkill.name : secondSkill.id?.toString() || '';
+          setRelationBuffer(prevBuffer => [...prevBuffer, [a, b]]);
+          return [null, null];
+        }
+        return prev;
       });
     }
   };
@@ -399,18 +517,19 @@ export default function CustomRoadmapPage() {
   const handleUpdateSkill = (newSkill: RoadmapSkill) => {
     setSelectedRoadmap((roadmap: CustomRoadmapDetail) => {
       const skillExists = roadmap.skills.some(skill => skill.id === newSkill.id);
-      if(skillExists) { 
+      if(skillExists) {
+        console.log("Updated roadmap:", selectedRoadmap);
         return {
           ...roadmap,
-          skills: roadmap.skills.map(skill => 
+          skills: roadmap.skills.map(skill =>
             skill.id === newSkill.id ? newSkill : skill
           ),
         }
       }
+      console.log("Received newSkill:", newSkill);
       return roadmap;
     });
   }
-  
   return (
     <div className='w-full h-full flex flex-col items-center'>
       <div className='w-[1400px] h-[90dvh]'>
