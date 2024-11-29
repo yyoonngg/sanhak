@@ -14,8 +14,5 @@ type CustomRoadmapDetail = {
 };
 
 type ChangeRoadmapDTO= {
-    id?: number|null;
-    csId?:number;
-    state: number;
-    mapping: [number, number];
+
 }

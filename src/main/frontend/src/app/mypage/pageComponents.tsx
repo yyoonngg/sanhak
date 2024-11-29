@@ -8,12 +8,21 @@ import { AiCard } from '@/models/card';
 import RecommendCompany from './RecommendCompany';
 import {CustomRoadmapDetail} from "@/models/roadmap";
 import {UpdateUserProfile, User, UserRecommendCompany, UserSkill} from '@/models/user';
+import { useUserContext } from '@/context/UserContext';
 
 // TODO: API 연결 -> 유저의 커스텀 로드맵 리스트
 // TODO: API 연결 -> customRoadmapList에서 선택된 로드맵의 id로 api호출
 // TODO: API 연결
+type MypagePageProps = {
+  user_id?: number;
+};
 
-export default function MypagePage() {
+export default function MypagePage({
+  user_id
+}: MypagePageProps) {    
+  const { loggedInUserId, mypageUserId  } = useUserContext();
+  console.log("user_id:", user_id);
+  const [pageUserId, setPageUserId] = useState<number>();
   const [userInfo, setUserInfo] = useState<User>();
   const [badgeInfo, setBadgeInfo] = useState<UserSkill[]>([]);
   const [cardInfos, setCardInfos] = useState<AiCard[]>([]);
@@ -46,10 +55,19 @@ export default function MypagePage() {
     },
   };
 
+  useEffect(()=>{
+    if(user_id) {
+      setPageUserId(user_id);
+    } 
+    else if(loggedInUserId) { 
+      setPageUserId(loggedInUserId);
+    }
+  },[user_id, loggedInUserId]);
+
   useEffect(() => {
     const fetchProfileInfo = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/main/profile`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/main/profile/${pageUserId}`, {
           credentials: 'include',
         });
         if (!response.ok) {
@@ -62,11 +80,9 @@ export default function MypagePage() {
       }
     };
 
-    fetchProfileInfo();
-    // 백엔드에서 데이터 가져오기
     const fetchCards = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/card/`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/card/${pageUserId}`, {
           credentials: 'include',
         });
         if (!response.ok) {
@@ -79,11 +95,9 @@ export default function MypagePage() {
       }
     };
 
-    fetchCards();
-
     const fetchBadges = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mypage/badge`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mypage/badge/${pageUserId}`, {
           credentials: 'include',
         });
         if (!response.ok) {
@@ -97,11 +111,9 @@ export default function MypagePage() {
       }
     };
 
-    fetchBadges();
-
     const fetchRoadmaps = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mypage/roadmap/all`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mypage/roadmap/all/${pageUserId}`, {
           credentials: 'include',
         });
         if (!response.ok) {
@@ -113,11 +125,10 @@ export default function MypagePage() {
         console.error('Error fetching roadmaps:', error);
       } 
     };
-    fetchRoadmaps();
 
     const fetchRecommendCompanies = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/company/recommend`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/company/recommend/${pageUserId}`, {
           credentials: 'include',
         });
         if (!response.ok) throw new Error('Failed to fetch recommended companies');
@@ -126,11 +137,16 @@ export default function MypagePage() {
         console.error('Error fetching recommended companies:', error);
       }
     };
-    fetchRecommendCompanies();
-  }, []);
+    if(pageUserId){
+      fetchProfileInfo();
+      fetchCards();
+      fetchBadges();
+      fetchRoadmaps();
+      fetchRecommendCompanies();
+    }
+  }, [pageUserId]);
 
   const onSaveProfile = async(data: UpdateUserProfile) => {
-    console.log(data);
       try {
         const formData = new FormData();
         formData.append('profile', new Blob([JSON.stringify(data.profile)], { type: 'application/json' }));
@@ -158,7 +174,7 @@ export default function MypagePage() {
 
   return (
     <div className="w-full h-full flex flex-col items-center mt-5">
-      <div className='max-w-[1400px] h-full px-4 xl:px-20 lg:px-10'>
+      <div className='max-w-[1400px] h-full px-4 2xl:w-[1400px] xl:px-20 lg:px-10'>
         <div className='w-full flex flex-col pb-5'>
           <UserProfile userInfo={userInfo} badgeInfo={badgeInfo} onSave={onSaveProfile}/>
         </div>
