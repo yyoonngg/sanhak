@@ -1,3 +1,4 @@
+import { UserProvider } from "@/context/UserContext";
 import "./globals.css";
 import NavigationBar from "@/components/Navbar";
 
@@ -12,6 +13,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
+    <UserProvider>
       <html lang="ko">
       <head>
       </head>
@@ -22,5 +24,6 @@ export default function RootLayout({
       {children}
       </body>
       </html>
+    </UserProvider>
   );
 }

@@ -2,8 +2,10 @@
 
 import {useEffect, useState} from 'react';
 import Link from 'next/link';
+import { useUserContext } from '@/context/UserContext';
 
 const NavigationBar = () =>{
+    const { setLoggedInUserId  } = useUserContext();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
 
@@ -14,6 +16,7 @@ const NavigationBar = () =>{
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/oauth/status`, { credentials: 'include' });
             const data = await response.json();
             setIsAuthenticated(data.authenticated);
+            setLoggedInUserId(data.uid);
         };
         fetchAuthStatus();
     }, []);
@@ -47,32 +50,32 @@ const NavigationBar = () =>{
                         menuOpen ? "flex" : "hidden"
                     } lg:flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-12 items-center absolute lg:static top-16 left-0 right-0 bg-white lg:bg-transparent z-50 shadow-lg lg:shadow-none p-5 lg:p-0`}
                 >
-                    <li>
+                    <li onClick={toggleMenu}>
                         <Link href="/category" className="hover:underline text-[0.7rem] font-gmarketsansBold xl:text-sm font-gmarketsansMedium">
                         직무별로드맵
                         </Link>
                     </li>
-                    <li>
+                    <li onClick={toggleMenu}>
                         <Link href="/lounge" className="hover:underline text-[0.7rem] font-gmarketsansBold xl:text-sm font-gmarketsansMedium">
                         커리어라운지
                         </Link>
                     </li>
-                    <li>
+                    <li onClick={toggleMenu}>
                         <Link href={isAuthenticated ? "/card" : "/signin"} className="hover:underline text-[0.7rem] font-gmarketsansBold xl:text-sm font-gmarketsansMedium">
                         AI경험카드
                         </Link>
                     </li>
-                    <li>
+                    <li onClick={toggleMenu}>
                         <Link href={isAuthenticated ? "/aiChatbot" : "/signin"} className="hover:underline text-[0.7rem] font-gmarketsansBold xl:text-sm font-gmarketsansMedium">
                         AI경험Chat
                         </Link>
                     </li>
-                    <li>
+                    <li onClick={toggleMenu}>
                         <Link href={isAuthenticated ? "/customRoadmap" : "/signin"} className="hover:underline text-[0.7rem] font-gmarketsansBold xl:text-sm font-gmarketsansMedium">
                         커스텀로드맵
                         </Link>
                     </li>
-                    <li>
+                    <li onClick={toggleMenu}>
                         <Link href={isAuthenticated ? "/mypage" : "/signin"} className="hover:underline text-[0.7rem] font-gmarketsansBold xl:text-sm font-gmarketsansMedium">
                         마이페이지
                         </Link>

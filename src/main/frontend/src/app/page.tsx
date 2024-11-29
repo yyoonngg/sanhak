@@ -1,9 +1,12 @@
+import { UserProvider } from '@/context/UserContext';
 import MainComponent from './main/pageComponents';
 
 export default function Home() {
     return (
         <div>
-            <MainComponent />
+            <UserProvider>
+              <MainComponent />
+            </UserProvider>
         </div>
     );
 }
