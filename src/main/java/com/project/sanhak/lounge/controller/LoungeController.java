@@ -37,8 +37,10 @@ public class LoungeController {
     @GetMapping("/all/{sortOption}/{page}")
     public ResponseEntity<Page<LoungesDTO>> getAllLounges(
             @PathVariable int sortOption,
-            @PathVariable int page) {
-        Page<LoungesDTO> lounges = loungeService.getLounges(sortOption, page);
+            @PathVariable int page,
+            HttpSession session) {
+        Integer uid = (Integer) session.getAttribute("uid");
+        Page<LoungesDTO> lounges = loungeService.getLounges(sortOption, page, uid);
         return ResponseEntity.ok(lounges);
     }
 

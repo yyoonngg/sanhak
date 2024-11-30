@@ -92,7 +92,7 @@ public class LoungeService {
         }
     }
 
-    public Page<LoungesDTO> getLounges(int sortOption, int page) {
+    public Page<LoungesDTO> getLounges(int sortOption, int page, Integer uid) {
         Sort sort = switch (sortOption) {
             case 2 -> Sort.by(Sort.Direction.DESC, "LBadge"); // 뱃지 많은 순
             case 3 -> Sort.by(Sort.Direction.DESC, "LRoadmap"); // 로드맵 많은 순
@@ -103,7 +103,12 @@ public class LoungeService {
         };
 
         PageRequest pageRequest = PageRequest.of(page - 1, 20, sort);
-        Page<Lounges> loungesPage = loungeRepository.findAll(pageRequest);
+        Page<Lounges> loungesPage;
+        if (uid != null) {
+            loungesPage = loungeRepository.findByLUid_UIdNot(uid, pageRequest);
+        } else {
+            loungesPage = loungeRepository.findAll(pageRequest);
+        }
         return loungesPage.map(this::convertToDTO);
     }
 
@@ -111,13 +116,14 @@ public class LoungeService {
         LoungesDTO dto = new LoungesDTO();
         dto.setId(lounge.getLId());
         dto.setLikes(lounge.getLLikes());
-        dto.setViewCount(lounge.getLView());
+        dto.setView_cnt(lounge.getLView());
         dto.setBadge_cnt(lounge.getLBadge());
         dto.setRoadmap_cnt(lounge.getLRoadmap());
         dto.setCard_cnt(lounge.getLCard());
         dto.setName(lounge.getLName());
         dto.setCategory(lounge.getLPosition());
         dto.setImageURL(lounge.getLImageURL());
+        dto.setUser_id(lounge.getLUid().getUId());
         return dto;
     }
 

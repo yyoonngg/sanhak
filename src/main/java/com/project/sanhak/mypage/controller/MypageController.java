@@ -1,5 +1,7 @@
 package com.project.sanhak.mypage.controller;
 
+import com.project.sanhak.category.repository.categoryRepository;
+import com.project.sanhak.domain.skil.code.CodeSkil;
 import com.project.sanhak.domain.skil.user.UserRoadmap;
 import com.project.sanhak.mypage.dto.*;
 import com.project.sanhak.mypage.service.MypageService;
@@ -22,6 +24,8 @@ import java.util.List;
 public class MypageController {
     @Autowired
     private MypageService mypageService;
+    @Autowired
+    private categoryRepository categoryRepository;
 
     @Operation(summary = "내 로드맵 목록 호출",
             responses = @ApiResponse(
@@ -127,10 +131,19 @@ public class MypageController {
                     content = @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = masteryDTO.class)))))
     @GetMapping("/mastery/{cs_id}")
-    public ResponseEntity<List<masteryDTO>> getMastery(@PathVariable int cs_id,
+    public ResponseEntity<mergeMasteryDTO> getMastery(@PathVariable int cs_id,
                                                        HttpSession session) {
         int uid = (int) session.getAttribute("uid");
-        List<masteryDTO> masteryList = mypageService.getMasteryList(uid, cs_id);
+        mergeMasteryDTO masteryList = mypageService.getMasteryList(uid, cs_id);
+        return ResponseEntity.ok(masteryList);
+    }
+    @GetMapping("/mastery")
+    public ResponseEntity<mergeMasteryDTO> getMasteryByName(@RequestParam String name,
+                                                            HttpSession session) {
+        int uid = (int) session.getAttribute("uid");
+        CodeSkil skil = categoryRepository.getCodeSkilByCSName(name);
+        int cs_id= skil.getCSId();
+        mergeMasteryDTO masteryList = mypageService.getMasteryList(uid, cs_id);
         return ResponseEntity.ok(masteryList);
     }
 
@@ -141,10 +154,9 @@ public class MypageController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = quizDTO.class))))
     @GetMapping("/mastery/test/{ms_id}")
-    public ResponseEntity<quizDTO> testMastery(@PathVariable int ms_id,
-                                               HttpSession session) {
-        int uid = (int) session.getAttribute("uid");
+    public ResponseEntity<quizDTO> testMastery(@PathVariable int ms_id) {
         quizDTO quiz = mypageService.getQuiz(ms_id);
+        System.out.println(quiz);
         return ResponseEntity.ok(quiz);
     }
 
@@ -157,7 +169,6 @@ public class MypageController {
         mypageService.masterSkill(uid, ms_id);
         return ResponseEntity.ok("스킬을 익혔습니다!");
     }
-
 
     @Operation(summary = "뱃지 호출",
             responses = @ApiResponse(responseCode = "200", description = "뱃지 보여주기"))

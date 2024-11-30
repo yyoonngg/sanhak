@@ -2,9 +2,10 @@
 
 import React, {useEffect, useState} from 'react';
 import Roadmap from './Roadmap';
-import {RoadmapSkill} from "@/models/skill";
+import {RoadmapSkill, SkillDetail} from "@/models/skill";
 import TimelineRoadmap from "@/app/category/TimeLineRoadMap";
 import CategoryButton from '@/app/category/CategoryButton';
+import SkillDetailModal from "@/app/customRoadmap/SkillDetailModal";
 
 const mockRoadmapSkills: RoadmapSkill[] = [
   { id: 1, name: 'HTML', child: [27, 28, 29], position: [0, 0], tag:'basic'},
@@ -56,6 +57,10 @@ export default function CategoryPage() {
   const [category, setCategory] = useState<string>('frontend');
   const [roadmapSkills, setRoadmapSkills] = useState<RoadmapSkill[]>([]);
   const categoryName = categoryLabels[category];
+  const [selectedSkillPng, setSelectedSkillPng] = useState<string>("");
+  const [skillDetailData, setSkillDetailData] = useState<SkillDetail | null>(null);
+  const [isDetailVisible, setIsDetailVisible] = useState<boolean>(false);
+
   useEffect(() => {
     // 백엔드에서 데이터 가져오기
     const fetchData = async () => {
@@ -89,6 +94,43 @@ export default function CategoryPage() {
     setCategory(category);
   };
 
+  const onSelectDetail = async (id: number) => {
+    try {
+      console.log("Fetching details for node ID:", id);
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mypage/mastery/${id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch mastery details");
+      }
+      const data : SkillDetail = await response.json();
+      const skillDetail: SkillDetail = {
+        id: data.id,
+        name: data.name,
+        description: data.description || '',
+        list: data.list.map((topic) => ({
+          id: topic.id,
+          title: topic.title,
+          subtitle: topic.subtitle,
+          status: topic.status ? 'completed' : 'not-started',
+        })),
+      };
+      setSkillDetailData(skillDetail);
+      setSelectedSkillPng(`/asset/png/skill/${data.name
+          .toLowerCase()
+          .replace(/\s+/g, '')
+          .replace(/\./g, '')
+          .replace(/#/g, 'sharp')}_img.png`);
+      setIsDetailVisible(true);
+    } catch (error) {
+      console.error("Error fetching mastery details:", error);
+    }
+  };
   return (
     <div className="w-full h-screen flex flex-col items-center">
       <div className='w-dvw h-40 flex flex-row items-center justify-center border-b border-gray-d9'>
@@ -109,9 +151,16 @@ export default function CategoryPage() {
             <div className="font-bold">RoadMap</div>
             <div className={`font-semibold text-category-${category} mb-5`}>{categoryName}</div>
           </div>
-          <Roadmap isEditMode={false} roadmapSkills={roadmapSkills} />
+          <Roadmap isEditMode={false} roadmapSkills={roadmapSkills} onSelectDetail={onSelectDetail}/>
         </div>
       </div>
+      {isDetailVisible && (
+          <SkillDetailModal
+              skillDetail={skillDetailData as SkillDetail}
+              selectedSkillPng={selectedSkillPng}
+              onClose={() => setIsDetailVisible(false)}
+          />
+      )}
     </div>
   );
 }

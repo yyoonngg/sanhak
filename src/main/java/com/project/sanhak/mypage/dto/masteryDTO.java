@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,20 +16,11 @@ public class masteryDTO {
     private int id;
 
     @Schema(description = "마스터리 스킬 이름", example = "Database Optimization")
-    private String name;
+    private String title;
 
-    @Schema(description = "정보 1", example = "SQL Tuning")
-    private String info1;
-
-    @Schema(description = "정보 2", example = "Indexing")
-    private String info2;
-
-    @Schema(description = "정보 3", example = "Query Optimization")
-    private String info3;
-
-    @Schema(description = "코드 스킬 ID", example = "10")
-    private int cs_id;
+    @Schema(description = "정보", example = "SQL Tuning")
+    private List<String> subtitle;
 
     @Schema(description = "익힌 여부.", example = "true")
-    private boolean state;
+    private boolean status;
 }

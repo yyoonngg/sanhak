@@ -31,6 +31,7 @@ type SkillStatus = 'not-started' | 'in-progress' | 'completed';
 
 // 스킬 목차 구성
 type SkillTopic = {
+    id: number;
     title: string;
     subtitle: string[];
     status: SkillStatus;
@@ -49,6 +50,12 @@ export declare const skillSelectedTags: {
     프레임워크: 'framework';
     연결과API:'connection';
     테스트: 'test';
+};
+
+type quiz = {
+    question: string;
+    options: string[];
+    answer: number;
 };
 
 //mypage 하위의 RoadmapCustomize 파일에서 재사용
