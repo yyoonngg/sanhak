@@ -124,24 +124,29 @@ public class MypageService {
     }
 
 
-    public List<masteryDTO> getMasteryList(int uid, int csId) {
+    public mergeMasteryDTO getMasteryList(int uid, int csId) {
         User user = userService.getUserFromUid(uid);
         CodeSkil codeSkil = categoryService.getCodeSkilFromCSId(csId);
         List<MasterySkil> masterySkills = masteryRepository.findByMSCSid(codeSkil);
-        List<masteryDTO> masteryList = new ArrayList<>();
+        mergeMasteryDTO masteryList = new mergeMasteryDTO();
+        masteryList.setId(codeSkil.getCSId());
+        masteryList.setName(codeSkil.getCSName());
+        masteryList.setDescription(codeSkil.getCSDetail());
+        List<masteryDTO> skillTopics = new ArrayList<>();
         for (MasterySkil masterySkill : masterySkills) {
-            boolean state=userMasterySkilRepository.findByUMSuidAndUMSmsid(user, masterySkill);
-            masteryDTO dto = new masteryDTO();
-            dto.setId(masterySkill.getMSId());
-            dto.setName(masterySkill.getMSName());
-            dto.setInfo1(masterySkill.getMSInfo1());
-            dto.setInfo2(masterySkill.getMSInfo2());
-            dto.setInfo3(masterySkill.getMSInfo3());
-            dto.setCs_id(csId);
-            dto.setState(state);
-            masteryList.add(dto);
+            masteryDTO mastery = new masteryDTO();
+            mastery.setId(masterySkill.getMSId());
+            mastery.setTitle(masterySkill.getMSName());
+            mastery.setSubtitle(Arrays.asList(masterySkill.getMSInfo1(), masterySkill.getMSInfo2(), masterySkill.getMSInfo3()));
+            mastery.setStatus(checkMasteryState(user, masterySkill));
+            skillTopics.add(mastery);
         }
+        masteryList.setList(skillTopics);
         return masteryList;
+    }
+
+    private boolean checkMasteryState(User user, MasterySkil masterySkill) {
+        return userMasterySkilRepository.existsByUMSuidAndUMSmsid(user, masterySkill);
     }
 
     @Transactional

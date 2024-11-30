@@ -36,6 +36,7 @@ const SkillNode = ({
         Math.round(skill.position[0] + deltaX / scale),
         Math.round(skill.position[1] + deltaY / scale),
       ];
+      console.log("Dragging node:", skill.id, "New position:", newPosition);
       onDrag?.(skill.id, newPosition);
     };
 
@@ -52,6 +53,7 @@ const SkillNode = ({
 
   // 선후관계를 위하여 스킬노드를 선택하는 함수
   const handleClick = () => {
+    console.log("Node clicked:", skill.id);
     onSelect?.(skill.id); 
   };
 

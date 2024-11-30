@@ -40,7 +40,7 @@ export default function LoungePage() {
   
         const formattedData: MiniProfileInfo[] = data.content.map((profile: any) => ({
           id: profile.id,
-          user_id: profile.luid,
+          user_id: profile.user_id,
           name: profile.name,
           category: profile.category,
           likes: profile.likes,

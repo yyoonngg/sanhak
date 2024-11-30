@@ -185,12 +185,14 @@ export default function UserProfile({
             </div>
           </div>
         </div>
+        {userInfo === undefined && (
         <div 
           className='w-1/12 h-1/12 flex justify-center items-center border-2 border-primary rounded-xl p-2 cursor-pointer'
           onClick={isEditing ? saveProfile : changeProfileMode}
         >
           <img src='/asset/png/icon_modify_profile.png'/>
         </div>
+        )}
       </div>
       
       <div className='w-full lg:w-2/5 xl:w-1/2 max-h-[256px] bg-primary rounded-xl flex flex-wrap content-start p-4 lg:ml-4 overflow-y-auto scrollbar'>
