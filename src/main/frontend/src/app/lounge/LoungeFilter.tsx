@@ -11,7 +11,7 @@ export default function LoungeFilter({
   handleClickFilter
 }: LoungeFilterProps) {
   return (
-    <div className='flex gap-4 mt-2'>
+    <div className='flex flex-wrap gap-4 mt-2'>
       <button
         className={`flex items-center gap-2 px-2 py-1 border rounded-xl hover:bg-gray-d9 ${selectedFilter === "time" ? "bg-primary text-white" : "bg-white"}`}
         onClick={()=>handleClickFilter('time')}
@@ -30,22 +30,22 @@ export default function LoungeFilter({
         className={`flex items-center gap-2 px-2 py-1 border rounded-xl hover:bg-gray-d9 ${selectedFilter === "badge" ? "bg-primary text-white" : "bg-white"}`}
         onClick={()=>handleClickFilter('badge')}
       >
-        <img className='w-4' src='asset/png/icon_filter_badge.png' alt='스킬뱃지 많은 순' />
-        스킬뱃지 많은 순
+        <img className='w-4' src='asset/png/icon_filter_badge.png' alt='스킬뱃지 순' />
+        스킬뱃지 순
       </button>
       <button
         className={`flex items-center gap-2 px-2 py-1 border rounded-xl hover:bg-gray-d9 ${selectedFilter === "roadmap" ? "bg-primary text-white" : "bg-white"}`}
         onClick={()=>handleClickFilter('roadmap')}
       >
-        <img className='w-4' src='asset/png/icon_filter_roadmap.png' alt='커스텀로드맵 많은 순' />
-        커스텀로드맵 많은 순
+        <img className='w-4' src='asset/png/icon_filter_roadmap.png' alt='커스텀로드맵 순' />
+        커스텀로드맵 순
       </button>
       <button
         className={`flex items-center gap-2 px-2 py-1 border rounded-xl hover:bg-gray-d9 ${selectedFilter === "card" ? "bg-primary text-white" : "bg-white"}`}
         onClick={()=>handleClickFilter('card')}
       >
-        <img className='w-4' src='asset/png/icon_filter_card.png' alt='경험카드 많은 순' />
-        경험카드 많은 순
+        <img className='w-4' src='asset/png/icon_filter_card.png' alt='경험카드 순' />
+        경험카드 순
       </button>
     </div>
   );

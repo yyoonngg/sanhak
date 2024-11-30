@@ -9,7 +9,10 @@ import java.util.List;
 
 @Repository
 public interface RoadmapSkilPrequeRepository extends JpaRepository<UserRoadmapSkilPreque, Integer> {
-    void deleteByURSPparentscsidAndURSPchildcsid(UserRoadmapSkil parent, UserRoadmapSkil child);
-    List<UserRoadmapSkilPreque> findByURSPchildcsid(UserRoadmapSkil childSkill);
-    List<UserRoadmapSkilPreque> findByURSPparentscsid(UserRoadmapSkil parentSkill);
+
+    List<UserRoadmapSkilPreque> findByURSPchildcsid(int childSkill);
+
+    List<UserRoadmapSkilPreque> findByURSPparentscsid(int parentSkill);
+
+    boolean existsByURSPparentscsidAndURSPchildcsid(int parent, int child);
 }
