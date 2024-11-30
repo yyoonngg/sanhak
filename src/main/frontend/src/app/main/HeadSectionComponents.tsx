@@ -1,24 +1,50 @@
 "use client";
 import '../../app/globals.css';
-import React from "react";
+import React, { useEffect } from "react";
 
 interface HeadSectionProps {
     currentPage: number;
 }
 
 export default function HeadSectionComponents({ currentPage }: HeadSectionProps) {
+    useEffect(() => {
+        // 애니메이션 스타일 추가
+        const style = document.createElement("style");
+        style.textContent = `
+            @keyframes bounce {
+                0%, 100% {
+                    transform: translateY(0);
+                }
+                50% {
+                    transform: translateY(-15px);
+                }
+            }
+            .arrow-animation {
+                animation: bounce 1s infinite;
+            }
+        `;
+        document.head.appendChild(style);
+    }, []);
+
+    const handleScroll = () => {
+        const nextSection = document.getElementById("rough_intro");
+        if (nextSection) {
+            nextSection.scrollIntoView({ behavior: "smooth" });
+        }
+    };
+
     return (
         <>
             <div
                 id="background_color"
-                className="bg-category-frontend/50 h-screen w-full px-10 justify-center items-center transition-all duration-500"
+                className="bg-[#ffffff] h-screen w-full px-10 justify-center items-center transition-all duration-500"
                 style={{
                     position: "relative",
                     scrollSnapAlign: "start",
                 }}
             >
                 <div id="text_container" className="justify-items-center text-center px-10">
-                    <h1 className="font-extrabold font-gmarketsansBold text-5xl py-20">포트폴리오에 개성을 더하다</h1>
+                    <h1 className="font-extrabold font-gmarketsansBold text-2xl sm:text-5xl sm:py-20 text-[#000000]">포트폴리오에 개성을 더하다</h1>
                 </div>
                 <div id="img_container" className="flex px-10 items-center justify-center">
                     <img
@@ -57,27 +83,28 @@ export default function HeadSectionComponents({ currentPage }: HeadSectionProps)
                 <div className="flex justify-center mt-6">
                     <img
                         src="/asset/png/icon/icon_angle_bottom.png"
-                        className="arrow-animation"
+                        className="arrow-animation cursor-pointer"
                         alt="Bouncing Arrow"
+                        onClick={handleScroll}
                     />
                 </div>
             </div>
             <div
                 id="rough_intro"
-                className="bg-[#f9fafb] h-screen w-full flex flex-col font-bold text-4xl items-center justify-center transition-all duration-500"
+                className="bg-category-backend h-screen w-full flex flex-col font-bold items-center justify-center transition-all duration-500"
                 style={{
                     position: "relative",
                     scrollSnapAlign: "start",
                 }}
             >
-                <p className="pb-4 font-gmarketsansMedium">
+                <p className="pb-4 font-gmarketsansMedium text-[#fed711] text-lg sm:text-4xl sm:py-4">
                     여러분의 커리어 여정을 함께하는{" "}
-                    <span className="text-category-application">PathFinder</span>입니다.
+                    <span className="text-[#ffffff]">PathFinder</span>입니다.
                 </p>
-                <p className="pb-4 font-gmarketsansMedium">
+                <p className="pb-4 font-gmarketsansMedium text-[#fed711] text-lg px-8 sm:text-4xl sm:py-4">
                     자신의 희망 직무에 맞춘 스킬 로드맵과 AI가 생성해주는 경험카드를 통해,
                 </p>
-                <p className="pb-4 font-gmarketsansMedium">맞춤형 포트폴리오를 제공합니다.</p>
+                <p className="pb-4 font-gmarketsansMedium text-[#fed711] text-lg sm:text-4xl sm:py-4">맞춤형 포트폴리오를 제공합니다.</p>
             </div>
         </>
     );
