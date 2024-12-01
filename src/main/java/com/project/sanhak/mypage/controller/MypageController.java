@@ -133,7 +133,7 @@ public class MypageController {
     @GetMapping("/mastery/{cs_id}")
     public ResponseEntity<mergeMasteryDTO> getMastery(@PathVariable int cs_id,
                                                        HttpSession session) {
-        int uid = (int) session.getAttribute("uid");
+        Integer uid = (Integer) session.getAttribute("uid");
         mergeMasteryDTO masteryList = mypageService.getMasteryList(uid, cs_id);
         return ResponseEntity.ok(masteryList);
     }
@@ -165,7 +165,12 @@ public class MypageController {
     @GetMapping("/mastery/test/ok/{ms_id}")
     public ResponseEntity<String> testOkMastery(@PathVariable int ms_id,
                                                 HttpSession session) {
-        int uid = (int) session.getAttribute("uid");
+        int uid;
+        Integer uidAttribute = (Integer) session.getAttribute("uid");
+        if (uidAttribute == null) {
+            throw new NullPointerException("UID is null");
+        }
+        uid = uidAttribute;
         mypageService.masterSkill(uid, ms_id);
         return ResponseEntity.ok("스킬을 익혔습니다!");
     }

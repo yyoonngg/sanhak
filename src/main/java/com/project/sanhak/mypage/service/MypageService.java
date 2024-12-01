@@ -136,8 +136,11 @@ public class MypageService {
     }
 
 
-    public mergeMasteryDTO getMasteryList(int uid, int csId) {
-        User user = userService.getUserFromUid(uid);
+    public mergeMasteryDTO getMasteryList(Integer uid, int csId) {
+        User user = null;
+        if (uid != null) {
+            user = userService.getUserFromUid(uid);
+        }
         CodeSkil codeSkil = categoryService.getCodeSkilFromCSId(csId);
         List<MasterySkil> masterySkills = masteryRepository.findByMSCSid(codeSkil);
         mergeMasteryDTO masteryList = new mergeMasteryDTO();
@@ -150,7 +153,11 @@ public class MypageService {
             mastery.setId(masterySkill.getMSId());
             mastery.setTitle(masterySkill.getMSName());
             mastery.setSubtitle(Arrays.asList(masterySkill.getMSInfo1(), masterySkill.getMSInfo2(), masterySkill.getMSInfo3()));
-            mastery.setStatus(checkMasteryState(user, masterySkill));
+            if (user != null) {
+                mastery.setStatus(checkMasteryState(user, masterySkill));
+            } else {
+                mastery.setStatus(false);
+            }
             skillTopics.add(mastery);
         }
         masteryList.setList(skillTopics);
