@@ -174,7 +174,7 @@ export default function MypagePage({
 
   return (
     <div className="w-full h-full flex flex-col items-center mt-5">
-      <div className='max-w-[1400px] h-full px-4 2xl:w-[1400px] xl:px-20 lg:px-10'>
+      <div className='max-w-[1400px] w-full h-full px-4 2xl:w-[1400px] xl:px-20 lg:px-10'>
         <div className='w-full flex flex-col pb-5'>
           <UserProfile userInfo={userInfo} badgeInfo={badgeInfo} onSave={onSaveProfile}/>
         </div>
@@ -198,15 +198,15 @@ export default function MypagePage({
               </div>
             )}
           </div>
-          <div className='w-full lg:w-2/5 flex flex-col'>
+          <div className='w-full lg:w-[36%] flex flex-col'>
             <div className='flex flex-col'>
               <div className='flex items-center text-center text-lg md:text-2xl font-gmarketsansMedium'><img className='w-4 h-4 md:w-6 md:h-6 mb-1 mr-1' src='asset/png/icon_filter_card.png' alt='AI경험카드' />AI경험카드</div>
               <div className='text-xl font-gmarketsansMedium'>{cardInfos[currentCard]?.title || '-'}</div>
             </div>
             {cardInfos.length > 0 ? (
-              <Slider {...cardSlideSettings} className="w-full mx-auto">
+              <Slider {...cardSlideSettings} className="w-11/12 xs:w-4/5 sm:w-3/5 lg:w-5/6 mx-auto">
                 {cardInfos.map((card, index) => (
-                  <div key={index} className="w-full h-full flex justify-center items-center p-5"> 
+                  <div key={index} className="w-full  h-full flex justify-center items-center p-5"> 
                     <Card card={card} />
                   </div>
                 ))}
