@@ -34,8 +34,9 @@
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "**/*.ts",
-    "**/*.tsx", 
+    "**/*.tsx",
     "src/App.js",
-    "src/main/frontend/**/*"
+    "src/main/frontend/**/*",
+    "out/types/**/*.ts"
   ]
 }
