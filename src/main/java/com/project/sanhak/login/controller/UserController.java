@@ -1,6 +1,8 @@
 package com.project.sanhak.login.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -29,10 +31,19 @@ public class UserController {
 
     @Operation(summary = "로그인 중인지 확인")
     @GetMapping("/status")
-    public ResponseEntity<?> getAuthStatus(Authentication authentication) {
+    public ResponseEntity<?> getAuthStatus(Authentication authentication, HttpSession session) {
         if (authentication != null && authentication.isAuthenticated()) {
-            return ResponseEntity.ok().body(Map.of("authenticated", true));
+            // 세션에서 uid 가져오기
+            Integer uid = (Integer) session.getAttribute("uid");
+            if (uid != null) {
+                // 로그인 되어 있고, uid가 세션에 존재하면 uid와 인증 상태를 반환
+                return ResponseEntity.ok().body(Map.of("authenticated", true, "uid", uid));
+            } else {
+                // uid가 세션에 없으면, 인증은 되어 있지만 uid가 없다고 반환
+                return ResponseEntity.ok().body(Map.of("authenticated", true, "uid", null));
         }
+        }
+        // 로그인되어 있지 않으면 인증 상태만 반환
         return ResponseEntity.ok().body(Map.of("authenticated", false));
     }
 
