@@ -26,7 +26,7 @@ export default function ButtonLabel({
   const labelName = type === 'category' ? categoryLabels[label] || label : label;
   return (
     <div
-      className={`${style ? style : "bg-primary text-white border-white"} text-sm font-semibold flex border rounded-xl px-4 py-1 mr-2 mb-2`}
+      className={`${style ? style : "bg-primary text-white border-white"} text-xs sm:text-sm font-semibold flex justify-center border rounded-xl px-1 xs:px-2 sm:px-4 py-1 mr-2 mb-2`}
       onClick={onClick ? onClick : undefined}
     >
       <img className='w-[20px] h-[20px] object-contain mr-2' src={imageSrc} alt={label}/>

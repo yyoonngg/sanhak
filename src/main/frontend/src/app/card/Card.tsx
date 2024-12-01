@@ -112,7 +112,7 @@ export default function Card({
   // }
 
   return (
-    <div className={`${style ? style : ''} w-full h-[65dvh] xs:w-[400px] xs:h-[75dvh] max-h-[600px] relative mb-4`}>
+    <div className={`${style ? style : ''} w-full h-[75dvh] max-h-[600px] relative mb-4`}>
       <motion.div
         className='w-full h-full relative'
         initial={false}
@@ -129,7 +129,7 @@ export default function Card({
             backfaceVisibility: 'hidden'
           }}
         >
-          <div className='w-full h-2/3 px-5 pt-5 pb-2'>
+          <div className='w-full h-1/2 px-5 pt-5 pb-2'>
             {card?.imageUrl && (
               <img className='w-full h-full object-cover rounded-t-xl' src={card?.imageUrl} alt='' />
             )}
@@ -140,7 +140,7 @@ export default function Card({
                 <div className='font-normal text-gray-cc'>{card?.fromDate} ~ {card?.toDate}</div>
               )}
               {card?.title && (
-                <div className='font-semibold text-3xl mb-2'>{card?.title}</div>
+                <div className='font-semibold text-2xl mb-2'>{card?.title}</div>
               )}
               <div className='w-full flex justify-between items-center'>
                 <div className='flex items-center'>

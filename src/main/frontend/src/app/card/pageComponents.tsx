@@ -84,7 +84,7 @@ export default function CardPage() {
 
   return (
     <div className='w-full h-full flex flex-col items-center mt-5'>
-      <div className='w-[1400px] h-full'>
+      <div className='max-w-[1400px] w-full h-full px-4 2xl:w-[1400px] xl:px-20 lg:px-10'>
         {isCreatePage ? (
           <CardEditor selectedCard={selectedCard} onCancel={onCancel} onCreate={onCreate} onModify={onModify}/> 
         ) : (
