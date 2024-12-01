@@ -10,9 +10,6 @@ import {CustomRoadmapDetail} from "@/models/roadmap";
 import {UpdateUserProfile, User, UserRecommendCompany, UserSkill} from '@/models/user';
 import { useUserContext } from '@/context/UserContext';
 
-// TODO: API 연결 -> 유저의 커스텀 로드맵 리스트
-// TODO: API 연결 -> customRoadmapList에서 선택된 로드맵의 id로 api호출
-// TODO: API 연결
 type MypagePageProps = {
   user_id?: number;
 };
@@ -23,6 +20,7 @@ export default function MypagePage({
   const { loggedInUserId, mypageUserId  } = useUserContext();
   console.log("user_id:", user_id);
   const [pageUserId, setPageUserId] = useState<number>();
+  const [isOwnUser, setIsOwnUser] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<User>();
   const [badgeInfo, setBadgeInfo] = useState<UserSkill[]>([]);
   const [cardInfos, setCardInfos] = useState<AiCard[]>([]);
@@ -58,9 +56,11 @@ export default function MypagePage({
   useEffect(()=>{
     if(user_id) {
       setPageUserId(user_id);
+      setIsOwnUser(false);
     } 
     else if(loggedInUserId) { 
       setPageUserId(loggedInUserId);
+      setIsOwnUser(true);
     }
   },[user_id, loggedInUserId]);
 
@@ -176,7 +176,7 @@ export default function MypagePage({
     <div className="w-full h-full flex flex-col items-center mt-5">
       <div className='max-w-[1400px] w-full h-full px-4 2xl:w-[1400px] xl:px-20 lg:px-10'>
         <div className='w-full flex flex-col pb-5'>
-          <UserProfile userInfo={userInfo} badgeInfo={badgeInfo} onSave={onSaveProfile}/>
+          <UserProfile userInfo={userInfo} badgeInfo={badgeInfo} isOwnUser={isOwnUser} onSave={onSaveProfile}/>
         </div>
         <div className='w-full flex flex-col lg:flex-row justify-between mb-10 border-b border-gray-cc pb-10'>
           <div className='w-full lg:w-3/5 flex flex-col justify-start'>

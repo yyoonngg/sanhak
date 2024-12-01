@@ -48,35 +48,35 @@ const NavigationBar = () =>{
                 <ul
                     className={`${
                         menuOpen ? "flex" : "hidden"
-                    } lg:flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-12 items-center absolute lg:static top-16 left-0 right-0 bg-white lg:bg-transparent z-50 shadow-lg lg:shadow-none p-5 lg:p-0`}
+                    } lg:flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-8 xl:space-x-12 items-center absolute lg:static top-16 left-0 right-0 bg-white lg:bg-transparent z-50 shadow-lg lg:shadow-none p-5 lg:p-0`}
                 >
                     <li onClick={toggleMenu}>
-                        <Link href="/category" className="hover:underline text-[0.7rem] font-gmarketsansBold xl:text-sm font-gmarketsansMedium">
+                        <Link href="/category" className="hover:underline text-[0.7rem] font-gmarketsansBold lg:text-sm font-gmarketsansMedium">
                         직무별로드맵
                         </Link>
                     </li>
                     <li onClick={toggleMenu}>
-                        <Link href="/lounge" className="hover:underline text-[0.7rem] font-gmarketsansBold xl:text-sm font-gmarketsansMedium">
+                        <Link href="/lounge" className="hover:underline text-[0.7rem] font-gmarketsansBold lg:text-sm font-gmarketsansMedium">
                         커리어라운지
                         </Link>
                     </li>
                     <li onClick={toggleMenu}>
-                        <Link href={isAuthenticated ? "/card" : "/signin"} className="hover:underline text-[0.7rem] font-gmarketsansBold xl:text-sm font-gmarketsansMedium">
+                        <Link href={isAuthenticated ? "/card" : "/signin"} className="hover:underline text-[0.7rem] font-gmarketsansBold lg:text-sm font-gmarketsansMedium">
                         AI경험카드
                         </Link>
                     </li>
                     <li onClick={toggleMenu}>
-                        <Link href={isAuthenticated ? "/aiChatbot" : "/signin"} className="hover:underline text-[0.7rem] font-gmarketsansBold xl:text-sm font-gmarketsansMedium">
+                        <Link href={isAuthenticated ? "/aiChatbot" : "/signin"} className="hover:underline text-[0.7rem] font-gmarketsansBold lg:text-sm font-gmarketsansMedium">
                         AI경험Chat
                         </Link>
                     </li>
                     <li onClick={toggleMenu}>
-                        <Link href={isAuthenticated ? "/customRoadmap" : "/signin"} className="hover:underline text-[0.7rem] font-gmarketsansBold xl:text-sm font-gmarketsansMedium">
+                        <Link href={isAuthenticated ? "/customRoadmap" : "/signin"} className="hover:underline text-[0.7rem] font-gmarketsansBold lg:text-sm font-gmarketsansMedium">
                         커스텀로드맵
                         </Link>
                     </li>
                     <li onClick={toggleMenu}>
-                        <Link href={isAuthenticated ? "/mypage" : "/signin"} className="hover:underline text-[0.7rem] font-gmarketsansBold xl:text-sm font-gmarketsansMedium">
+                        <Link href={isAuthenticated ? "/mypage" : "/signin"} className="hover:underline text-[0.7rem] font-gmarketsansBold lg:text-sm font-gmarketsansMedium">
                         마이페이지
                         </Link>
                     </li>
