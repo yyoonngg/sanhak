@@ -39,7 +39,6 @@ public class chatController {
                                        @PathVariable(required = false) Integer chat_id,
                                        @PathVariable(required = false) Integer chat_type) {
         try {
-            System.out.println("1");
             Integer uidAttribute = (Integer) session.getAttribute("uid");
             if (uidAttribute == null) {
                 throw new NullPointerException("UID is null");
@@ -56,10 +55,7 @@ public class chatController {
                 chat_type = latestChatRoom.getCRType();
             }
 
-            // 초기화
-            System.out.println("9");
             String response = chatService.initializeChat(uid, chat_id, chat_type);
-            System.out.println("6");
             if ("success".equals(response)) {
                 return ResponseEntity.ok("채팅이 성공적으로 초기화되었습니다.");
             } else {

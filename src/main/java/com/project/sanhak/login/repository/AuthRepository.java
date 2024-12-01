@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface AuthRepository extends JpaRepository<OAuthToken, Integer> {
     Optional<OAuthToken> findUserByEmailAndProvider(String email, String provider);
+
+    String findByEmail(String uEmailId);
 }

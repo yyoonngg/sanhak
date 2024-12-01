@@ -106,9 +106,14 @@ const RoadmapCustomize = ({
 
   // 스킬을 선택한 id 정보를 상위 컵포넌트인 pageComponent로 넘겨 데이터를 받아옴 -> API호출을 위하여
   const onSelectDetail = (id: number) => {
+    console.log("Fetching details for node ID:", id);
     getSelectDetail(id);
     setIsDetailVisible(true);
-    SetSelectedSkillPng(`/asset/png/skill/${skillDetailData.name.toLowerCase().replace(/\s+/g, '').replace(/\./g, '').replace(/#/g, 'sharp')}_img.png`)
+    SetSelectedSkillPng(`/asset/png/skill/${skillDetailData.name.
+    toLowerCase()
+        .replace(/\s+/g, '')
+        .replace(/\./g, '')
+        .replace(/#/g, 'sharp')}_img.png`)
   }
 
   return (
@@ -183,7 +188,11 @@ const RoadmapCustomize = ({
         <div className="w-full h-full">
           <div className="flex flex-col">
           </div>
-          <Roadmap isEditMode={isEditMode} roadmapSkills={roadmapSkills} handleUpdateSkill={handleUpdateSkill} onSelectDetail={onSelectDetail}/>
+          <Roadmap
+              isEditMode={isEditMode}
+              roadmapSkills={roadmapSkills}
+              handleUpdateSkill={handleUpdateSkill}
+              onSelectDetail={onSelectDetail}/>
         </div>
       </div>
 
@@ -211,31 +220,25 @@ const RoadmapCustomize = ({
             
             <ul className='px-5 relative'>
               {skillDetailData.list.map((topic, index) => (
-                <li key={index} className="pb-5 relative flex items-start">
-                  <div className="absolute left-0 top-0 h-full w-2 border-r border-primary"></div>
-                  <div
-                    className={`relative z-10 w-4 h-4 mr-3 rounded-full border 
-                      ${topic.status === 'completed' ? 'bg-primary' : 
-                        topic.status === 'in-progress' ? 'bg-half-primary' : 
-                        'bg-white'} border-black`}
-                    style={
-                      topic.status === 'in-progress' ? {
-                        background: 'linear-gradient(to right, #3D3D4E 50%, #ffffff 50%)'
-                      } : {}
-                    }
-                  ></div>
-                  <div>
-                    <div className='flex'>
-                      <div className="font-bold">{topic.title}</div>
-                      <div className='text-white bg-primary rounded-xl px-5 ml-2 w-fit'>{topic.status}</div>
+                  <li key={index} className="pb-5 relative flex items-start">
+                    <div className="absolute left-0 top-0 h-full w-2 border-r border-primary"></div>
+                    <div
+                        className={`relative z-10 w-4 h-4 mr-3 rounded-full border ${
+                            topic.status === "completed" ? "bg-primary" : "bg-white"
+                        } border-black`}
+                    ></div>
+                    <div>
+                      <div className='flex'>
+                        <div className="font-bold">{topic.title}</div>
+                        <div className='text-white bg-primary rounded-xl px-5 ml-2 w-fit'>{topic.status}</div>
+                      </div>
+                      <ul className="pl-4 mt-2">
+                        {topic.subtitle.map((sub, subIndex) => (
+                            <li key={subIndex} className="mb-2 text-sm">{sub}</li>
+                        ))}
+                      </ul>
                     </div>
-                    <ul className="pl-4 mt-2">
-                      {topic.subtitle.map((sub, subIndex) => (
-                        <li key={subIndex} className="mb-2 text-sm">{sub}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </li>
+                  </li>
               ))}
             </ul>
           </div>

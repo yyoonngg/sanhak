@@ -12,7 +12,7 @@ public class LoungesDTO {
     @Schema(description = "Number of likes the lounge has received")
     private int likes;
     @Schema(description = "Number of views the lounge has received")
-    private int viewCount;
+    private int view_cnt;
     @Schema(description = "Number of badges associated with the lounge")
     private int badge_cnt;
     @Schema(description = "Number of roadmaps associated with the lounge")
@@ -25,4 +25,5 @@ public class LoungesDTO {
     private String category;
     @Schema(description = "URL of the lounge's image")
     private String imageURL;
+    private int user_id;
 }

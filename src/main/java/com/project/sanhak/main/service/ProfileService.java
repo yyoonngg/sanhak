@@ -4,6 +4,7 @@ import com.project.sanhak.card.repository.cardRepository;
 import com.project.sanhak.domain.lounge.Lounges;
 import com.project.sanhak.domain.user.User;
 import com.project.sanhak.domain.user.UserInfo;
+import com.project.sanhak.login.repository.AuthRepository;
 import com.project.sanhak.lounge.repository.LoungeRepository;
 import com.project.sanhak.main.dto.profileDTO;
 import com.project.sanhak.main.repository.ProfileRepository;
@@ -35,6 +36,8 @@ public class ProfileService {
     private cardRepository cardRepository;
     @Autowired
     private LoungeRepository loungeRepository;
+    @Autowired
+    private AuthRepository authRepository;
 
     public profileDTO getProfile(int uid) {
         User user = userService.getUserFromUid(uid);
@@ -64,9 +67,9 @@ public class ProfileService {
         if (profile == null) {
             profile = new UserInfo();
             profile.setUIuid(user);
-            profile.setUIDesirePosition("frontend");
             Lounges lounge =new Lounges();
             lounge.setLUid(user);
+            lounge.setLName(authRepository.findByEmail(user.getUEmailId()));
             lounge.setLRoadmap(roadmapRepository.countByURuid(user));
             lounge.setLBadge(badgeRepository.countByUBUid(user));
             lounge.setLCard(cardRepository.countByECuid(user));

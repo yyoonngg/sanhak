@@ -132,12 +132,22 @@ const Roadmap = ({
   
   // 스킬 노드을 옮겼을 경우 좌표를 최신화하는 함수
   const handleDrag = (id: number, newPosition: [number, number]) => {
-    setSkills(prevSkills => 
-      prevSkills.map(skill => 
-        skill.id === id ? { ...skill, position: newPosition } : skill
-      )
+    console.log("handleDrag called for ID:", id, "with newPosition:", newPosition);
+    setSkills(prevSkills =>
+        prevSkills.map(skill =>
+            skill.id === id ? { ...skill, position: newPosition } : skill
+        )
     );
+
+    const updatedSkill = skills.find(skill => skill.id === id);
+    if (updatedSkill) {
+      console.log("Calling handleUpdateSkill for updatedSkill:", updatedSkill);
+      handleUpdateSkill?.({ ...updatedSkill, position: newPosition });
+    } else {
+      console.warn(`Skill with ID ${id} not found in skills array.`);
+    }
   };
+
 
   // SkillNode 컴포넌트에서 callback 받는 함수 -> [편집모드] : 선후관계 표시
   const handleSelectForPath = (id: number) => {
@@ -148,6 +158,7 @@ const Roadmap = ({
 
   // SkillNode 컴포넌트에서 callback 받는 함수 -> [보기모드] : 상세 사이드바 표시
   const handleSelectForDetail = (id: number) => {
+    console.log("Node selected for detail:", id);
     onSelectDetail?.(id);
   };
 

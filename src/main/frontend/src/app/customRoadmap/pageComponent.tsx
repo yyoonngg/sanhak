@@ -2,9 +2,10 @@
 import React, {useEffect, useState} from 'react';
 import CustomRoadmapList from './CustomRoadmapList';
 import Roadmap from '../category/Roadmap';
-import {AllKindOfSkills, RoadmapSkill} from '@/models/skill';
+import {AllKindOfSkills, RoadmapSkill, SkillDetail} from '@/models/skill';
 import CustomSkillList from './CustomSkillList';
 import {ChangeRoadmapDTO, CustomRoadmapDetail, CustomRoadmapName} from "@/models/roadmap";
+import SkillDetailModal from './SkillDetailModal';
 
 // TODO 1: API 연결 -> 유저의 커스텀 로드맵 리스트
 const fetchCustomRoadmapList = async (): Promise<CustomRoadmapName[]> => {
@@ -276,6 +277,9 @@ export default function CustomRoadmapPage() {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [selectedSkills, setSelectedSkills] = useState<(RoadmapSkill | null)[]>([null, null]);
   const [relationBuffer, setRelationBuffer] = useState<[string, string][]>([]);
+  const [selectedSkillPng, setSelectedSkillPng] = useState<string>("");
+  const [skillDetailData, setSkillDetailData] = useState<SkillDetail | null>(null);
+  const [isDetailVisible, setIsDetailVisible] = useState<boolean>(false);
 
   // 로드맵 리스트 불러오기
   useEffect(() => {
@@ -391,7 +395,6 @@ export default function CustomRoadmapPage() {
       console.error('로드맵 저장 중 오류 발생:', error);
     }
   };
-
 
   // 로드맵 크기 관련 트리거 
   // 1) 로드맵 확장 트리거
@@ -515,21 +518,69 @@ export default function CustomRoadmapPage() {
   };
   // 2) 노드 2개를 선택해서 선후관계가 정해질 때
   const handleUpdateSkill = (newSkill: RoadmapSkill) => {
+    console.log("handleUpdateSkill updating skill:", newSkill);
     setSelectedRoadmap((roadmap: CustomRoadmapDetail) => {
       const skillExists = roadmap.skills.some(skill => skill.id === newSkill.id);
-      if(skillExists) {
-        console.log("Updated roadmap:", selectedRoadmap);
+      console.log("Skill exists:", skillExists);
+      if (skillExists) {
         return {
           ...roadmap,
           skills: roadmap.skills.map(skill =>
-            skill.id === newSkill.id ? newSkill : skill
+              skill.id === newSkill.id ? newSkill : skill
           ),
-        }
+        };
       }
-      console.log("Received newSkill:", newSkill);
       return roadmap;
     });
-  }
+  };
+
+  const getNameById = (id: number, skills: { id: number; name: string }[]): string | null => {
+    const skill = skills.find((skill) => skill.id === id);
+    return skill ? skill.name : null;
+  };
+
+  const onSelectDetail = async (id: number) => {
+    try {
+      console.log("Fetching details for node ID:", id);
+      const skillName = getNameById(id, selectedRoadmap.skills);
+      if (!skillName) {
+        console.error(`No skill found with id ${id}`);
+        return; // skillName이 null이면 API 호출 중단
+      }
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mypage/mastery?name=${encodeURIComponent(skillName)}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch mastery details");
+      }
+      const data : SkillDetail = await response.json();
+      const skillDetail: SkillDetail = {
+        id: data.id,
+        name: data.name,
+        description: data.description || '',
+        list: data.list.map((topic) => ({
+          id: topic.id,
+          title: topic.title,
+          subtitle: topic.subtitle,
+          status: topic.status ? 'completed' : 'not-started',
+        })),
+      };
+      setSkillDetailData(skillDetail);
+      setSelectedSkillPng(`/asset/png/skill/${data.name
+          .toLowerCase()
+          .replace(/\s+/g, '')
+          .replace(/\./g, '')
+          .replace(/#/g, 'sharp')}_img.png`);
+      setIsDetailVisible(true);
+    } catch (error) {
+      console.error("Error fetching mastery details:", error);
+    }
+  };
+
   return (
     <div className='w-full h-full flex flex-col items-center'>
       <div className='w-[1400px] h-[90dvh]'>
@@ -586,17 +637,25 @@ export default function CustomRoadmapPage() {
                 </>
               )}
             </div>
-            <Roadmap 
-              isEditMode={isEditMode} 
-              roadmapSkills={selectedRoadmap.skills} 
-              style={'h-[75dvh] max-h-[600px] mb-4'} 
+            <Roadmap
+              isEditMode={isEditMode}
+              roadmapSkills={selectedRoadmap.skills}
+              style={'h-[75dvh] max-h-[600px] mb-4'}
               onTriggerAction={triggerAction}
+              onSelectDetail={onSelectDetail}
               handleUpdateSkill={handleUpdateSkill}
               onResetAction={resetAction}
             />
           </div>
         </div>
       </div>
+      {isDetailVisible && (
+          <SkillDetailModal
+              skillDetail={skillDetailData as SkillDetail}
+              selectedSkillPng={selectedSkillPng}
+              onClose={() => setIsDetailVisible(false)}
+          />
+      )}
     </div>
   );
 }
