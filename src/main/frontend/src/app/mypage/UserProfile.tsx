@@ -6,6 +6,7 @@ type UserProfileProps = {
   userInfo?: User
   badgeInfo?: UserSkill[]
   onSave: (updateProfileBody: UpdateUserProfile) => void;
+  other?: number;
 };
 
 const categoryLabels: Record<string, string> = {
@@ -20,7 +21,8 @@ const categoryLabels: Record<string, string> = {
 export default function UserProfile({
   userInfo,
   badgeInfo,
-  onSave
+  onSave,
+  other
 }:UserProfileProps) {
   const [isEditing, setIsEditing] = useState(false); 
   const [editedName, setEditedName] = useState(userInfo?.name || ''); 
@@ -28,7 +30,7 @@ export default function UserProfile({
   const categories = ['웹/프론트엔드', '웹/백엔드', '데이터사이언스', '보안', '어플리케이션', '예비'];
   const [profileImg, setProfileImg] = useState(userInfo?.profileImgURL || '/asset/png/profile_default_image.png');
   const [profileImgBlob, setProfileImgBlob] = useState<File|null>(null);
-
+  const isOther = useState(other);
   const changeProfileMode = () => {
     setIsEditing((prev) => !prev); 
   };
@@ -185,7 +187,7 @@ export default function UserProfile({
             </div>
           </div>
         </div>
-        {userInfo === undefined && (
+        {isOther[0] === undefined && (
         <div 
           className='w-1/12 h-1/12 flex justify-center items-center border-2 border-primary rounded-xl p-2 cursor-pointer'
           onClick={isEditing ? saveProfile : changeProfileMode}

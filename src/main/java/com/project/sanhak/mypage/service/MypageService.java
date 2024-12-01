@@ -363,4 +363,11 @@ public class MypageService {
             roadmapRepository.save(userRoadmap);
         }
     }
+
+    public void updateRoadmapState(int urId, int state) {
+        UserRoadmap userRoadmap = roadmapRepository.findById(urId)
+                .orElseThrow(() -> new IllegalArgumentException("로드맵을 찾을 수 없습니다."));
+        userRoadmap.setState(state);
+        roadmapRepository.save(userRoadmap);
+    }
 }
