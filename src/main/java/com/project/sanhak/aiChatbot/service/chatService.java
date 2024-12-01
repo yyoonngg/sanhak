@@ -98,7 +98,6 @@ public class chatService {
     }
 
     public int getTargetChatCard(int chat_id) {
-        System.out.println("11");
         return chatRepository.findCRecIdByCRId(chat_id);
     }
 
