@@ -1,125 +1,184 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import Card from "../card/Card";
-import ChatRoomList from "./ChatRoomList";
-import ChatInterface from "./ChatInterface";
-import { AiCard, AiCardChatRoom, ChatMessage, ChatRoleOption } from "@/models/card";
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import Card from '../card/Card';
+import ChatRoomList from './ChatRoomList';
+import ChatInterface from './ChatInterface';
+import {AiCard, AiCardChat, AiCardChatRoom, ChatRoleOption} from "@/models/card";
+
+
+const aiRoles: ChatRoleOption[] = [
+  { label: "AI 면접관", description: "경험카드를 바탕으로 예상 면접질문 및 답변 생성", guideNotice: "어떤 예상질문을 뽑아드릴까요?" },
+  { label: "AI 자소서 도우미", description: "경험카드를 기반으로 자기소개서 문항 생성", guideNotice: "어떤 자기소개서 문항을 작성해드릴까요?" },
+  { label: "AI 포지션 질문", description: "포지션을 바탕으로 해당 직무와 언어에 대한 설명 생성", guideNotice: "해당 직무와 언어에 대해 어떤 점이 궁금한가요?" },
+];
 
 const AiChatbotPage: React.FC = () => {
   const [cardList, setCardList] = useState<AiCard[]>([]);
+  const [selectedChatRoom, setSelectedChatRoom] = useState<AiCardChatRoom | null>(null); // 선택된 채팅방 상태
   const [chatRoomData, setChatRoomData] = useState<AiCardChatRoom[]>([]);
-  const [selectedChatRoom, setSelectedChatRoom] = useState<AiCardChatRoom | null>(null);
-  const [chatData, setChatData] = useState<ChatMessage[]>([]);
+  const [chatData, setChatData] = useState<AiCardChat[]>([]);
   const [selectedCard, setSelectedCard] = useState<AiCard | null>(null);
-  const [chatInput, setChatInput] = useState("");
-  const [roles, setRoles] = useState<ChatRoleOption[]>([
-    { label: "AI 면접관", description: "경험카드를 바탕으로 예상 면접질문 및 답변 생성", guideNotice: "어떤 예상질문을 뽑아드릴까요?" },
-    { label: "AI 자소서 도우미", description: "경험카드를 기반으로 자기소개서 문항 생성", guideNotice: "어떤 자기소개서 문항을 작성해드릴까요?" },
-    { label: "AI 포지션 질문", description: "포지션을 바탕으로 해당 직무와 언어에 대한 설명 생성", guideNotice: "해당 직무와 언어에 대해 어떤 점이 궁금한가요?" },
-  ]);
-  const [selectedRole, setSelectedRole] = useState<ChatRoleOption>(roles[0]);
+  const [chatInput, setChatInput] = useState('');
   const chatEndRef = useRef<HTMLDivElement | null>(null);
+  const [roles, setRoles] = useState<ChatRoleOption[]>(aiRoles); // 역할 리스트 설정
+  const [selectedRole, setSelectedRole] = useState<ChatRoleOption>(roles[0]); // 선택된 역할 상태 추가
 
-  // 채팅방 목록 API 호출
   const fetchChatList = async () => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat/list`, {
-        method: "GET",
-        credentials: "include",
+        method: 'GET',
+        credentials: 'include',
       });
       if (response.ok) {
         const data = await response.json();
-        setChatRoomData(data);
+        setChatRoomData(data); // 채팅방 데이터 설정
       } else {
-        throw new Error("채팅방 목록을 불러오는 중 오류가 발생했습니다.");
+        throw new Error('채팅방 목록을 불러오는 중 오류가 발생했습니다.');
       }
     } catch (error) {
-      console.error(error);
+      if (error instanceof Error) {
+        console.error(error.message);
+      } else {
+        console.error("An unknown error occurred");
+      }
     }
   };
 
-  // 카드 목록 API 호출
+  const initializeChat = async (chatId: number, chatRole: string) => {
+    const chatType = getChatType(chatRole); // 역할에 따른 chatType 계산
+    const updatedChatId = chatId + chatType; // chatId에 chatType을 더함
+
+    console.log("Initializing chat:", { chatId, chatRole, chatType, updatedChatId });
+
+    try {
+      const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/chat/initialize/${updatedChatId}/${chatType}`,
+          {
+            method: 'GET',
+            credentials: 'include',
+          }
+      );
+
+      if (response.ok) {
+        console.log("채팅이 성공적으로 초기화되었습니다.");
+      } else {
+        console.error("채팅 초기화 실패");
+      }
+    } catch (error) {
+      console.error("API 요청 오류:", error);
+    }
+  };
+
   const fetchCardList = async () => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/card/`, {
-        method: "GET",
-        credentials: "include",
+        method: 'GET',
+        credentials: 'include', // 세션 인증을 위해 필요할 경우 추가
       });
+
       if (response.ok) {
         const data = await response.json();
-        setCardList(data);
+        setCardList(data); // cardList 상태를 API 응답 데이터로 설정
       } else {
-        throw new Error("카드 목록을 불러오는 중 오류가 발생했습니다.");
+        console.error('카드 목록을 불러오는 중 오류가 발생했습니다.');
       }
     } catch (error) {
-      console.error(error);
+      console.error('카드 목록 불러오기 오류:', error);
     }
   };
+  const fetchChatMessages = async (chatId: number, chatRole: string) => {
+    const chatType = getChatType(chatRole); // 역할에 따른 chatType 계산
+    const updatedChatId = chatId + chatType; // chatId에 chatType을 더함
 
-  // 채팅 메시지 API 호출
-  const fetchChatMessages = async (chatId: number) => {
+    console.log("Fetching chat messages for updated chat ID:", { chatId, chatRole, chatType, updatedChatId });
+
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat/message/${chatId}`, {
-        method: "GET",
-        credentials: "include",
-      });
+      const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/chat/message/${updatedChatId}`,
+          {
+            method: 'GET',
+            credentials: 'include',
+          }
+      );
+
       if (response.ok) {
         const data = await response.json();
-        const formattedData: ChatMessage[] = data.map((message: any) => ({
+        const formattedData: AiCardChat[] = data.map((message: any) => ({
           id: message.cmid,
           isUser: message.cmisUser,
           content: message.cmcontent,
         }));
         setChatData(formattedData);
       } else {
-        throw new Error("채팅 메시지 불러오기 실패");
+        console.error("채팅 메시지 불러오기 실패");
       }
     } catch (error) {
-      console.error(error);
+      console.error("API 요청 오류:", error);
     }
   };
 
-  // 채팅 초기화 API
-  const initializeChat = async (chatId: number, role: ChatRoleOption) => {
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat/initialize/${chatId}/${roles.indexOf(role)}`, {
-        method: "GET",
-        credentials: "include",
-      });
-      if (response.ok) {
-        setChatData([]);
-      } else {
-        throw new Error("채팅 초기화에 실패했습니다.");
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  const getChatType = (chatRole: string): number => {
+    if (chatRole === "AI 포지션 질문") return 2;
+    if (chatRole === "AI 자소서 도우미") return 1;
+    return 0;
   };
 
-  // 카드 선택 핸들러
-  const handleSelectCard = (cardId: number) => {
+  useEffect(() => {
+    fetchChatList(); // 컴포넌트 마운트 시 채팅방 목록 가져오기
+    fetchCardList();
+  }, []);
+
+  const handleSelect = (cardId : number) => {
     const selected = cardList.find((card) => card.id === cardId);
     if (selected) {
       setSelectedCard(selected);
-      const chatRoom = chatRoomData.find((room) => room.cardId === cardId);
-      if (chatRoom) {
-        setSelectedChatRoom(chatRoom);
-        initializeChat(chatRoom.id, selectedRole);
-        fetchChatMessages(chatRoom.id);
+      const selectedChatRoom = chatRoomData.find((room) => room.cardId === cardId);
+      if (selectedChatRoom) {
+        setSelectedChatRoom(selectedChatRoom);
+        const role = roles.find((role) => role.label === selectedChatRoom.role);
+        setSelectedRole(role || roles[0]);
       }
     }
   };
 
-  // 채팅 전송 핸들러
+  const handleSelectRole = (role:ChatRoleOption) => {
+    setSelectedRole(role);
+    if (selectedChatRoom) {
+      initializeChat(selectedChatRoom.id, role.label);
+      fetchChatMessages(selectedChatRoom.id, role.label);
+    }
+  };
+  const handleChatInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChatInput(event.target.value);
+  };
+
+  useEffect(() => {
+    fetchChatList();
+    fetchCardList();
+  }, []);
+
+  useEffect(() => {
+    if (selectedChatRoom && selectedRole) {
+      initializeChat(selectedChatRoom.id, selectedRole.label);
+      fetchChatMessages(selectedChatRoom.id, selectedRole.label);
+    }
+  }, [selectedChatRoom, selectedRole]);
+
   const handleSendChat = async () => {
     if (!chatInput.trim() || !selectedChatRoom) return;
-    const userMessage: ChatMessage = { id: chatData.length + 1, isUser: 1, content: chatInput };
+
+    console.log("Sending chat with selectedRole:", selectedRole); // 디버깅 로그 추가
+    const userMessage: AiCardChat = { id: chatData.length + 1, isUser: 1, content: chatInput };
     setChatData((prev) => [...prev, userMessage]);
     setChatInput("");
-
+    const chatId=selectedChatRoom.id;
+    const chatRole=selectedRole.label;
+    console.log(chatRole);
+    const chatType = getChatType(chatRole); // 역할에 따른 chatType 계산
+    const updatedChatId = chatId + chatType;
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat/${selectedChatRoom.id}/send/${roles.indexOf(selectedRole)}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat/${updatedChatId}/send/${chatType}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -127,7 +186,7 @@ const AiChatbotPage: React.FC = () => {
       });
       if (response.ok) {
         const responseData = await response.json();
-        const aiMessage: ChatMessage = { id: chatData.length + 2, isUser: 0, content: responseData.response };
+        const aiMessage: AiCardChat = { id: chatData.length + 2, isUser: 0, content: responseData.response };
         setChatData((prev) => [...prev, aiMessage]);
       } else {
         throw new Error("채팅 전송 실패");
@@ -137,48 +196,58 @@ const AiChatbotPage: React.FC = () => {
     }
   };
 
-  // 입력 필드 핸들러
-  const handleChatInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setChatInput(e.target.value);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
       handleSendChat();
     }
   };
 
   useEffect(() => {
-    fetchChatList();
-    fetchCardList();
-  }, []);
+    if (chatEndRef.current) {
+      if ("scrollIntoView" in chatEndRef.current) {
+        chatEndRef.current.scrollIntoView({behavior: 'smooth'});
+      }
+    }
+  }, [chatData]);
+
+  useEffect(() => {
+    if (selectedChatRoom && selectedRole) {
+      console.log("Role updated, reinitializing chat:", selectedRole);
+      initializeChat(selectedChatRoom.id, selectedRole.label);
+      fetchChatMessages(selectedChatRoom.id, selectedRole.label);
+    }
+  }, [selectedRole]);
 
   return (
       <div className="w-full h-full flex flex-col items-center">
-        <div className="w-[1400px] h-[90dvh]">
-          <div className="w-full h-full flex px-24">
-            <ChatRoomList
-                chatRoomMockData={chatRoomData}
-                selectedCardId={selectedCard?.id || 0}
-                onSelectCard={handleSelectCard}
-            />
-            <ChatInterface
-                roles={roles}
-                chatData={chatData}
-                chatInput={chatInput}
-                selectedCardTitle={selectedCard?.title || ""}
-                onSendChat={handleSendChat}
-                onInputChange={handleChatInputChange}
-                onKeyDown={handleKeyDown}
-                onResetChat={() => setChatData([])}
-                selectedChatId={selectedChatRoom?.id || 0}
-                selectedChatType={selectedRole.label}
-                selectedRole={selectedRole}
-                handleSelectRole={setSelectedRole}
-            />
-            <div className="w-1/3 h-full flex flex-col pl-4 border-l border-gray-d9">
-              <div className="font-semibold py-4">현재 선택한 경험카드</div>
+        <div className='w-[1400px] h-[90dvh]'>
+          <div className='w-full h-full flex px-24'>
+            <div className='w-full h-full flex justify-between items-center'>
+              <ChatRoomList
+                  chatRoomMockData={chatRoomData}
+                  selectedCardId={selectedCard ? selectedCard.id : 0}
+                  onSelectCard={handleSelect}
+              />
+              <ChatInterface
+                  roles={roles}
+                  chatData={chatData}
+                  chatInput={chatInput}
+                  selectedCardTitle={selectedCard?.title || ""}
+                  onSendChat={handleSendChat}
+                  onInputChange={handleChatInputChange}
+                  onKeyDown={handleKeyDown}
+                  onResetChat={() => setChatData([])}
+                  selectedChatId={selectedChatRoom?.id || 0}
+                  selectedChatType={selectedRole?.label || ""}
+                  selectedRole={selectedRole}
+                  handleSelectRole={handleSelectRole}
+                  initializeChat={initializeChat}
+                  fetchChatMessages={fetchChatMessages}
+              />
+            </div>
+            <div className='w-1/3 h-full flex flex-col pl-4 border-l border-gray-d9'>
+              <div className='font-semibold py-4'>현재 선택한 경험카드</div>
               {selectedCard && <Card card={selectedCard} />}
             </div>
           </div>

@@ -63,25 +63,37 @@ public class MypageService {
 
     public void masterSkill(int uid, int msId) {
         User user = userService.getUserFromUid(uid);
-        MasterySkil mastery=masteryRepository.findByMSId(msId);
-        boolean alreadyMastered = userMasterySkilRepository.existsByUMSuidAndUMSmsid(user, mastery);
-        if (alreadyMastered) {
-            throw new IllegalStateException("이미 익힌 스킬입니다.");
-        }
-        if (msId % 5 == 0) {
-            CodeSkil codeSkil = mastery.getMSCSid();
-            Badge badge = new Badge();
-            badge.setUBCSid(codeSkil);
-            badge.setUBUid(user);
-            badgeRepository.save(badge);
-            if(loungeRepository.findByLUid(user)!=null){
-                loungeService.increaseBnum(user);
+
+        int startId = (msId % 5 == 0) ? msId - 4 : msId - (msId % 5 - 1);
+
+        for (int id = startId; id <= msId; id++) {
+            MasterySkil mastery = masteryRepository.findByMSId(id);
+            if (mastery == null) {
+                continue;
             }
+
+            boolean alreadyMastered = userMasterySkilRepository.existsByUMSuidAndUMSmsid(user, mastery);
+            if (alreadyMastered) {
+                continue;
+            }
+
+            if (id % 5 == 0) {
+                CodeSkil codeSkil = mastery.getMSCSid();
+                Badge badge = new Badge();
+                badge.setUBCSid(codeSkil);
+                badge.setUBUid(user);
+                badgeRepository.save(badge);
+
+                if (loungeRepository.findByLUid(user) != null) {
+                    loungeService.increaseBnum(user);
+                }
+            }
+
+            UserMasterySkil userMasterySkil = new UserMasterySkil();
+            userMasterySkil.setUMSuid(user);
+            userMasterySkil.setUMSmsid(mastery);
+            userMasterySkilRepository.save(userMasterySkil);
         }
-        UserMasterySkil userMasterySkil = new UserMasterySkil();
-        userMasterySkil.setUMSuid(user);
-        userMasterySkil.setUMSmsid(mastery);
-        userMasterySkilRepository.save(userMasterySkil);
     }
 
     public quizDTO getQuiz(int msId) {
@@ -268,8 +280,7 @@ public class MypageService {
         if(loungeRepository.findByLUid(roadmap.getURuid())!=null){
             loungeService.increaseRnum(roadmap.getURuid());
         }
-        roadmapListDTO dto=new roadmapListDTO(newRoadmap.getURId(),newRoadmap.getURName(),newRoadmap.getState());
-        return dto;
+        return new roadmapListDTO(newRoadmap.getURId(),newRoadmap.getURName(),newRoadmap.getState());
     }
 
     public List<roadmapDTO> getRoadmaps(UserRoadmap userRoadmap) {
@@ -304,8 +315,7 @@ public class MypageService {
 
     public UserRoadmap getRoadmapNameByuid(int uid, int ur_id){
         User user = userService.getUserFromUid(uid);
-        UserRoadmap userRoadmap = roadmapRepository.findByURIdAndURuid(ur_id, user);
-        return userRoadmap;
+        return roadmapRepository.findByURIdAndURuid(ur_id, user);
     }
 
     public List<roadmapListDTO> getRoadmapListByUid(int uid, boolean flag) {

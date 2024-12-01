@@ -30,7 +30,7 @@ export type ChatRoleOption = {
     guideNotice: string;
 };
 
-export type ChatMessage = {
+type AiCardChat = {
     id: number;
     isUser: number; // 0: AI, 1: User
     content: string;
