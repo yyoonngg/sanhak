@@ -294,6 +294,15 @@ export default function CardEditor({
   const [buttonStyles, setButtonStyles] = useState(Array(categories.length).fill('border-primary'));
   const [selectedSkills, setSelectedSkills] = useState<Skill[]>([]);
   const [isLoading, setIsLoading] = useState(false); // 로딩
+  const [isSidePanelOpen, setSidePanelOpen] = useState(false);
+
+  const toggleSidePanel = () => {
+    setSidePanelOpen(!isSidePanelOpen);
+  };
+
+  const closeSidePanel = () => {
+    setSidePanelOpen(false);
+  };
 
   // 1. 제목과 기간
   const handlerTitleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -390,18 +399,6 @@ export default function CardEditor({
     }))
   }
 
-  // 6. 경험 이미지 업로드
-  // const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const file = event.target.files?.[0];
-  //   if (file) {
-  //     setCard(prevCard => ({
-  //       ...prevCard,
-  //       imageFile : file,
-  //       imageUrl: `/asset/png/profile/${file.name}`
-  //     }))
-  //   }
-  // };
-
   // 6. pdf 참고자료
   const handlePdfUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -477,15 +474,15 @@ export default function CardEditor({
   }, [card]);
   
   return (
-    <div className='w-full h-full flex flex-row justify-between px-24'>
-      <div className='w-[65%] h-full flex flex-col items-end'>
+    <div className='w-full h-full flex flex-row justify-between'>
+      <div className='w-full lg:w-[65%] h-full flex flex-col items-end'>
         <CardEditorFormSection title="경험의 제목과 기간을 입력해주세요">
           <div className='flex flex-row w-full justify-around mb-2'>
-            <div className='w-1/6 mr-2 text-sm rounded-xl border-gray-d9 bg-primary font-semibold text-white flex justify-center items-center'>경험 제목</div>
-            <div className='w-5/6'>
+            <div className='w-1/5 md:w-1/6 mr-2 text-xs xs:text-sm rounded-xl border-gray-d9 bg-primary font-semibold text-white flex justify-center items-center'>경험제목</div>
+            <div className='w-4/5 md:w-5/6'>
               <Input 
                 type='text'
-                className='w-full rounded-xl border-gray-d9 text-sm focus:outline-0'
+                className='w-full rounded-xl border-gray-d9 text-xs xs:text-sm focus:outline-0'
                 placeholder='제목을 입력해주세요'
                 value={card?.title}
                 onChange={handlerTitleInput}
@@ -493,22 +490,22 @@ export default function CardEditor({
             </div>
           </div>
           <div className='flex flex-row w-full justify-around'>
-            <div className='w-1/6 mr-2 text-sm rounded-xl border-gray-d9 bg-primary font-semibold text-white flex justify-center items-center'>기간</div>
-            <div className='w-5/6 flex flex-row'>
-              <div className='flex flex-row w-1/6'>
+            <div className='w-1/5 md:w-1/6 mr-2 text-xs xs:text-sm rounded-xl border-gray-d9 bg-primary font-semibold text-white flex justify-center items-center'>기간</div>
+            <div className='w-4/5 md:w-5/6 flex flex-row'>
+              <div className='flex flex-row w-2/5 md:w-1/6'>
                 <Input 
                   type='text'
-                  className='w-full rounded-xl border-gray-d9 text-sm focus:outline-0'
+                  className='w-full rounded-xl border-gray-d9 text-xs xs:text-sm focus:outline-0'
                   placeholder='YYYY-MM-DD'
                   value={card?.fromDate}
                   onChange={handlerFromDateInput}
                 />
               </div>
               <div className='flex text-2xl text-gray-d9 justify-center items-center mx-2'>&#126;</div>
-              <div className='flex flex-row w-1/6'>
+              <div className='flex flex-row w-2/5 md:w-1/6'>
                 <Input 
                   type='text'
-                  className='w-full rounded-xl border-gray-d9 text-sm focus:outline-0'
+                  className='w-full rounded-xl border-gray-d9 text-xs xs:text-sm focus:outline-0'
                   placeholder='YYYY-MM-DD'
                   value={card?.toDate}
                   onChange={handlerToDateInput}
@@ -519,7 +516,7 @@ export default function CardEditor({
         </CardEditorFormSection>
         { card?.title && card?.fromDate && card?.toDate && card?.title.length > 0 && (
           <CardEditorFormSection title="내가 맡았던 역할은 무엇인가요?">
-            <div className='flex flex-row w-full justify-between'>
+            <div className='w-full grid grid-cols-2 sm:grid-cols-3 gap-2'>
               {categories.map((c, index) => (
                 <ButtonLabel 
                   key={c}
@@ -578,31 +575,6 @@ export default function CardEditor({
             />
           </CardEditorFormSection>
         )}
-        {/* { card?.reflection && card?.reflection.length > 0 && (
-          <CardEditorFormSection title="사진으로 경험을 보여주세요">
-            <div className='w-full flex'>
-              <label className='cursor-pointer inline-flex items-center mr-4 py-2 px-4 rounded-lg border-0 text-sm font-semibold bg-primary text-white'>
-                <Input 
-                  type='file'
-                  accept='image/*'
-                  className='hidden'
-                  onChange={handleImageUpload}
-                />
-                파일 선택
-              </label>
-              {card?.imageUrl && (
-                <div className="mt-2 font-semibold">{card?.imageUrl}</div> 
-              )}
-            </div>
-            {card?.imageUrl && (
-              <img
-                src={card?.imageUrl}
-                alt="Preview"
-                className="mt-4 w-1/2 h-1/2 object-cover border border-gray-d9 rounded-xl"
-              />
-            )}
-          </CardEditorFormSection>
-        )} */}
         { card?.reflection && card?.reflection.length > 0 && (
           <CardEditorFormSection title="경험을 가장 잘 보여주는 자료(.pdf)">
             <div className='w-full flex'>
@@ -622,7 +594,7 @@ export default function CardEditor({
           </CardEditorFormSection>
         )}
         { card?.pdfName && card?.pdfName.length > 0 && (
-          <CardEditorFormSection title="경험을 보여주는 소스 URL을 입력해주세요">
+          <CardEditorFormSection title="경험이 담긴 소스 URL을 입력해주세요">
             {[0, 1].map(index => (
               <Input 
                 key={index}
@@ -635,9 +607,27 @@ export default function CardEditor({
             ))}
           </CardEditorFormSection>
         )}
+        <div className='w-full lg:hidden'>
+          {card?.sourceUrl && card?.sourceUrl.length > 0 ? (
+            <div
+              className='cursor-pointer w-full flex justify-center font-semibold bg-primary text-white border-2 border-primary hover:text-primary hover:bg-white px-4 py-2 mt-2 rounded-xl'
+              onClick={handleSaveClick}
+            >
+              {isNewCard ? 'AI경험카드 생성하기' : 'AI경험카드 수정하기'}
+            </div>
+          ) :
+          (
+            <div
+              className='cursor-pointer w-full flex justify-center font-semibold bg-primary text-white border-2 border-primary hover:text-primary hover:bg-white px-4 py-2 mt-2 rounded-xl'
+              onClick={handleCancelClick}
+            >
+              {'AI경험카드 관리 돌아가기'}
+            </div>
+          )}
+        </div>
       </div>
-      <div className='w-1/3 flex flex-col items-center'>
-        <div className='fixed'>
+      <div className='hidden lg:w-1/3 lg:flex flex-col items-center'>
+        <div className='w-1/4 fixed'>
           <Card card={card}/>
           {card?.sourceUrl && card?.sourceUrl.length > 0 ? (
             <div
@@ -657,6 +647,37 @@ export default function CardEditor({
           )}
         </div>
       </div>
+
+      <div className="lg:hidden fixed top-16 right-0 z-40">
+        <button
+          className="w-28 p-3 text-xs rounded-l-lg bg-primary text-white shadow-lg"
+          onClick={toggleSidePanel}
+        >
+          {isSidePanelOpen ? '닫기' : '카드 미리보기'}
+        </button>
+      </div>
+
+      {isSidePanelOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-gray-45 bg-opacity-50 z-50"
+            onClick={closeSidePanel}
+          ></div>
+
+          <div className="fixed top-0 right-0 w-4/5 h-full bg-white shadow-lg z-50 p-8">
+            <div className='font-bold text-medium sm:text-lg mb-3 sm:mb-6'>현재 AI경험카드</div>
+            <Card card={card} />
+            <div className='w-full flex justify-end mt-4 '>
+              <button
+                className="w-28 p-3 text-xs rounded-lg bg-primary text-white shadow-lg"
+                onClick={closeSidePanel}
+              >
+                {isSidePanelOpen ? '닫기' : '카드 보기'}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
