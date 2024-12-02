@@ -1,4 +1,5 @@
 import React from "react";
+import {ExitIcon} from "@/components/icon";
 
 type QuizModalProps = {
     quiz: {
@@ -31,7 +32,7 @@ const QuizModal: React.FC<QuizModalProps> = ({ quiz, onSubmit, onClose }) => {
                     className="mt-3 px-4 py-2 bg-gray-500 text-white rounded w-full"
                     onClick={onClose}
                 >
-                    닫기
+                    <ExitIcon/>
                 </button>
             </div>
         </div>

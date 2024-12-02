@@ -1,6 +1,8 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import RoleDropdown from './ChatRoleDropdown';
 import {AiCardChat, ChatRoleOption} from "@/models/card";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 type ChatInterfaceProps = {
     roles: ChatRoleOption[];
@@ -86,7 +88,7 @@ export default function ChatInterface({
                                 className={`w-full mb-2 flex ${chat.isUser === 1 ? 'justify-end' : 'justify-start'}`}
                             >
                                 <div className={`${chat.isUser === 1 ? 'bg-primary text-white' : 'bg-gray-ec text-black'} p-2 rounded-lg max-w-xs`}>
-                                    <div>{chat.content}</div>
+                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{chat.content}</ReactMarkdown>
                                 </div>
                             </div>
                         ))}
