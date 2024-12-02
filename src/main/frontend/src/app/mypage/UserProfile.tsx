@@ -7,7 +7,6 @@ type UserProfileProps = {
   badgeInfo?: UserSkill[]
   isOwnUser: boolean
   onSave: (updateProfileBody: UpdateUserProfile) => void;
-  other?: number;
 };
 
 const categoryLabels: Record<string, string> = {
@@ -20,24 +19,24 @@ const categoryLabels: Record<string, string> = {
 };
 
 export default function UserProfile({
-  userInfo,
-  badgeInfo,
-  isOwnUser,
-  onSave
-}:UserProfileProps) {
-  constte(false); 
-  const [editedName, setEditedName] = useState(userInfo?.name || ''); 
-  const [selectedCategory, setSelectedCategory] = useState(userInfo?.desirePosition || ''); 
+                                      userInfo,
+                                      badgeInfo,
+                                      isOwnUser,
+                                      onSave
+                                    }:UserProfileProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedName, setEditedName] = useState(userInfo?.name || '');
+  const [selectedCategory, setSelectedCategory] = useState(userInfo?.desirePosition || '');
   const categories = ['웹/프론트엔드', '웹/백엔드', '데이터사이언스', '보안', '어플리케이션', '예비'];
   const [profileImg, setProfileImg] = useState(userInfo?.profileImgURL || '/asset/png/profile_default_image.png');
   const [profileImgBlob, setProfileImgBlob] = useState<File|null>(null);
-  const isOther = useState(other);
+
   const changeProfileMode = () => {
-    setIsEditing((prev) => !prev); 
+    setIsEditing((prev) => !prev);
   };
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEditedName(event.target.value); 
+    setEditedName(event.target.value);
   };
 
   const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -60,7 +59,7 @@ export default function UserProfile({
 
   const saveProfile = () => {
     const categoryKey = Object.keys(categoryLabels).find(
-      (key) => categoryLabels[key] === selectedCategory
+        (key) => categoryLabels[key] === selectedCategory
     );
 
     if (!categoryKey) {
@@ -70,15 +69,15 @@ export default function UserProfile({
 
     // profile 데이터 생성
     const profileData: User = {
-      id: userInfo!.id, 
-      bio: userInfo?.bio || '', 
-      profileImgURL: profileImg, 
-      name: editedName, 
-      email: userInfo!.email, 
-      desirePosition: categoryKey, 
-      badge_cnt: userInfo!.badge_cnt, 
-      roadmap_cnt: userInfo!.roadmap_cnt, 
-      card_cnt: userInfo!.card_cnt, 
+      id: userInfo!.id,
+      bio: userInfo?.bio || '',
+      profileImgURL: profileImg,
+      name: editedName,
+      email: userInfo!.email,
+      desirePosition: categoryKey,
+      badge_cnt: userInfo!.badge_cnt,
+      roadmap_cnt: userInfo!.roadmap_cnt,
+      card_cnt: userInfo!.card_cnt,
     };
 
     const updateProfileBody: UpdateUserProfile = {
@@ -110,99 +109,99 @@ export default function UserProfile({
   },[userInfo])
 
   return (
-    <div className='w-full h-fit min-h-64 flex flex-col lg:flex-row justify-between border-b border-gray-cc pb-5 lg:px-8'>
-      <div className='w-full lg:w-[55%] flex flex-row items-center justify-between'>
-        <div className='w-5/6 flex items-center'>
-          <div className="w-32 h-32 md:w-64 md:h-64 object-cover rounded-xl border border-gray-cc">
-            {isEditing ? (
-              <>
-                <input 
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                  id="profileImageInput"
-                />
-                <label htmlFor="profileImageInput">
+      <div className='w-full h-fit min-h-64 flex flex-col lg:flex-row justify-between border-b border-gray-cc pb-5 lg:px-8'>
+        <div className='w-full lg:w-[55%] flex flex-row items-center justify-between'>
+          <div className='w-5/6 flex items-center'>
+            <div className="w-32 h-32 md:w-64 md:h-64 object-cover rounded-xl border border-gray-cc">
+              {isEditing ? (
+                  <>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
+                        id="profileImageInput"
+                    />
+                    <label htmlFor="profileImageInput">
+                      <img
+                          className="w-32 h-32 md:w-64 md:h-64 object-cover rounded-xl cursor-pointer transition-all duration-300 ease-in-out hover:filter hover:blur-sm"
+                          src={profileImg}
+                          alt="Profile"
+                      />
+                    </label>
+                  </>
+              ) : (
                   <img
-                    className="w-32 h-32 md:w-64 md:h-64 object-cover rounded-xl cursor-pointer transition-all duration-300 ease-in-out hover:filter hover:blur-sm"
-                    src={profileImg}
-                    alt="Profile"
+                      className="w-32 h-32 md:w-64 md:h-64 object-cover rounded-xl"
+                      src={profileImg}
+                      alt="Profile"
                   />
-                </label>
-              </>
-            ) : (
-              <img 
-                className="w-32 h-32 md:w-64 md:h-64 object-cover rounded-xl"
-                src={profileImg}
-                alt="Profile"
-              />
-            )}
-          </div>
-          <div className='ml-4'>
-            <div className="text-xl md:text-3xl font-gmarketsansBold">
-              {isEditing ? (
-                <input
-                  type="text"
-                  value={editedName}
-                  onChange={handleNameChange}
-                  className="w-36 h-8 md:w-60 md:h-10 border border-gray-cc rounded px-2 pb-1 text-lg md:text-3xl font-gmarketsansBold"
-                />
-              ) : (
-                editedName
               )}
             </div>
-            <div className="text-medium md:text-2xl font-gmarketsansMedium mt-1">
-              {isEditing ? (
-                <select
-                  value={selectedCategory}
-                  onChange={handleCategoryChange}
-                  className="w-36 md:w-40 border border-gray-cc rounded px-2 py-1"
-                >
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                `${selectedCategory} 개발자`
-              )}
-            </div>
-            <div className="text-xs md:text-medium font-gmarketsansBold mt-1">
-              {userInfo?.email}
-            </div>
-            <div className='flex mt-2'>
-              <div className='flex items-center gap-2 mr-6'>
-                <img className='w-4 h-4 md:w-6 md:h-6' src='asset/png/icon_filter_badge.png' />
-                <div>{userInfo?.badge_cnt}</div>
+            <div className='ml-4'>
+              <div className="text-xl md:text-3xl font-gmarketsansBold">
+                {isEditing ? (
+                    <input
+                        type="text"
+                        value={editedName}
+                        onChange={handleNameChange}
+                        className="w-36 h-8 md:w-60 md:h-10 border border-gray-cc rounded px-2 pb-1 text-lg md:text-3xl font-gmarketsansBold"
+                    />
+                ) : (
+                    editedName
+                )}
               </div>
-              <div className='flex items-center gap-2 mr-6'>
-                <img className='w-4 h-4 md:w-6 md:h-6' src='asset/png/icon_filter_roadmap.png' />
-                <div>{userInfo?.roadmap_cnt}</div>
+              <div className="text-medium md:text-2xl font-gmarketsansMedium mt-1">
+                {isEditing ? (
+                    <select
+                        value={selectedCategory}
+                        onChange={handleCategoryChange}
+                        className="w-36 md:w-40 border border-gray-cc rounded px-2 py-1"
+                    >
+                      {categories.map((category) => (
+                          <option key={category} value={category}>
+                            {category}
+                          </option>
+                      ))}
+                    </select>
+                ) : (
+                    `${selectedCategory} 개발자`
+                )}
               </div>
-              <div className='flex items-center gap-2 mr-6'>
-                <img className='w-4 h-4 md:w-6 md:h-6' src='asset/png/icon_filter_card.png' />
-                <div>{userInfo?.card_cnt}</div>
+              <div className="text-xs md:text-medium font-gmarketsansBold mt-1">
+                {userInfo?.email}
+              </div>
+              <div className='flex mt-2'>
+                <div className='flex items-center gap-2 mr-6'>
+                  <img className='w-4 h-4 md:w-6 md:h-6' src='asset/png/icon_filter_badge.png' />
+                  <div>{userInfo?.badge_cnt}</div>
+                </div>
+                <div className='flex items-center gap-2 mr-6'>
+                  <img className='w-4 h-4 md:w-6 md:h-6' src='asset/png/icon_filter_roadmap.png' />
+                  <div>{userInfo?.roadmap_cnt}</div>
+                </div>
+                <div className='flex items-center gap-2 mr-6'>
+                  <img className='w-4 h-4 md:w-6 md:h-6' src='asset/png/icon_filter_card.png' />
+                  <div>{userInfo?.card_cnt}</div>
+                </div>
               </div>
             </div>
           </div>
+          {userInfo !== undefined && isOwnUser && (
+              <div
+                  className='w-1/12 h-1/12 flex justify-center items-center border-2 border-primary rounded-xl p-2 cursor-pointer'
+                  onClick={isEditing ? saveProfile : changeProfileMode}
+              >
+                <img src='/asset/png/icon_modify_profile.png'/>
+              </div>
+          )}
         </div>
-        {userInfo !== undefined && isOwnUser && (
-        <div 
-          className='w-1/12 h-1/12 flex justify-center items-center border-2 border-primary rounded-xl p-2 cursor-pointer'
-          onClick={isEditing ? saveProfile : changeProfileMode}
-        >
-          <img src='/asset/png/icon_modify_profile.png'/>
+
+        <div className='w-full lg:w-2/5 xl:w-1/2 max-h-[256px] bg-primary rounded-xl flex flex-wrap content-start p-4 lg:ml-4 overflow-y-auto scrollbar'>
+          {badgeInfo?.map((skill) => (
+              <SkillBadge key={skill.id} skill={skill} />
+          ))}
         </div>
-        )}
       </div>
-      
-      <div className='w-full lg:w-2/5 xl:w-1/2 max-h-[256px] bg-primary rounded-xl flex flex-wrap content-start p-4 lg:ml-4 overflow-y-auto scrollbar'>
-        {badgeInfo?.map((skill) => (
-          <SkillBadge key={skill.id} skill={skill} />
-        ))}
-      </div>
-    </div>
   );
 }
