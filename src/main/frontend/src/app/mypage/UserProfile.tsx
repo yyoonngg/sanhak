@@ -5,6 +5,7 @@ import {UpdateUserProfile, User, UserSkill} from "@/models/user";
 type UserProfileProps = {
   userInfo?: User
   badgeInfo?: UserSkill[]
+  isOwnUser: boolean
   onSave: (updateProfileBody: UpdateUserProfile) => void;
   other?: number;
 };
@@ -21,10 +22,10 @@ const categoryLabels: Record<string, string> = {
 export default function UserProfile({
   userInfo,
   badgeInfo,
-  onSave,
-  other
+  isOwnUser,
+  onSave
 }:UserProfileProps) {
-  const [isEditing, setIsEditing] = useState(false); 
+  constte(false); 
   const [editedName, setEditedName] = useState(userInfo?.name || ''); 
   const [selectedCategory, setSelectedCategory] = useState(userInfo?.desirePosition || ''); 
   const categories = ['웹/프론트엔드', '웹/백엔드', '데이터사이언스', '보안', '어플리케이션', '예비'];
@@ -187,7 +188,7 @@ export default function UserProfile({
             </div>
           </div>
         </div>
-        {isOther[0] === undefined && (
+        {userInfo !== undefined && isOwnUser && (
         <div 
           className='w-1/12 h-1/12 flex justify-center items-center border-2 border-primary rounded-xl p-2 cursor-pointer'
           onClick={isEditing ? saveProfile : changeProfileMode}

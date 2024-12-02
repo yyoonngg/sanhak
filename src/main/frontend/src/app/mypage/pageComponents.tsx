@@ -10,11 +10,35 @@
   import {UpdateUserProfile, User, UserRecommendCompany, UserSkill} from '@/models/user';
   import { useUserContext } from '@/context/UserContext';
 
-  // TODO: API 연결 -> 유저의 커스텀 로드맵 리스트
-  // TODO: API 연결 -> customRoadmapList에서 선택된 로드맵의 id로 api호출
-  // TODO: API 연결
-  type MypagePageProps = {
-    user_id?: number;
+type MypagePageProps = {
+  user_id?: number;
+};
+
+export default function MypagePage({
+  user_id
+}: MypagePageProps) {    
+  const { loggedInUserId, mypageUserId  } = useUserContext();
+  console.log("user_id:", user_id);
+  const [pageUserId, setPageUserId] = useState<number>();
+  const [isOwnUser, setIsOwnUser] = useState<boolean>(false);
+  const [userInfo, setUserInfo] = useState<User>();
+  const [badgeInfo, setBadgeInfo] = useState<UserSkill[]>([]);
+  const [cardInfos, setCardInfos] = useState<AiCard[]>([]);
+  const [roadmapInfos, setRoadmapInfos]=useState<CustomRoadmapDetail[]>([]);
+  const [currentRoadmap, setCurrentRoadmap] = useState(0); 
+  const [currentCard, setCurrentCard] = useState(0);
+  const [recommendCompanyList, setRecommendCompanyList] = useState<UserRecommendCompany[]>([]);
+
+  const roadmapSlideSettings = {
+    dots: true, // 슬라이더 하단에 점 표시
+    infinite: false, // 무한 반복
+    speed: 500, // 슬라이딩 속도
+    slidesToShow: 1, // 한 번에 보여줄 슬라이드 개수
+    slidesToScroll: 1, // 스크롤할 슬라이드 개수
+    arrows: true, // 좌우 화살표 표시
+    beforeChange: (oldIndex: number, newIndex: number) => {
+      setCurrentRoadmap(newIndex); // 슬라이드 변경 시 현재 인덱스 업데이트
+    },
   };
 
   export default function MypagePage({
@@ -30,18 +54,16 @@
     const [currentRoadmap, setCurrentRoadmap] = useState(0);
     const [currentCard, setCurrentCard] = useState(0);
     const [recommendCompanyList, setRecommendCompanyList] = useState<UserRecommendCompany[]>([]);
-
-    const roadmapSlideSettings = {
-      dots: true, // 슬라이더 하단에 점 표시
-      infinite: false, // 무한 반복
-      speed: 500, // 슬라이딩 속도
-      slidesToShow: 1, // 한 번에 보여줄 슬라이드 개수
-      slidesToScroll: 1, // 스크롤할 슬라이드 개수
-      arrows: true, // 좌우 화살표 표시
-      beforeChange: (oldIndex: number, newIndex: number) => {
-        setCurrentRoadmap(newIndex); // 슬라이드 변경 시 현재 인덱스 업데이트
-      },
-    };
+  useEffect(()=>{
+    if(user_id) {
+      setPageUserId(user_id);
+      setIsOwnUser(false);
+    } 
+    else if(loggedInUserId) { 
+      setPageUserId(loggedInUserId);
+      setIsOwnUser(true);
+    }
+  },[user_id, loggedInUserId])
 
     const cardSlideSettings = {
       dots: true, // 슬라이더 하단에 점 표시
@@ -170,14 +192,31 @@
         } finally {
         }
     };
-
-    useEffect(()=>{console.log(userInfo)},[userInfo])
-
-    return (
-      <div className="w-full h-full flex flex-col items-center mt-5">
-        <div className='max-w-[1400px] w-full h-full px-4 2xl:w-[1400px] xl:px-20 lg:px-10'>
-          <div className='w-full flex flex-col pb-5'>
-            <UserProfile userInfo={userInfo} badgeInfo={badgeInfo} onSave={onSaveProfile} other={user_id} />
+  return (
+    <div className="w-full h-full flex flex-col items-center mt-5">
+      <div className='max-w-[1400px] w-full h-full px-4 2xl:w-[1400px] xl:px-20 lg:px-10'>
+        <div className='w-full flex flex-col pb-5'>
+          <UserProfile userInfo={userInfo} badgeInfo={badgeInfo} isOwnUser={isOwnUser} onSave={onSaveProfile}/>
+        </div>
+        <div className='w-full flex flex-col lg:flex-row justify-between mb-10 border-b border-gray-cc pb-10'>
+          <div className='w-full lg:w-3/5 flex flex-col justify-start'>
+            <div className='flex flex-col'>
+              <div className='flex items-center text-center text-lg md:text-2xl font-gmarketsansMedium'><img className='w-4 h-4 md:w-6 md:h-6 mb-1 mr-1' src='asset/png/icon_filter_roadmap.png' alt='커스텀로드맵' />커스텀 로드맵</div>
+              <div className='text-xl font-gmarketsansMedium'>{roadmapInfos[currentRoadmap]?.name || '-'}</div>
+            </div>
+            {roadmapInfos.length > 0 ? (
+              <Slider {...roadmapSlideSettings} className="w-full mx-auto">
+                {roadmapInfos.map((roadmap, index) => (
+                  <div key={index} className="w-full h-full flex justify-center items-center p-5">
+                    <Roadmap isEditMode={false} roadmapSkills={roadmap.skills} style={'h-[75dvh] max-h-[600px] mb-4'} />
+                  </div>
+                ))}
+              </Slider>
+            ) : (
+              <div className="w-full h-full flex justify-center items-center p-5">
+                <div className='w-full h-[75dvh] max-h-[600px] mb-4 box-border flex flex-col items-center justify-center rounded-xl shadow-[4px_4px_8px_rgba(0,0,0,0.3)] font-gmarketsansMedium'>빈 커스텀 로드맵</div>
+              </div>
+            )}
           </div>
           <div className='w-full flex flex-col lg:flex-row justify-between mb-10 border-b border-gray-cc pb-10'>
             <div className='w-full lg:w-3/5 flex flex-col justify-start'>

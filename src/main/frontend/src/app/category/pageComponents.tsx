@@ -60,7 +60,7 @@ export default function CategoryPage() {
   const [selectedSkillPng, setSelectedSkillPng] = useState<string>("");
   const [skillDetailData, setSkillDetailData] = useState<SkillDetail | null>(null);
   const [isDetailVisible, setIsDetailVisible] = useState<boolean>(false);
-
+  const [triggerAction, setTriggerAction] = useState<null | 'increase' | 'decrease'>(null);
   useEffect(() => {
     // 백엔드에서 데이터 가져오기
     const fetchData = async () => {
@@ -131,10 +131,25 @@ export default function CategoryPage() {
       console.error("Error fetching mastery details:", error);
     }
   };
+
+  // 로드맵 크기 관련 트리거 
+  // 1) 로드맵 확장 트리거
+  const handleIncreaseSize = () => {
+    setTriggerAction('increase'); 
+  };
+  // 2) 로드맵 축소 트리거
+  const handleDecreaseSize = () => {
+    setTriggerAction('decrease'); 
+  };
+  // 3) 초기화 트리거
+  const resetAction = () => {
+    setTriggerAction(null);
+  };
+  
   return (
     <div className="w-full h-screen flex flex-col items-center">
-      <div className='w-dvw h-40 flex flex-row items-center justify-center border-b border-gray-d9'>
-        <div className='w-[1000px] h-full flex flex-row items-center justify-between'>
+      <div className='w-full h-40 flex flex-row items-center justify-center border-b border-gray-d9'>
+        <div className='max-w-[1400px] w-full h-full py-2 sm:py-0 px-4 2xl:w-[1400px] xl:px-20 lg:px-10 h-full grid grid-cols-3 sm:grid-cols-5 flex flex-row items-center justify-between'>
           {categories.map(c => (
             <div key={c} onClick={()=>selectCategory(c)}>
               <CategoryButton key={c} category={c} />
@@ -142,24 +157,46 @@ export default function CategoryPage() {
           ))}
         </div>
       </div>
-      <div className="w-[1400px] h-full flex flex-col items-center">
-        <div className='w-full px-24'>
+      <div className="max-w-[1400px] w-full h-full px-4 2xl:w-[1400px] xl:px-20 lg:px-10 flex flex-col items-center mb-10">
+        <div className='w-full'>
           <TimelineRoadmap category={category} skills={roadmapSkills}/>
         </div>
-        <div className='w-full flex flex-col px-24'>
+        <div className='w-full flex flex-col pb-10'>
           <div className="flex flex-col">
             <div className="font-bold">RoadMap</div>
-            <div className={`font-semibold text-category-${category} mb-5`}>{categoryName}</div>
+            <div className={`font-semibold text-category-${category} mb-2`}>{categoryName}</div>
           </div>
-          <Roadmap isEditMode={false} roadmapSkills={roadmapSkills} onSelectDetail={onSelectDetail}/>
+          <div className='w-40 sm:w-56 lg:w-60 flex justify-between mb-2 '>
+            <div
+              onClick={handleDecreaseSize}
+              className="bg-primary text-white text-xs sm:text-sm lg:text-base px-2 sm:px-4 py-2 rounded-xl cursor-pointer"
+            >
+              {'축소하기(-)'}
+            </div>
+            <div
+              onClick={handleIncreaseSize}
+              className="bg-primary text-white text-xs sm:text-sm lg:text-base px-2 sm:px-4 py-2 rounded-xl cursor-pointer"
+            >
+              {'확대하기(+)'}
+            </div>
+          </div>
+          <Roadmap 
+            style={'h-[40dvh] sm:h-[70dvh] md:h-dvh'}
+            isEditMode={false} 
+            roadmapSkills={roadmapSkills} 
+            onTriggerAction={triggerAction}
+            onSelectDetail={onSelectDetail}
+            onResetAction={resetAction}
+          />
         </div>
       </div>
       {isDetailVisible && (
-          <SkillDetailModal
-              skillDetail={skillDetailData as SkillDetail}
-              selectedSkillPng={selectedSkillPng}
-              onClose={() => setIsDetailVisible(false)}
-          />
+        <SkillDetailModal
+          style={'w-full border-none'}
+          skillDetail={skillDetailData as SkillDetail}
+          selectedSkillPng={selectedSkillPng}
+          onClose={() => setIsDetailVisible(false)}
+        />
       )}
     </div>
   );
