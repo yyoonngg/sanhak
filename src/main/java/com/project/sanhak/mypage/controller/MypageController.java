@@ -44,6 +44,11 @@ public class MypageController {
             }
             uid = uidAttribute;
             flag=true;
+        } else{
+            int uidCheck = (int) session.getAttribute("uid");
+            if(uid==uidCheck){
+                flag=true;
+            }
         }
         List<roadmapListDTO> roadmapList = mypageService.getRoadmapListByUid(uid, flag);
         return ResponseEntity.ok(roadmapList);
@@ -68,7 +73,7 @@ public class MypageController {
         }
         UserRoadmap roadmapName=mypageService.getRoadmapNameByuid(uid,ur_id);
         List<roadmapDTO> roadmapList = mypageService.getRoadmaps(roadmapName);
-        mergeRoadmapDTO roadmap = new mergeRoadmapDTO(ur_id,roadmapName.getURName(),roadmapList);
+        mergeRoadmapDTO roadmap = new mergeRoadmapDTO(ur_id,roadmapName.getURName(),roadmapName.getState(),roadmapList);
         return ResponseEntity.ok(roadmap);
     }
 
@@ -89,6 +94,11 @@ public class MypageController {
             }
             uid = uidAttribute;
             flag=true;
+        } else{
+            int uidCheck = (int) session.getAttribute("uid");
+            if(uid==uidCheck){
+                flag=true;
+            }
         }
         List<mergeRoadmapDTO> roadmapList = new ArrayList<>();
         List<roadmapListDTO> list = mypageService.getRoadmapListByUid(uid, flag);
@@ -121,6 +131,15 @@ public class MypageController {
         System.out.println("처리 중인 요청 데이터: " + requestData);
         mypageService.updateRoadmapName(ur_id, requestData.getName());
         mypageService.updateRoadmap(ur_id, requestData.getUpdates());
+        return ResponseEntity.ok("로드맵 정보 업데이트 성공");
+    }
+
+    @Operation(summary = "특정 로드맵 정보 업데이트",
+            responses = @ApiResponse(responseCode = "200", description = "로드맵 정보 업데이트 성공"))
+    @GetMapping("/roadmap/state/{ur_id}/{state}")
+    public ResponseEntity<String> updateStateRoadmap(@PathVariable int ur_id,
+                                                      @PathVariable int state) {
+        mypageService.updateRoadmapState(ur_id, state);
         return ResponseEntity.ok("로드맵 정보 업데이트 성공");
     }
 
