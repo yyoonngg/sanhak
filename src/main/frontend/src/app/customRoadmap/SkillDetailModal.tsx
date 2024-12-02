@@ -4,12 +4,14 @@ import { ExitIcon } from "@/components/icon";
 import QuizModal from "./QuizModal";
 
 type SkillDetailModalProps = {
+    style?: string;
     skillDetail: SkillDetail;
     selectedSkillPng: string;
     onClose: () => void;
 };
 
 const SkillDetailModal: React.FC<SkillDetailModalProps> = ({
+                                                                style,
                                                                skillDetail,
                                                                selectedSkillPng,
                                                                onClose,
@@ -67,7 +69,7 @@ const SkillDetailModal: React.FC<SkillDetailModalProps> = ({
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-end items-center z-50">
-            <div className="bg-white p-5 w-1/3 h-full overflow-y-auto">
+            <div className={`bg-white p-5 ${style ? style : "w-1/3"} h-full overflow-y-auto scrollbar`}>
                 <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center pl-5">
                         <img className="w-12 h-auto" src={selectedSkillPng} alt={skillDetail.name} />
