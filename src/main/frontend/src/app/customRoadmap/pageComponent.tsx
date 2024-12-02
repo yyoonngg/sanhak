@@ -266,6 +266,22 @@ const allCategorySkills: AllKindOfSkills[] = [
     ]},
 ];
 
+const updateRoadmapState = async (roadmapId: number, state: number) => {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/mypage/roadmap/state/${roadmapId}/${state}`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error('로드맵 상태 변경 실패');
+    }
+    console.log(`로드맵 상태가 ${state}로 변경되었습니다.`);
+  } catch (error) {
+    console.error('로드맵 상태 변경 중 오류 발생:', error);
+  }
+};
+
 export default function CustomRoadmapPage() {
   const [customRoadmapList, setCustomRoadmapList] = useState<CustomRoadmapName[]>([]);
   const [selectedRoadmap, setSelectedRoadmap] = useState<CustomRoadmapDetail>({
@@ -280,6 +296,7 @@ export default function CustomRoadmapPage() {
   const [selectedSkillPng, setSelectedSkillPng] = useState<string>("");
   const [skillDetailData, setSkillDetailData] = useState<SkillDetail | null>(null);
   const [isDetailVisible, setIsDetailVisible] = useState<boolean>(false);
+  const [selectedState, setSelectedState] = useState<number>(0);
 
   // 로드맵 리스트 불러오기
   useEffect(() => {
@@ -290,7 +307,9 @@ export default function CustomRoadmapPage() {
 
         // 기본 선택 로드맵 설정
         if (roadmapList.length > 0) {
-          onSelectRoadmap(roadmapList[0].id);
+          const firstRoadmap = roadmapList[0];
+          onSelectRoadmap(firstRoadmap.id);
+          setSelectedState(firstRoadmap.state || 0);
         }
       } catch (error) {
         console.error('로드맵 리스트 로드 실패:', error);
@@ -305,6 +324,10 @@ export default function CustomRoadmapPage() {
       const roadmapData = await fetchRoadmapDetail(roadmapId);
       console.log(roadmapData);
       setSelectedRoadmap(roadmapData);
+      const selected = customRoadmapList.find((roadmap) => roadmap.id === roadmapId);
+      if (selected) {
+        setSelectedState(selected.state || 0);
+      }
     } catch (error) {
       console.error('로드맵 선택 실패:', error);
     }
@@ -581,6 +604,20 @@ export default function CustomRoadmapPage() {
     }
   };
 
+  const handleStateChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const newState = Number(event.target.value);
+    setSelectedState(newState);
+
+    if (selectedRoadmap.id != null) {
+      await updateRoadmapState(selectedRoadmap.id, newState);
+      setCustomRoadmapList((prevList) =>
+          prevList.map((roadmap) =>
+              roadmap.id === selectedRoadmap.id ? { ...roadmap, state: newState } : roadmap
+          )
+      );
+    }
+  };
+
   return (
     <div className='w-full h-full flex flex-col items-center'>
       <div className='w-[1400px] h-[90dvh]'>
@@ -628,23 +665,36 @@ export default function CustomRoadmapPage() {
                   </div>
                 </>
               ) : (
-                <>
-                  <div className='font-gmarketsansBold text-lg'>{selectedRoadmap.name}</div>
-                  <div 
-                    className='px-3 py-1 rounded-xl border-2 border-primary cursor-pointer hover:bg-gray-ec'
-                    onClick={()=>setIsEditMode(true)}
-                  >수정하기</div>
-                </>
+                  <>
+                    <div className='font-gmarketsansBold text-lg'>{selectedRoadmap.name}</div>
+                    <div className='flex items-center gap-4'>
+                      <select
+                          className='border rounded-xl px-2 py-1 w-24'
+                          value={selectedState}
+                          onChange={handleStateChange}
+                      >
+                        <option value={0}>제작중</option>
+                        <option value={1}>공개중</option>
+                        <option value={2}>미공개</option>
+                      </select>
+                      <div
+                          className='px-3 py-1 rounded-xl border-2 border-primary cursor-pointer hover:bg-gray-ec'
+                          onClick={() => setIsEditMode(true)}
+                      >
+                        수정하기
+                      </div>
+                    </div>
+                  </>
               )}
             </div>
             <Roadmap
-              isEditMode={isEditMode}
-              roadmapSkills={selectedRoadmap.skills}
-              style={'h-[75dvh] max-h-[600px] mb-4'}
-              onTriggerAction={triggerAction}
-              onSelectDetail={onSelectDetail}
-              handleUpdateSkill={handleUpdateSkill}
-              onResetAction={resetAction}
+                isEditMode={isEditMode}
+                roadmapSkills={selectedRoadmap.skills}
+                style={'h-[75dvh] max-h-[600px] mb-4'}
+                onTriggerAction={triggerAction}
+                onSelectDetail={onSelectDetail}
+                handleUpdateSkill={handleUpdateSkill}
+                onResetAction={resetAction}
             />
           </div>
         </div>

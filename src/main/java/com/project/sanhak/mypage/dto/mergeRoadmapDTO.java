@@ -16,5 +16,6 @@ public class mergeRoadmapDTO {
     private int id;
     @Schema(description = "로드맵 이름", example = "웹 개발 로드맵")
     private String name;
+    private int state;
     private List<roadmapDTO> skills;
 }

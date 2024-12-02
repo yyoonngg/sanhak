@@ -7,6 +7,7 @@ type UserProfileProps = {
   badgeInfo?: UserSkill[]
   isOwnUser: boolean
   onSave: (updateProfileBody: UpdateUserProfile) => void;
+  other?: number;
 };
 
 const categoryLabels: Record<string, string> = {
@@ -24,13 +25,13 @@ export default function UserProfile({
   isOwnUser,
   onSave
 }:UserProfileProps) {
-  const [isEditing, setIsEditing] = useState(false); 
+  constte(false); 
   const [editedName, setEditedName] = useState(userInfo?.name || ''); 
   const [selectedCategory, setSelectedCategory] = useState(userInfo?.desirePosition || ''); 
   const categories = ['웹/프론트엔드', '웹/백엔드', '데이터사이언스', '보안', '어플리케이션', '예비'];
   const [profileImg, setProfileImg] = useState(userInfo?.profileImgURL || '/asset/png/profile_default_image.png');
   const [profileImgBlob, setProfileImgBlob] = useState<File|null>(null);
-
+  const isOther = useState(other);
   const changeProfileMode = () => {
     setIsEditing((prev) => !prev); 
   };
