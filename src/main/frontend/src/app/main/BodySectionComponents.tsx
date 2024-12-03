@@ -73,19 +73,27 @@ export default function BodySectionComponents({ currentPage }: BodySectionProps)
                     </p>
                 </div>
                 <div className="flex flex-col my-4">
-                    <div className="flex sm:flex sm:flex-row">
-                        <p className="font-gmarketsansLight text-base text-left sm:text-xl sm:pt-20 sm:pr-4">
-                            프론트, 백, 보안, 앱, 데이터까지
-                        </p>
-                        <img src="/asset/png/mainpage/mockup_category.png" className="w-full sm:w-2/3 justify-center"/>
+                    <div className="flex flex-col my-4">
+                        <div className="flex flex-col items-start mb-2 px-4">
+                            <p className="font-gmarketsansLight text-base text-left sm:text-xl">
+                                프론트, 백, 보안, 앱, 데이터까지
+                            </p>
+                        </div>
+                        <div className="relative">
+                            <img
+                                src="/asset/png/mainpage/mockup_category.png"
+                                className="w-full sm:w-2/3"
+                                alt="Mockup Category"
+                            />
+                        </div>
+                        <div className="flex flex-col items-end mt-2 px-4">
+                            <p className="font-gmarketsansLight text-base text-right sm:text-xl">
+                                각 분야에서 뭘 하면 되는지 한눈에 볼 수 있어요.
+                            </p>
+                        </div>
                     </div>
-                    <div>
-                        <p className="font-gmarketsansLight text-base text-right sm:text-xl sm:flex-col sm:flex sm:py-2">
-                            각 분야에서 뭘 하면 되는지 한눈에 볼 수 있어요.
-                        </p>
-                    </div>
-                </div>
 
+                </div>
                 <p className="font-gmarketsansBold text-lg sm:text-xl text-[#3b2a70] py-4">
                     TimeLine Roadmap
                 </p>

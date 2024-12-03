@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import SkillBadge from './SkillBadge';
-import {UpdateUserProfile, User, UserSkill} from "@/models/user";
+import { UpdateUserProfile, User, UserSkill } from "@/models/user";
+import EmailModal from "@/app/mypage/EmailModal";
 
 type UserProfileProps = {
-  userInfo?: User
-  badgeInfo?: UserSkill[]
-  isOwnUser: boolean
+  userInfo?: User;
+  badgeInfo?: UserSkill[];
+  isOwnUser: boolean;
   onSave: (updateProfileBody: UpdateUserProfile) => void;
+  userId?: number;
 };
 
 const categoryLabels: Record<string, string> = {
@@ -15,69 +17,52 @@ const categoryLabels: Record<string, string> = {
   data: '데이터사이언스',
   security: '보안',
   application: '어플리케이션',
-  default: '예비' // null인 경우
+  default: '예비',
 };
 
 export default function UserProfile({
                                       userInfo,
                                       badgeInfo,
                                       isOwnUser,
-                                      onSave
-                                    }:UserProfileProps) {
+                                      onSave,
+                                      userId,
+                                    }: UserProfileProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(userInfo?.name || '');
   const [selectedCategory, setSelectedCategory] = useState(userInfo?.desirePosition || '');
-  const categories = ['웹/프론트엔드', '웹/백엔드', '데이터사이언스', '보안', '어플리케이션', '예비'];
   const [profileImg, setProfileImg] = useState(userInfo?.profileImgURL || '/asset/png/profile_default_image.png');
-  const [profileImgBlob, setProfileImgBlob] = useState<File|null>(null);
+  const [profileImgBlob, setProfileImgBlob] = useState<File | null>(null);
+  const [isModalOpen, setModalOpen] = useState(false);
 
-  const changeProfileMode = () => {
-    setIsEditing((prev) => !prev);
-  };
+  const categories = Object.values(categoryLabels);
 
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEditedName(event.target.value);
-  };
+  const toggleEditMode = () => setIsEditing((prev) => !prev);
 
-  const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedCategory(event.target.value);
-  };
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => setEditedName(e.target.value);
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => setSelectedCategory(e.target.value);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setProfileImg(imageUrl); // 이미지 URL을 상태에 저장
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImgBlob(file);
-      };
-      reader.readAsDataURL(file);
+      setProfileImg(URL.createObjectURL(file));
+      setProfileImgBlob(file);
     }
   };
 
   const saveProfile = () => {
-    const categoryKey = Object.keys(categoryLabels).find(
-        (key) => categoryLabels[key] === selectedCategory
-    );
+    const categoryKey = Object.keys(categoryLabels).find((key) => categoryLabels[key] === selectedCategory);
 
     if (!categoryKey) {
       console.error('Invalid category selected');
       return;
     }
 
-    // profile 데이터 생성
     const profileData: User = {
-      id: userInfo!.id,
-      bio: userInfo?.bio || '',
-      profileImgURL: profileImg,
+      ...userInfo!,
       name: editedName,
-      email: userInfo!.email,
+      profileImgURL: profileImg,
       desirePosition: categoryKey,
-      badge_cnt: userInfo!.badge_cnt,
-      roadmap_cnt: userInfo!.roadmap_cnt,
-      card_cnt: userInfo!.card_cnt,
     };
 
     const updateProfileBody: UpdateUserProfile = {
@@ -85,36 +70,51 @@ export default function UserProfile({
       image: profileImgBlob,
     };
 
-    console.log(updateProfileBody);
     onSave(updateProfileBody);
-    setIsEditing(false); // 편집 모드 종료
+    setIsEditing(false);
   };
 
-  useEffect(()=>{
-    if(userInfo?.name){
+  useEffect(() => {
+    if (userInfo) {
       setEditedName(userInfo.name);
+      setSelectedCategory(categoryLabels[userInfo.desirePosition] || '예비');
+      setProfileImg(userInfo.profileImgURL === 'default' ? '/asset/png/profile_default_image.png' : userInfo.profileImgURL);
     }
+  }, [userInfo]);
 
-    if (userInfo?.desirePosition != null) {
-      setSelectedCategory(categoryLabels[userInfo.desirePosition] || '');
-    } else {
-      setSelectedCategory('예비');
+  const handleSendEmail = async (contents: string) => {
+    try {
+      const recipient = userInfo?.email || "";
+      const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/lounge/send/?recipient=${encodeURIComponent(recipient)}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'text/plain',
+            },
+            body: contents, // 내용만 본문으로 전송
+            credentials: 'include', // 세션 쿠키 포함
+          }
+      );
+      if (response.ok) {
+        alert("메일이 성공적으로 전송되었습니다."); // 성공 메시지
+        setModalOpen(false); // 모달 닫기
+      } else {
+        alert("메일 전송에 실패했습니다."); // 실패 메시지
+      }
+    } catch (error) {
+      alert("오류가 발생했습니다. 다시 시도해주세요."); // 에러 메시지
+      console.error("Error while sending email:", error);
     }
-
-    if (userInfo?.profileImgURL == 'default') {
-      setProfileImg('/asset/png/profile_default_image.png');
-    } else if (userInfo?.profileImgURL) {
-      setProfileImg(userInfo.profileImgURL);
-    }
-  },[userInfo])
+  };
 
   return (
-      <div className='w-full h-fit min-h-64 flex flex-col lg:flex-row justify-between border-b border-gray-cc pb-5 lg:px-8'>
-        <div className='w-full lg:w-[55%] flex flex-row items-center justify-between'>
-          <div className='w-5/6 flex items-center'>
+      <div className="w-full h-fit min-h-64 flex flex-col lg:flex-row justify-between border-b border-gray-cc pb-5 lg:px-8">
+        <div className="w-full lg:w-[55%] flex flex-row items-center justify-between">
+          <div className="w-5/6 flex items-center">
             <div className="w-32 h-32 md:w-64 md:h-64 object-cover rounded-xl border border-gray-cc">
               {isEditing ? (
-                  <>
+                  <label htmlFor="profileImageInput">
                     <input
                         type="file"
                         accept="image/*"
@@ -122,30 +122,24 @@ export default function UserProfile({
                         className="hidden"
                         id="profileImageInput"
                     />
-                    <label htmlFor="profileImageInput">
-                      <img
-                          className="w-32 h-32 md:w-64 md:h-64 object-cover rounded-xl cursor-pointer transition-all duration-300 ease-in-out hover:filter hover:blur-sm"
-                          src={profileImg}
-                          alt="Profile"
-                      />
-                    </label>
-                  </>
+                    <img
+                        className="w-32 h-32 md:w-64 md:h-64 object-cover rounded-xl cursor-pointer transition-all hover:filter hover:blur-sm"
+                        src={profileImg}
+                        alt="Profile"
+                    />
+                  </label>
               ) : (
-                  <img
-                      className="w-32 h-32 md:w-64 md:h-64 object-cover rounded-xl"
-                      src={profileImg}
-                      alt="Profile"
-                  />
+                  <img className="w-32 h-32 md:w-64 md:h-64 object-cover rounded-xl" src={profileImg} alt="Profile" />
               )}
             </div>
-            <div className='ml-4'>
+            <div className="ml-4">
               <div className="text-xl md:text-3xl font-gmarketsansBold">
                 {isEditing ? (
                     <input
                         type="text"
                         value={editedName}
                         onChange={handleNameChange}
-                        className="w-36 h-8 md:w-60 md:h-10 border border-gray-cc rounded px-2 pb-1 text-lg md:text-3xl font-gmarketsansBold"
+                        className="w-36 h-8 md:w-60 md:h-10 border border-gray-cc rounded px-2 text-lg"
                     />
                 ) : (
                     editedName
@@ -187,21 +181,32 @@ export default function UserProfile({
               </div>
             </div>
           </div>
-          {userInfo !== undefined && isOwnUser && (
+          {userInfo !== undefined && isOwnUser ? (
               <div
-                  className='w-1/12 h-1/12 flex justify-center items-center border-2 border-primary rounded-xl p-2 cursor-pointer'
-                  onClick={isEditing ? saveProfile : changeProfileMode}
+                  className="w-1/12 h-1/12 flex justify-center items-center border-2 border-primary rounded-xl p-2 cursor-pointer"
+                  onClick={isEditing ? saveProfile : toggleEditMode}
               >
-                <img src='/asset/png/icon_modify_profile.png'/>
+                <img src="/asset/png/icon_modify_profile.png" alt="Modify Profile" />
               </div>
-          )}
+          ) : userInfo && userId!== undefined ?  (
+              <div
+                  className="w-1/12 h-1/12 flex justify-center items-center border-2 border-primary rounded-xl p-2 cursor-pointer"
+                  onClick={() => setModalOpen(true)}
+              >
+                <img src="/asset/png/icon_email.png" alt="Send Email" />
+              </div>
+          ) : null}
         </div>
-
-        <div className='w-full lg:w-2/5 xl:w-1/2 max-h-[256px] bg-primary rounded-xl flex flex-wrap content-start p-4 lg:ml-4 overflow-y-auto scrollbar'>
+        <div className="w-full lg:w-2/5 xl:w-1/2 max-h-[256px] bg-primary rounded-xl flex flex-wrap content-start p-4 lg:ml-4 overflow-y-auto">
           {badgeInfo?.map((skill) => (
               <SkillBadge key={skill.id} skill={skill} />
           ))}
         </div>
+        <EmailModal
+            isOpen={isModalOpen}
+            onClose={() => setModalOpen(false)}
+            onSend={handleSendEmail}
+        />
       </div>
   );
 }
