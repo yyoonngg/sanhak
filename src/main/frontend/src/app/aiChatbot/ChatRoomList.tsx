@@ -6,12 +6,14 @@ type ChatRoomListProps = {
   chatRoomMockData: AiCardChatRoom[];
   selectedCardId: number | undefined;
   onSelectCard?: (cardId: number, chatType: String) => void;
+  closeSidePanel?: () => void;
 };
 
 export default function ChatRoomList({
   chatRoomMockData,
   selectedCardId,
-  onSelectCard
+  onSelectCard,
+  closeSidePanel
 }: ChatRoomListProps) {
 
   const handleSelecteCard = (cardId: number, chatType:string) =>{
@@ -20,8 +22,14 @@ export default function ChatRoomList({
     }
   }
   return (
-    <div className="w-1/3 h-full text-sm py-4 bg-gray-f8">
-      <div className="w-full mb-2 px-4 font-semibold">경험카드 목록</div>
+    <div className="w-full h-full text-sm py-4 bg-gray-f8">
+      <div className='flex justify-between w-full mb-2 px-4 font-semibold'>
+        <div className="">경험카드 목록</div>
+        <div
+          className='flex lg:hidden' 
+          onClick={closeSidePanel}
+        ><img src='asset/png/icon_list_close.png'/></div>
+      </div>
       {chatRoomMockData.map((card) => (
         <div
           key={card.id}
