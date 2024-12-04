@@ -41,7 +41,7 @@ export default function RoleDropdown({
     return (
         <div className="relative">
             <button
-                className="w-full flex items-center p-4 pb-2 font-bold text-left"
+                className="w-full flex items-center p-4 font-bold text-left"
                 onClick={toggleDropdown}
             >
                 {selectedRole?.label || "모델 선택"}
@@ -49,7 +49,7 @@ export default function RoleDropdown({
             </button>
 
             {isOpen && (
-                <div className="absolute z-10 w-[400px] p-4 mt-2 bg-white rounded-xl shadow-[4px_4px_8px_rgba(0,0,0,0.3)]">
+                <div className="absolute z-10 w-[300px] xs:w-[400px] p-4 mt-2 bg-white rounded-xl shadow-[4px_4px_8px_rgba(0,0,0,0.3)]">
                     <p className="text-sm text-gray-d9 mb-2">모델 선택</p>
                     {roles.map((role) => (
                         <div

@@ -176,7 +176,7 @@ export default function MypagePage({
       <div className="w-full h-full flex flex-col items-center mt-5">
         <div className='max-w-[1400px] w-full h-full px-4 2xl:w-[1400px] xl:px-20 lg:px-10'>
           <div className='w-full flex flex-col pb-5'>
-            <UserProfile userInfo={userInfo} badgeInfo={badgeInfo} isOwnUser={isOwnUser} onSave={onSaveProfile}/>
+            <UserProfile userInfo={userInfo} badgeInfo={badgeInfo} isOwnUser={isOwnUser} onSave={onSaveProfile} userId={user_id}/>
           </div>
           <div className='w-full flex flex-col lg:flex-row justify-between mb-10 border-b border-gray-cc pb-10'>
             <div className='w-full lg:w-3/5 flex flex-col justify-start'>

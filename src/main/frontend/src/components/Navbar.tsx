@@ -39,7 +39,7 @@ const NavigationBar = () =>{
         }
     };
     return (
-        <nav className="flex justify-center items-center py-5 border-b border-gray-d9">
+        <nav className="flex h-[5rem] justify-center items-center py-5 border-b border-gray-d9">
             <div className="w-[1400px] flex justify-between items-center px-4 xl:px-20 lg:px-10">
                 <Link href="/main">
                 <img src="/asset/png/icon/service_full_logo.png" alt="logo" className="w-40" />
