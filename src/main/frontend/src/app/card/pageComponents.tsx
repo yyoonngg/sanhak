@@ -3,10 +3,13 @@ import React, {useState} from 'react';
 import CardRetrieve from './CardRetrieve';
 import CardEditor from './CardEditor';
 import {AiCard} from "@/models/card";
+import Loading from '@/components/Loading';
 
 export default function CardPage() {
   const [isCreatePage, setIsCreatePage] = useState<Boolean>(false);
   const [selectedCard, setSelectedCard] = useState<AiCard | null>(null);
+  const [isLoading, setIsLoading] = useState<Boolean>(false); // 로딩
+
 
   const onSelectCard = (card: AiCard | null) => {
     console.log("onSelectCard: ", card);
@@ -47,11 +50,13 @@ export default function CardPage() {
         console.error("오류 발생:", error);
       } finally {
         setIsCreatePage(false);
+        setIsLoading(false); //카드 생성에 실패할경우 로딩 페이지 불러오는것도 실패
       }
   }
 
   const onModify = async (card: AiCard) => {
     console.log("카드 수정: ", card);
+      setIsLoading(true);
       const formData = new FormData();
       formData.append("cardInfo", new Blob([JSON.stringify(card)], { type: "application/json" }))
       if (card?.imageFile) {
@@ -79,7 +84,11 @@ export default function CardPage() {
         console.error("오류 발생:", error);
       } finally {
         setIsCreatePage(false);
+        setIsLoading(false);
       }
+  }
+  if(isLoading){
+    return <Loading/>;
   }
 
   return (

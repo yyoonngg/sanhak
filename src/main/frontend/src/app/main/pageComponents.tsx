@@ -36,7 +36,7 @@ export default function MainPage() {
 
     return (
         <main>
-            <HeadSectionComponents currentPage={currentPage} />
+            <HeadSectionComponents/>
             <BodySectionComponents currentPage={currentPage} />
         </main>
     );
