@@ -16,6 +16,8 @@ const config: Config = {
         light: '#3E444D',
         semi: '#31353B',
       },
+      gradientStart: '#4A5FCF',
+      gradientEnd: '#263069',
       gray: {
         45: '#454545',
         cc: '#CCC',
