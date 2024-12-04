@@ -95,8 +95,8 @@ public class MypageController {
             uid = uidAttribute;
             flag=true;
         } else{
-            int uidCheck = (int) session.getAttribute("uid");
-            if(uid==uidCheck){
+            Integer uidCheck = (Integer) session.getAttribute("uid");
+            if(uid.equals(uidCheck)){
                 flag=true;
             }
         }

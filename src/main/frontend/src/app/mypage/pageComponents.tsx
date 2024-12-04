@@ -12,13 +12,14 @@ import { useUserContext } from '@/context/UserContext';
 
 type MypagePageProps = {
   user_id?: number;
+  logged: number| null;
 };
 
 export default function MypagePage({
-                                     user_id
+                                     user_id,
+                                     logged,
                                    }: MypagePageProps) {
   const { loggedInUserId, mypageUserId  } = useUserContext();
-  console.log("user_id:", user_id);
   const [pageUserId, setPageUserId] = useState<number>();
   const [isOwnUser, setIsOwnUser] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<User>();
@@ -28,7 +29,6 @@ export default function MypagePage({
   const [currentRoadmap, setCurrentRoadmap] = useState(0);
   const [currentCard, setCurrentCard] = useState(0);
   const [recommendCompanyList, setRecommendCompanyList] = useState<UserRecommendCompany[]>([]);
-
   const roadmapSlideSettings = {
     dots: true, // 슬라이더 하단에 점 표시
     infinite: false, // 무한 반복
@@ -176,7 +176,7 @@ export default function MypagePage({
       <div className="w-full h-full flex flex-col items-center mt-5">
         <div className='max-w-[1400px] w-full h-full px-4 2xl:w-[1400px] xl:px-20 lg:px-10'>
           <div className='w-full flex flex-col pb-5'>
-            <UserProfile userInfo={userInfo} badgeInfo={badgeInfo} isOwnUser={isOwnUser} onSave={onSaveProfile} userId={user_id}/>
+            <UserProfile userInfo={userInfo} badgeInfo={badgeInfo} isOwnUser={isOwnUser} onSave={onSaveProfile} userId={logged}/>
           </div>
           <div className='w-full flex flex-col lg:flex-row justify-between mb-10 border-b border-gray-cc pb-10'>
             <div className='w-full lg:w-3/5 flex flex-col justify-start'>

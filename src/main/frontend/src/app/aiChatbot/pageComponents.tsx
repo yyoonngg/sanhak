@@ -25,6 +25,7 @@ const AiChatbotPage: React.FC = () => {
   const [selectedRole, setSelectedRole] = useState<ChatRoleOption>(roles[0]); // 선택된 역할 상태 추가
   const [isSidePanelOpen, setSidePanelOpen] = useState(false);
   const [isSideListOpen, setSideListOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const toggleSidePanel = () => {
     setSidePanelOpen(!isSidePanelOpen);
@@ -178,7 +179,7 @@ const AiChatbotPage: React.FC = () => {
 
   const handleSendChat = async () => {
     if (!chatInput.trim() || !selectedChatRoom) return;
-
+    setIsLoading(true);
     console.log("Sending chat with selectedRole:", selectedRole); // 디버깅 로그 추가
     const userMessage: AiCardChat = { id: chatData.length + 1, isUser: 1, content: chatInput };
     setChatData((prev) => [...prev, userMessage]);
@@ -205,6 +206,7 @@ const AiChatbotPage: React.FC = () => {
     } catch (error) {
       console.error(error);
     }
+    setIsLoading(false);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -258,6 +260,7 @@ const AiChatbotPage: React.FC = () => {
                   roles={roles}
                   chatData={chatData}
                   chatInput={chatInput}
+                  isLoading={isLoading}
                   selectedCardTitle={selectedCard?.title || ""}
                   onSendChat={handleSendChat}
                   onInputChange={handleChatInputChange}
