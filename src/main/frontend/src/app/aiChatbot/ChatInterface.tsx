@@ -7,6 +7,7 @@ import remarkGfm from 'remark-gfm';
 type ChatInterfaceProps = {
     roles: ChatRoleOption[];
     chatData: AiCardChat[];
+    isLoading: boolean;
     chatInput: string;
     selectedCardTitle: string | undefined;
     onSendChat: (userMessage: { id: number; isUser: number; content: string }) => void;
@@ -31,6 +32,7 @@ const aiRoles: ChatRoleOption[] = [
 export default function ChatInterface({
                                           chatData,
                                           chatInput,
+                                          isLoading,
                                           selectedCardTitle,
                                           onSendChat,
                                           onInputChange,
@@ -45,8 +47,6 @@ export default function ChatInterface({
     const chatEndRef = useRef<HTMLDivElement | null>(null);
     const [roles, setRoles] = useState<ChatRoleOption[]>(aiRoles);
     const [selectedRole, setSelectedRole] = useState<ChatRoleOption>(roles[0]);
-    const [loading, setLoading] = useState(false);
-
     const handleSelectRole = useCallback((role: ChatRoleOption) => {
         console.log("Previous role:", selectedRole);
         console.log("New role selected:", role);
@@ -100,7 +100,7 @@ export default function ChatInterface({
                                         </div>
                                     </div>
                                 ))}
-                                {loading && (
+                                {isLoading && ( // 로딩 상태에 따라 표시
                                     <div className="w-full mb-2 flex justify-start">
                                         <div className="bg-gray-ec text-black p-2 rounded-lg max-w-xs">
                                             <div>대기중...</div>

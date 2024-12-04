@@ -21,14 +21,18 @@ const AutoImageSlider: React.FC = () => {
                 const { scrollWidth, clientWidth, scrollLeft } = sliderRef.current;
 
                 if (Math.abs(scrollLeft + clientWidth - scrollWidth) < 1) {
-                    sliderRef.current.scrollTo({ left: 0, behavior: "smooth" });
+                    if ("scrollTo" in sliderRef.current) {
+                        sliderRef.current.scrollTo({left: 0, behavior: "smooth"});
+                    }
                 } else {
-                    sliderRef.current.scrollBy({
-                        left: clientWidth,
-                        behavior: "smooth",
-                    });
+                    if ("scrollBy" in sliderRef.current) {
+                        sliderRef.current.scrollBy({
+                            left: clientWidth,
+                            behavior: "smooth",
+                        });
+                    }
                 }
-                }
+            }
 
         }, 3000);
 
@@ -78,7 +82,6 @@ export default function BodySectionComponents({ currentPage }: BodySectionProps)
                             각 분야에서 뭘 하면 되는지 한눈에 볼 수 있어요.
                         </p>
                     </div>
-                </div>
                 </div>
                 <p className="font-gmarketsansBold text-lg sm:text-xl text-[#3b2a70] py-4">
                     TimeLine Roadmap
