@@ -293,8 +293,9 @@ export default function CardEditor({
   const isNewCard = selectedCard ? false : true;
   const [buttonStyles, setButtonStyles] = useState(Array(categories.length).fill('border-primary'));
   const [selectedSkills, setSelectedSkills] = useState<Skill[]>([]);
-  const [isLoading, setIsLoading] = useState(false); // 로딩
   const [isSidePanelOpen, setSidePanelOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // 로딩
+
 
   const toggleSidePanel = () => {
     setSidePanelOpen(!isSidePanelOpen);
