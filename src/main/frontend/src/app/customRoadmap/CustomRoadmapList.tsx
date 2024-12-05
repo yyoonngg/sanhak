@@ -22,7 +22,7 @@ export default function CustomRoadmapList({
     }
   }
   return (
-    <div className="w-[250px] h-full text-sm py-4 bg-gray-f8">
+    <div className="w-full h-full text-sm py-4 bg-gray-f8">
       <div className='w-full flex justify-between items-center '>
         <div className="w-full mb-2 px-4 font-gmarketsansMedium text-lg">커스텀 로드맵 목록</div>
         <div 
