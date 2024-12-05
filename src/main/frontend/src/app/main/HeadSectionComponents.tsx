@@ -41,7 +41,7 @@ const AutoTextSlider: React.FC<AutoTextSliderProps> = ({ texts }) => {
         >
             <div className="flex flex-col">
                 {texts.map((text, index) => (
-                    <div key={index} className="flex items-center justify-center h-20 text-6xl font-gmarketsansBold">
+                    <div key={index} className="flex items-center justify-center h-20 font-gmarketsansBold">
                         {text}
                     </div>
                 ))}
@@ -56,15 +56,20 @@ export default function HeadSectionComponents() {
     return (
         <div
             className="relative w-full h-screen bg-cover bg-center"
-            style={{ backgroundImage: "url(/asset/png/mainpage/web-main.png)" }}
+            style={{backgroundImage: "url(/asset/png/mainpage/web-main.png)"}}
         >
-            <div className="absolute top-1/2 left-[35%] transform -translate-x-1/2 -translate-y-1/2 text-white text-center">
-                <AutoTextSlider texts={texts} />
+            <div
+                className="relative w-full h-screen bg-cover bg-center block sm:hidden"
+                style={{backgroundImage: "url(/asset/png/mainpage/mobile-main.png)"}}
+            ></div>
+            <div
+                className="absolute sm:top-1/2 sm:left-[35%] sm:text-6xl transform -translate-x-1/2 -translate-y-1/2 text-white text-center top-[30%] left-[50%] text-4xl">
+                <AutoTextSlider texts={texts}/>
             </div>
             <div className="fixed bottom-0 left-1/2 -translate-x-1/2 py-4 px-8 bg-blue-500 text-white rounded">
                 <StartButton/>
+            </div>
         </div>
-</div>
-)
-    ;
+    )
+        ;
 }
