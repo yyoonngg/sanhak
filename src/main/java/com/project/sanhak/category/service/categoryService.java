@@ -1,13 +1,18 @@
 package com.project.sanhak.category.service;
 
 import com.project.sanhak.category.dto.categoryDTO;
+import com.project.sanhak.category.dto.categorySkillDTO;
+import com.project.sanhak.category.dto.skillDTO;
+import com.project.sanhak.category.dto.toolDTO;
 import com.project.sanhak.category.repository.SkilPrequeRepository;
 import com.project.sanhak.category.repository.categoryRepository;
+import com.project.sanhak.category.repository.toolsRepository;
 import com.project.sanhak.domain.skil.code.CodeSkil;
 import com.project.sanhak.domain.skil.code.SkilPrequeCateFlags;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,6 +24,8 @@ public class categoryService {
     private categoryRepository categoryRepository;
     @Autowired
     private SkilPrequeRepository skilPrequeRepository;
+    @Autowired
+    private toolsRepository toolsRepository;
 
     public List<categoryDTO> getSkilNode(String csCate) {
         // 1. 특정 카테고리에 매칭된 CodeSkil만 가져오기
@@ -126,5 +133,50 @@ public class categoryService {
     public CodeSkil getCodeSkilFromCSId(int CSId) {
         return categoryRepository.findById(CSId)
                 .orElseThrow(() -> new IllegalArgumentException("CodeSkil을 찾을 수 없습니다."));
+    }
+
+
+    public List<categorySkillDTO> getAllSkillsByCategory() {
+        List<CodeSkil> codeSkils = categoryRepository.findAll();
+
+        List<skillDTO> frontendSkills = new ArrayList<>();
+        List<skillDTO> backendSkills = new ArrayList<>();
+        List<skillDTO> dataSkills = new ArrayList<>();
+        List<skillDTO> securitySkills = new ArrayList<>();
+        List<skillDTO> applicationSkills = new ArrayList<>();
+
+        for (CodeSkil codeSkil : codeSkils) {
+            if (codeSkil.getFrontend() != null && codeSkil.getFrontend().isActive()) {
+                frontendSkills.add(new skillDTO(codeSkil.getCSId(), codeSkil.getCSName()));
+            }
+            if (codeSkil.getBackend() != null && codeSkil.getBackend().isActive()) {
+                backendSkills.add(new skillDTO(codeSkil.getCSId(), codeSkil.getCSName()));
+            }
+            if (codeSkil.getData() != null && codeSkil.getData().isActive()) {
+                dataSkills.add(new skillDTO(codeSkil.getCSId(), codeSkil.getCSName()));
+            }
+            if (codeSkil.getSecurity() != null && codeSkil.getSecurity().isActive()) {
+                securitySkills.add(new skillDTO(codeSkil.getCSId(), codeSkil.getCSName()));
+            }
+            if (codeSkil.getApplication() != null && codeSkil.getApplication().isActive()) {
+                applicationSkills.add(new skillDTO(codeSkil.getCSId(), codeSkil.getCSName()));
+            }
+        }
+
+        List<categorySkillDTO> categories = new ArrayList<>();
+        categories.add(new categorySkillDTO("frontend", frontendSkills));
+        categories.add(new categorySkillDTO("backend", backendSkills));
+        categories.add(new categorySkillDTO("data", dataSkills));
+        categories.add(new categorySkillDTO("security", securitySkills));
+        categories.add(new categorySkillDTO("application", applicationSkills));
+
+        return categories;
+    }
+
+
+    public List<toolDTO> getAllTools() {
+        return toolsRepository.findAll().stream()
+                .map(tool -> new toolDTO(tool.getId(), tool.getName()))
+                .collect(Collectors.toList());
     }
 }
