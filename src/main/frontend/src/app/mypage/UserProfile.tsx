@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import SkillBadge from './SkillBadge';
 import { UpdateUserProfile, User, UserSkill } from "@/models/user";
 import EmailModal from "@/app/mypage/EmailModal";
+import {useRouter} from "next/navigation";
 
 type UserProfileProps = {
   userInfo?: User;
   badgeInfo?: UserSkill[];
   isOwnUser: boolean;
   onSave: (updateProfileBody: UpdateUserProfile) => void;
-  userId?: number;
+  userId: number| null;
 };
 
 const categoryLabels: Record<string, string> = {
@@ -33,9 +34,9 @@ export default function UserProfile({
   const [profileImg, setProfileImg] = useState(userInfo?.profileImgURL || '/asset/png/profile_default_image.png');
   const [profileImgBlob, setProfileImgBlob] = useState<File | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
-
+  const router = useRouter();
   const categories = Object.values(categoryLabels);
-
+  console.log("userId"+userId);
   const toggleEditMode = () => setIsEditing((prev) => !prev);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => setEditedName(e.target.value);
@@ -181,23 +182,31 @@ export default function UserProfile({
               </div>
             </div>
           </div>
-          {userInfo !== undefined && isOwnUser ? (
+          {!userId ? (
+              <div
+                  className="w-1/12 h-1/12 flex justify-center items-center border-2 border-primary rounded-xl p-2 cursor-pointer"
+                  onClick={() => router.push('/signin')}
+              >
+                <img src="/asset/png/icon_lock.png" alt="login" />
+              </div>
+          ) : isOwnUser ? (
               <div
                   className="w-1/12 h-1/12 flex justify-center items-center border-2 border-primary rounded-xl p-2 cursor-pointer"
                   onClick={isEditing ? saveProfile : toggleEditMode}
               >
                 <img src="/asset/png/icon_modify_profile.png" alt="Modify Profile" />
               </div>
-          ) : userInfo && userId!== undefined ?  (
+          ) : (
               <div
                   className="w-1/12 h-1/12 flex justify-center items-center border-2 border-primary rounded-xl p-2 cursor-pointer"
                   onClick={() => setModalOpen(true)}
               >
                 <img src="/asset/png/icon_email.png" alt="Send Email" />
               </div>
-          ) : null}
+          )}
         </div>
-        <div className="w-full lg:w-2/5 xl:w-1/2 max-h-[256px] bg-primary rounded-xl flex flex-wrap content-start p-4 lg:ml-4 overflow-y-auto">
+        <div
+            className="w-full lg:w-2/5 xl:w-1/2 max-h-[256px] bg-primary rounded-xl flex flex-wrap content-start p-4 lg:ml-4 overflow-y-auto">
           {badgeInfo?.map((skill) => (
               <SkillBadge key={skill.id} skill={skill} />
           ))}

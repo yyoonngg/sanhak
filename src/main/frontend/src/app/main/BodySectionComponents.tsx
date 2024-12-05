@@ -21,14 +21,18 @@ const AutoImageSlider: React.FC = () => {
                 const { scrollWidth, clientWidth, scrollLeft } = sliderRef.current;
 
                 if (Math.abs(scrollLeft + clientWidth - scrollWidth) < 1) {
-                    sliderRef.current.scrollTo({ left: 0, behavior: "smooth" });
+                    if ("scrollTo" in sliderRef.current) {
+                        sliderRef.current.scrollTo({left: 0, behavior: "smooth"});
+                    }
                 } else {
-                    sliderRef.current.scrollBy({
-                        left: clientWidth,
-                        behavior: "smooth",
-                    });
+                    if ("scrollBy" in sliderRef.current) {
+                        sliderRef.current.scrollBy({
+                            left: clientWidth,
+                            behavior: "smooth",
+                        });
+                    }
                 }
-                }
+            }
 
         }, 3000);
 
