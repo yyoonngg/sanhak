@@ -39,7 +39,7 @@ export default function CustomSkillList({
   };
 
   return (
-    <div className="w-[250px] h-full text-sm py-4 bg-gray-f8">
+    <div className="w-full h-full text-sm py-4 bg-gray-f8">
       <div className="w-full mb-2 px-4 font-gmarketsansMedium text-lg">직무별 스킬 목록</div>
       <div className='w-full h-full overflow-auto scrollbar flex flex-col'>
       {skillData.map((cate) => (

@@ -79,7 +79,6 @@ export default function BodySectionComponents({ currentPage }: BodySectionProps)
                         </p>
                     </div>
                 </div>
-                </div>
                 <p className="font-gmarketsansBold text-lg sm:text-xl text-[#3b2a70] py-4">
                     TimeLine Roadmap
                 </p>

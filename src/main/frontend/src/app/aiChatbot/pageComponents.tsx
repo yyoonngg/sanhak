@@ -239,7 +239,7 @@ const AiChatbotPage: React.FC = () => {
         <div className='max-w-[1400px] w-full py-0 px-4 2xl:w-[1400px] xl:px-20 lg:px-10 h-[calc(100dvh-5rem)]'>
           <div className='w-full h-full flex'>
             <div className='w-full h-full flex justify-between items-center'>
-              <div className='hidden lg:flex w-1/3 h-full justify-between items-center'>
+              <div className='hidden lg:flex w-[250px] h-full justify-between items-center'>
                 <ChatRoomList
                   chatRoomMockData={chatRoomData}
                   selectedCardId={selectedCard ? selectedCard.id : 0}

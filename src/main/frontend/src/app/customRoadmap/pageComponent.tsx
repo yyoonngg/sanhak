@@ -297,6 +297,15 @@ export default function CustomRoadmapPage() {
   const [skillDetailData, setSkillDetailData] = useState<SkillDetail | null>(null);
   const [isDetailVisible, setIsDetailVisible] = useState<boolean>(false);
   const [selectedState, setSelectedState] = useState<number>(0);
+  const [isSidePanelOpen, setSidePanelOpen] = useState(false);
+
+  const toggleSidePanel = () => {
+    setSidePanelOpen(!isSidePanelOpen);
+  };
+
+  const closeSidePanel = () => {
+    setSidePanelOpen(false);
+  };
 
   // 로드맵 리스트 불러오기
   useEffect(() => {
@@ -620,53 +629,63 @@ export default function CustomRoadmapPage() {
 
   return (
     <div className='w-full h-full flex flex-col items-center'>
-      <div className='w-[1400px] h-[90dvh]'>
-        <div className='w-full h-full flex justify-between px-24'>
-          {isEditMode ? (
-            <CustomSkillList 
-            skillData={allCategorySkills}
-            onSelectSkill={onSelectSkill}
-            />
-          ) : (
-            <CustomRoadmapList 
-              roadmapData={customRoadmapList}
-              selectedRoadmapId={selectedRoadmap.id ? selectedRoadmap.id : null}
-              onSelectRoadmap={onSelectRoadmap}
-              handleCreateBtn={handleCreateBtn}
-            />
-          )}
-          <div className='w-4/5 flex flex-col pt-4 px-8'>
-            <div className='font-gmarketsansMedium text-2xl mb-2'>나의 커스텀 로드맵</div>
+      <div className='max-w-[1400px] w-full py-0 px-4 2xl:w-[1400px] xl:px-20 lg:px-10 h-[calc(100dvh-5rem)]'>
+        <div className='w-full h-full flex justify-between'>
+          <div className='hidden lg:flex w-[250px] h-full justify-between items-center'>
+            {isEditMode ? (
+              <CustomSkillList 
+              skillData={allCategorySkills}
+              onSelectSkill={onSelectSkill}
+              />
+            ) : (
+              <CustomRoadmapList 
+                roadmapData={customRoadmapList}
+                selectedRoadmapId={selectedRoadmap.id ? selectedRoadmap.id : null}
+                onSelectRoadmap={onSelectRoadmap}
+                handleCreateBtn={handleCreateBtn}
+              />
+            )}
+          </div>
+          <div className='w-full lg:w-4/5 flex flex-col pt-4 px-0 lg:px-8'>
+            <div className='flex w-full h-[3rem] items-center mb-2'>
+              <div 
+                className='lg:hidden flex mr-2'
+                onClick={toggleSidePanel}
+              >
+                <img src='asset/png/icon_list_open.png'/>
+              </div>
+              <div className='font-gmarketsansMedium text-2xl'>나의 커스텀 로드맵</div>
+            </div>
             <div className='w-full flex items-center justify-between mb-2'>
               {isEditMode ? (
-                <>
+                <div className='w-full flex flex-col md:flex-row justify-between items-start md:items-center'>
                   <input 
-                    className='w-1/2 rounded-xl border-gray-d9 focus:outline-0 font-gmarketsansBold text-lg' 
+                    className='w-full md:w-1/2 rounded-xl border-gray-d9 focus:outline-0 font-gmarketsansBold text-lg mb-2 md:mb-0' 
                     value={selectedRoadmap.name}
                     onChange={handlerRoadmapNameInput}
                   />
-                  <div className='w-2/5 flex justify-between'>
+                  <div className='grid grid-cols-3 gap-4 flex justify-between'>
                     <div
                       onClick={handleDecreaseSize}
-                      className="bg-primary text-white px-4 py-2 rounded-xl cursor-pointer"
+                      className="bg-primary text-white px-4 py-2 rounded-xl cursor-pointer text-sm sm:text-base"
                     >
-                      {'축소하기(-)'}
+                      {'축소(-)'}
                     </div>
                     <div
                       onClick={handleIncreaseSize}
-                      className="bg-primary text-white px-4 py-2 rounded-xl cursor-pointer"
+                      className="bg-primary text-white px-4 py-2 rounded-xl cursor-pointer text-sm sm:text-base"
                     >
-                      {'확대하기(+)'}
+                      {'확대(+)'}
                     </div>
                     <div   
-                      className='px-3 py-1 rounded-xl border-2 border-primary cursor-pointer hover:bg-gray-ec'
+                      className='flex justify-center items-center px-3 py-1 rounded-xl border-2 border-primary cursor-pointer hover:bg-gray-ec text-sm sm:text-base'
                       onClick={()=>updateRoadmap()}
-                    >저장하기</div>
+                    >저장</div>
                   </div>
-                </>
+                </div>
               ) : (
-                  <>
-                    <div className='font-gmarketsansBold text-lg'>{selectedRoadmap.name}</div>
+                  <div className='w-full flex flex-col md:flex-row justify-between items-start md:items-center'>
+                    <div className='font-gmarketsansBold text-lg mb-2 md:mb-0'>{selectedRoadmap.name}</div>
                     <div className='flex items-center gap-4'>
                       <select
                           className='border rounded-xl px-2 py-1 w-24'
@@ -684,7 +703,7 @@ export default function CustomRoadmapPage() {
                         수정하기
                       </div>
                     </div>
-                  </>
+                  </div>
               )}
             </div>
             <Roadmap
@@ -700,12 +719,35 @@ export default function CustomRoadmapPage() {
         </div>
       </div>
       {isDetailVisible && (
-          <SkillDetailModal
-              skillDetail={skillDetailData as SkillDetail}
-              selectedSkillPng={selectedSkillPng}
-              onClose={() => setIsDetailVisible(false)}
-          />
+        <SkillDetailModal
+          skillDetail={skillDetailData as SkillDetail}
+          selectedSkillPng={selectedSkillPng}
+          onClose={() => setIsDetailVisible(false)}
+        />
       )}
+      {isSidePanelOpen && (
+          <>
+            <div
+              className="fixed inset-0 bg-gray-45 bg-opacity-50 z-50"
+              onClick={closeSidePanel}
+            ></div>
+            <div className="fixed top-0 left-0 flex flex-col w-4/5 sm:w-1/2 md:w-5/12 h-full bg-white shadow-lg z-[60] px-6 pt-12">
+              {isEditMode ? (
+                <CustomSkillList 
+                skillData={allCategorySkills}
+                onSelectSkill={onSelectSkill}
+                />
+              ) : (
+                <CustomRoadmapList 
+                  roadmapData={customRoadmapList}
+                  selectedRoadmapId={selectedRoadmap.id ? selectedRoadmap.id : null}
+                  onSelectRoadmap={onSelectRoadmap}
+                  handleCreateBtn={handleCreateBtn}
+                />
+              )}
+            </div>
+          </>
+        )}
     </div>
   );
 }
