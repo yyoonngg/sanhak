@@ -18,8 +18,9 @@ const SkillDetailModal: React.FC<SkillDetailModalProps> = ({
                                                            }) => {
     const [quiz, setQuiz] = useState<quiz | null>(null);
     const [currentTopicId, setCurrentTopicId] = useState<number | null>(null);
-
+    const [loading, setLoading] = useState<boolean>(false);
     const fetchQuiz = async (ms_id: number) => {
+        setLoading(true);
         try {
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL}/api/mypage/mastery/test/${ms_id}`,
@@ -37,6 +38,7 @@ const SkillDetailModal: React.FC<SkillDetailModalProps> = ({
         } catch (error) {
             console.error("Error fetching quiz:", error);
         }
+        setLoading(false);
     };
 
     const submitQuiz = async (selectedAnswer: number) => {
@@ -112,6 +114,12 @@ const SkillDetailModal: React.FC<SkillDetailModalProps> = ({
                         </li>
                     ))}
                 </ul>
+
+                {loading && (
+                    <div className="flex justify-center items-center mt-10">
+                        <Loading />
+                    </div>
+                )}
 
                 {quiz && (
                     <QuizModal
