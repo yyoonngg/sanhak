@@ -73,7 +73,7 @@ const SkillDetailModal: React.FC<SkillDetailModalProps> = ({
                 <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center pl-5">
                         <img className="w-12 h-auto" src={selectedSkillPng} alt={skillDetail.name} />
-                        <h2 className="text-xl font-bold">{skillDetail.name}</h2>
+                        <h2 className="text-2xl font-bold">{skillDetail.name}</h2>
                     </div>
                     <button onClick={onClose}>
                         <ExitIcon />
