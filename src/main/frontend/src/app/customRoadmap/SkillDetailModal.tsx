@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { quiz, SkillDetail } from "@/models/skill";
 import { ExitIcon } from "@/components/icon";
 import QuizModal from "./QuizModal";
+import Loading from '@/components/Loading';
 
 type SkillDetailModalProps = {
     style?: string;
