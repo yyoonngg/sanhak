@@ -182,7 +182,7 @@ export default function UserProfile({
               </div>
             </div>
           </div>
-          {!userId ? (
+          {!userId && !isOwnUser ? (
               <div
                   className="w-1/12 h-1/12 flex justify-center items-center border-2 border-primary rounded-xl p-2 cursor-pointer"
                   onClick={() => router.push('/signin')}
