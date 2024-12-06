@@ -10,7 +10,8 @@ public class cateFlag {
     @Data
     public static class Category {
         private boolean active;
-        private int x;
-        private int y;
+        private Integer x;
+        private Integer y;
+        private String tag;
     }
 }

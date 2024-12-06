@@ -87,7 +87,9 @@ public class ProfileService {
         Lounges lounge = loungeRepository.findByLUid(user);
         lounge.setLName(profileDTO.getName());
         lounge.setLPosition(profileDTO.getDesirePosition());
-        lounge.setLImageURL(profileDTO.getProfileImgURL());
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            lounge.setLImageURL(imageUrl);
+        }
         loungeRepository.save(lounge);
         profileRepository.save(profile);
     }
