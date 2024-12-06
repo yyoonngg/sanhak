@@ -155,6 +155,7 @@ const AiChatbotPage: React.FC = () => {
   };
 
   const handleSelectRole = (role:ChatRoleOption) => {
+    console.log("선택한 role:", role);
     setSelectedRole(role);
     if (selectedChatRoom) {
       initializeChat(selectedChatRoom.id, role.label);
@@ -228,14 +229,6 @@ const AiChatbotPage: React.FC = () => {
     }
   }, [chatData]);
 
-  useEffect(() => {
-    if (selectedChatRoom && selectedRole) {
-      console.log("Role updated, reinitializing chat:", selectedRole);
-      initializeChat(selectedChatRoom.id, selectedRole.label);
-      fetchChatMessages(selectedChatRoom.id, selectedRole.label);
-    }
-  }, [selectedRole]);
-
   return (
       <div className="w-full h-full flex flex-col items-center">
         <div className='max-w-[1400px] w-full py-0 px-4 2xl:w-[1400px] xl:px-20 lg:px-10 h-[calc(100dvh-5rem)]'>
@@ -267,7 +260,6 @@ const AiChatbotPage: React.FC = () => {
                   onKeyDown={handleKeyDown}
                   onResetChat={() => setChatData([])}
                   selectedChatId={selectedChatRoom?.id || 0}
-                  selectedChatType={selectedRole?.label || ""}
                   selectedRole={selectedRole}
                   handleSelectRole={handleSelectRole}
                   initializeChat={initializeChat}

@@ -151,7 +151,7 @@ export default function CategoryPage() {
       <div className='w-full h-40 flex flex-row items-center justify-center border-b border-gray-d9'>
         <div className='max-w-[1400px] w-full h-full py-2 sm:py-0 px-4 2xl:w-[1400px] xl:px-20 lg:px-10 h-full grid grid-cols-3 sm:grid-cols-5 flex flex-row items-center justify-between'>
           {categories.map(c => (
-            <div key={c} onClick={()=>selectCategory(c)}>
+            <div key={c} onClick={()=>selectCategory(c)} className='cursor-pointer'>
               <CategoryButton key={c} category={c} />
             </div>
           ))}
@@ -192,7 +192,7 @@ export default function CategoryPage() {
       </div>
       {isDetailVisible && (
         <SkillDetailModal
-          style={'w-full border-none'}
+          style={'w-full sm:w-1/2 lg:w-1/3 border-none'}
           skillDetail={skillDetailData as SkillDetail}
           selectedSkillPng={selectedSkillPng}
           onClose={() => setIsDetailVisible(false)}

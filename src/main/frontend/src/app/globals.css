@@ -39,6 +39,13 @@
     font-style: normal;
 }
 
+@layer base {
+  body {
+    @apply font-sans;
+    font-family: 'GmarketSans-Medium', Arial, sans-serif;
+  }
+}
+
 @layer components {
     .scrollbar {
       scrollbar-width: thin; 
