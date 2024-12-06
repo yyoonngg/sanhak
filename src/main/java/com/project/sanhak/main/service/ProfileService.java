@@ -69,7 +69,7 @@ public class ProfileService {
             profile.setUIuid(user);
             Lounges lounge =new Lounges();
             lounge.setLUid(user);
-            lounge.setLName(authRepository.findByEmail(user.getUEmailId()));
+            lounge.setLName(profileDTO.getName());
             lounge.setLRoadmap(roadmapRepository.countByURuid(user));
             lounge.setLBadge(badgeRepository.countByUBUid(user));
             lounge.setLCard(cardRepository.countByECuid(user));
