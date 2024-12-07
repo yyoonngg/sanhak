@@ -17,9 +17,12 @@ export default function ChatRoomList({
 }: ChatRoomListProps) {
 
   const handleSelecteCard = (cardId: number, chatType:string) =>{
-    if(onSelectCard && closeSidePanel){
+    if(onSelectCard && closeSidePanel){ // 모바일화면에선 사이드창을 닫을 수 있도록 closeSidePanel 추가
       onSelectCard(cardId,chatType);
       closeSidePanel();
+    } 
+    else if(onSelectCard) {             // 기본 PC 화면
+      onSelectCard(cardId,chatType);
     }
   }
   return (
