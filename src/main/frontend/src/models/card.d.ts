@@ -13,6 +13,7 @@ export type AiCard = {
     imageUrl?: string,
     pdfFile?: File | null;
     pdfName?: String;
+    pdfUrl?: string;
     sourceUrl?: string[]
     summary?: String | null;
 };

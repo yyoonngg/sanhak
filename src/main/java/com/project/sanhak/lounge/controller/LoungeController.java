@@ -4,6 +4,7 @@ import com.project.sanhak.domain.user.User;
 import com.project.sanhak.lounge.dto.LoungesDTO;
 import com.project.sanhak.lounge.service.LoungeService;
 import com.project.sanhak.main.service.MainService;
+import com.project.sanhak.util.mail.EmailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -25,6 +27,9 @@ public class LoungeController {
     private LoungeService loungeService;
     @Autowired
     private MainService userService;
+    @Autowired
+    private EmailService emailService;
+
     @Operation(summary = "Retrieve lounges with pagination and sorting options",
             description = "Fetches lounges based on the specified sort option and page number")
     @ApiResponses(value = {
@@ -80,6 +85,30 @@ public class LoungeController {
         } catch(Exception e){
             log.error("서비스 실행 중 오류 발생: {}", e.getMessage());
             return ResponseEntity.status(500).body("서버 오류가 발생했습니다. 다시 시도해주세요.");
+        }
+    }
+
+
+    @PostMapping("/send/")
+    public ResponseEntity<?> sendMessage(@RequestParam String recipient,
+                                         @RequestBody String contents,
+                                         HttpSession session){
+        try {
+            Integer uidAttribute = (Integer) session.getAttribute("uid");
+            if (uidAttribute == null) {
+                throw new NullPointerException("UID is null");
+            }
+            int uid = uidAttribute;
+            String sender = userService.getUserFromUid(uid).getUEmailId();
+            try {
+                emailService.sendMail(sender, recipient, contents);
+                return ResponseEntity.ok("{\"status\":\"success\"}");
+            } catch(Exception e){
+                log.error("서비스 실행 중 오류 발생: {}", e.getMessage());
+                return ResponseEntity.status(500).body("서버 오류가 발생했습니다. 다시 시도해주세요.");
+            }
+        } catch (NullPointerException e) {
+            throw new RuntimeException(e);
         }
     }
 }

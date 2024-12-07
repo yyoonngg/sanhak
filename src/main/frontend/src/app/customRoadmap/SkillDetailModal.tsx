@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import { quiz, SkillDetail } from "@/models/skill";
 import { ExitIcon } from "@/components/icon";
 import QuizModal from "./QuizModal";
+import Loading from "@/components/Loading";
+
 
 type SkillDetailModalProps = {
     style?: string;
     skillDetail: SkillDetail;
     selectedSkillPng: string;
+    fromPage: string;
     onClose: () => void;
 };
 
@@ -14,12 +17,14 @@ const SkillDetailModal: React.FC<SkillDetailModalProps> = ({
                                                                 style,
                                                                skillDetail,
                                                                selectedSkillPng,
+                                                               fromPage,
                                                                onClose,
                                                            }) => {
     const [quiz, setQuiz] = useState<quiz | null>(null);
     const [currentTopicId, setCurrentTopicId] = useState<number | null>(null);
-
+    const [loading, setLoading] = useState<boolean>(false);
     const fetchQuiz = async (ms_id: number) => {
+        setLoading(true);
         try {
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL}/api/mypage/mastery/test/${ms_id}`,
@@ -37,6 +42,7 @@ const SkillDetailModal: React.FC<SkillDetailModalProps> = ({
         } catch (error) {
             console.error("Error fetching quiz:", error);
         }
+        setLoading(false);
     };
 
     const submitQuiz = async (selectedAnswer: number) => {
@@ -73,7 +79,7 @@ const SkillDetailModal: React.FC<SkillDetailModalProps> = ({
                 <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center pl-5">
                         <img className="w-12 h-auto" src={selectedSkillPng} alt={skillDetail.name} />
-                        <h2 className="text-xl font-bold">{skillDetail.name}</h2>
+                        <h2 className="text-2xl font-bold">{skillDetail.name}</h2>
                     </div>
                     <button onClick={onClose}>
                         <ExitIcon />
@@ -92,12 +98,12 @@ const SkillDetailModal: React.FC<SkillDetailModalProps> = ({
                             <div>
                                 <div className="flex">
                                     <div className="font-bold">{topic.title}</div>
-                                    {topic.status !== "completed" && (
+                                    {topic.status !== "completed" && fromPage == "customRoadmap" && (
                                         <button
-                                            className="text-white bg-primary rounded-xl px-5 ml-2 w-fit"
+                                            className="w-24 h-8 text-white bg-primary rounded-xl px-5 ml-2 w-fit"
                                             onClick={() => fetchQuiz(topic.id)}
                                         >
-                                            {topic.status}
+                                            {'테스트'}
                                         </button>
                                     )}
                                 </div>
@@ -112,6 +118,12 @@ const SkillDetailModal: React.FC<SkillDetailModalProps> = ({
                         </li>
                     ))}
                 </ul>
+
+                {loading && (
+                    <div className="flex justify-center items-center mt-10">
+                        <Loading />
+                    </div>
+                )}
 
                 {quiz && (
                     <QuizModal

@@ -23,6 +23,18 @@ const AiChatbotPage: React.FC = () => {
   const chatEndRef = useRef<HTMLDivElement | null>(null);
   const [roles, setRoles] = useState<ChatRoleOption[]>(aiRoles); // 역할 리스트 설정
   const [selectedRole, setSelectedRole] = useState<ChatRoleOption>(roles[0]); // 선택된 역할 상태 추가
+  const [isSidePanelOpen, setSidePanelOpen] = useState(false);
+  const [isSideListOpen, setSideListOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const toggleSidePanel = () => {
+    setSidePanelOpen(!isSidePanelOpen);
+  };
+
+  const closeSidePanel = () => {
+    setSideListOpen(false);
+    setSidePanelOpen(false);
+  };
 
   const fetchChatList = async () => {
     try {
@@ -143,6 +155,7 @@ const AiChatbotPage: React.FC = () => {
   };
 
   const handleSelectRole = (role:ChatRoleOption) => {
+    console.log("선택한 role:", role);
     setSelectedRole(role);
     if (selectedChatRoom) {
       initializeChat(selectedChatRoom.id, role.label);
@@ -167,7 +180,7 @@ const AiChatbotPage: React.FC = () => {
 
   const handleSendChat = async () => {
     if (!chatInput.trim() || !selectedChatRoom) return;
-
+    setIsLoading(true);
     console.log("Sending chat with selectedRole:", selectedRole); // 디버깅 로그 추가
     const userMessage: AiCardChat = { id: chatData.length + 1, isUser: 1, content: chatInput };
     setChatData((prev) => [...prev, userMessage]);
@@ -194,6 +207,7 @@ const AiChatbotPage: React.FC = () => {
     } catch (error) {
       console.error(error);
     }
+    setIsLoading(false);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -203,6 +217,10 @@ const AiChatbotPage: React.FC = () => {
     }
   };
 
+  const handleSideList = () => {
+    setSideListOpen(!isSideListOpen);
+  }
+
   useEffect(() => {
     if (chatEndRef.current) {
       if ("scrollIntoView" in chatEndRef.current) {
@@ -211,47 +229,86 @@ const AiChatbotPage: React.FC = () => {
     }
   }, [chatData]);
 
-  useEffect(() => {
-    if (selectedChatRoom && selectedRole) {
-      console.log("Role updated, reinitializing chat:", selectedRole);
-      initializeChat(selectedChatRoom.id, selectedRole.label);
-      fetchChatMessages(selectedChatRoom.id, selectedRole.label);
-    }
-  }, [selectedRole]);
-
   return (
       <div className="w-full h-full flex flex-col items-center">
-        <div className='w-[1400px] h-[90dvh]'>
-          <div className='w-full h-full flex px-24'>
+        <div className='max-w-[1400px] w-full py-0 px-4 2xl:w-[1400px] xl:px-20 lg:px-10 h-[calc(100dvh-5rem)]'>
+          <div className='w-full h-full flex'>
             <div className='w-full h-full flex justify-between items-center'>
-              <ChatRoomList
+              <div className='hidden lg:flex w-[250px] h-full justify-between items-center'>
+                <ChatRoomList
                   chatRoomMockData={chatRoomData}
                   selectedCardId={selectedCard ? selectedCard.id : 0}
                   onSelectCard={handleSelect}
-              />
+                />
+              </div>
+              <div className="lg:hidden fixed top-20 right-0 z-40">
+                <button
+                  className="w-28 px-3 py-2 text-xs rounded-l-lg bg-primary text-white shadow-lg"
+                  onClick={toggleSidePanel}
+                >
+                  {isSidePanelOpen ? '닫기' : '현재 AI경험카드'}
+                </button>
+              </div>
               <ChatInterface
                   roles={roles}
                   chatData={chatData}
                   chatInput={chatInput}
+                  isLoading={isLoading}
                   selectedCardTitle={selectedCard?.title || ""}
                   onSendChat={handleSendChat}
                   onInputChange={handleChatInputChange}
                   onKeyDown={handleKeyDown}
                   onResetChat={() => setChatData([])}
                   selectedChatId={selectedChatRoom?.id || 0}
-                  selectedChatType={selectedRole?.label || ""}
                   selectedRole={selectedRole}
                   handleSelectRole={handleSelectRole}
                   initializeChat={initializeChat}
                   fetchChatMessages={fetchChatMessages}
+                  handleSideList={handleSideList}
               />
             </div>
-            <div className='w-1/3 h-full flex flex-col pl-4 border-l border-gray-d9'>
+            <div className='hidden lg:flex w-1/3 h-full flex-col pl-4 border-l border-gray-d9'>
               <div className='font-semibold py-4'>현재 선택한 경험카드</div>
               {selectedCard && <Card card={selectedCard} />}
             </div>
           </div>
         </div>
+        {isSideListOpen && (
+          <>
+            <div
+              className="fixed inset-0 bg-gray-45 bg-opacity-50 z-50"
+              onClick={closeSidePanel}
+            ></div>
+            <div className="fixed top-0 left-0 flex flex-col w-4/5 sm:w-1/2 md:w-5/12 h-full bg-white shadow-lg z-[60] px-6 pt-12">
+              <ChatRoomList
+                chatRoomMockData={chatRoomData}
+                selectedCardId={selectedCard ? selectedCard.id : 0}
+                onSelectCard={handleSelect}
+                closeSidePanel={closeSidePanel}
+              />
+            </div>
+          </>
+        )}
+        {isSidePanelOpen && (
+          <>
+            <div
+              className="fixed inset-0 bg-gray-45 bg-opacity-50 z-50"
+              onClick={closeSidePanel}
+            ></div>
+            <div className="fixed top-0 right-0 w-4/5 sm:w-1/2 md:w-5/12 h-full bg-white shadow-lg z-[60] px-6 pt-12">
+              <div className='font-bold text-base sm:text-lg mb-3 sm:mb-6'>현재 선택한 AI경험카드</div>
+              {selectedCard && <Card card={selectedCard} />}
+              <div className='w-full flex justify-end mt-4 '>
+                <button
+                  className="w-28 p-3 text-xs rounded-lg bg-primary text-white shadow-lg"
+                  onClick={closeSidePanel}
+                >
+                  {isSidePanelOpen ? '닫기' : '카드 보기'}
+                </button>
+              </div>
+            </div>
+          </>
+        )}
       </div>
   );
 };

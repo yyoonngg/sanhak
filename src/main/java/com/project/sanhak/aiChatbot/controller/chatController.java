@@ -57,6 +57,7 @@ public class chatController {
 
             String response = chatService.initializeChat(uid, chat_id, chat_type);
             if ("success".equals(response)) {
+                System.out.println(chat_type+"로 초기화");
                 return ResponseEntity.ok("채팅이 성공적으로 초기화되었습니다.");
             } else {
                 return ResponseEntity.badRequest().body("Python 서버 요청 실패: " + response);
@@ -134,7 +135,7 @@ public class chatController {
                 throw new NullPointerException("UID is null");
             }
             int uid = uidAttribute;
-
+            System.out.println(chat_type+"와 대화");
             String question = requestData.get("question");
             if (question == null || question.trim().isEmpty()) {
                 return ResponseEntity.badRequest().body("질문이 비어 있습니다.");

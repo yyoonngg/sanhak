@@ -51,7 +51,10 @@ export default function CardRetrieve({ onChangePage }: CardRetrieveProps) {
 
   return (
     <div className='w-full h-full flex flex-col items-center justify-center'>
-      <div className='w-full text-2xl font-gmarketsansMedium mb-4 ml-14 xs:ml-20 sm:ml-0'>AI경험카드 관리</div>
+      <div className='w-full flex flex-col mb-4 ml-14 xs:ml-20 sm:ml-0'>
+        <div className='w-full text-2xl font-bold mb-1'>AI경험카드 관리</div>
+        <div className='font-md text-md'>프로젝트를 카드에 담아 관리해보세요!</div>
+      </div>
       <div className="hidden sm:grid w-full h-full justify-center items-center grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {cardInfos.map((card, index) => (
           <div

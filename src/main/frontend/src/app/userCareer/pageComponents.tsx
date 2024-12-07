@@ -26,7 +26,7 @@ export default function UserCareerPage() {
 
     return (
         <>
-            {userId !== null ? <MypagePage user_id={userId} /> : <p>Loading...</p>}
+            {userId !== null ? <MypagePage user_id={userId} logged={loggedInUserId} /> : <p>Loading...</p>}
         </>
     );
 }
