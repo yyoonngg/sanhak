@@ -192,9 +192,10 @@ export default function CategoryPage() {
       </div>
       {isDetailVisible && (
         <SkillDetailModal
-          style={'w-full sm:w-1/2 lg:w-1/3 border-none'}
+          style={'w-full sm:w-1/2 border-none'}
           skillDetail={skillDetailData as SkillDetail}
           selectedSkillPng={selectedSkillPng}
+          fromPage={'category'}
           onClose={() => setIsDetailVisible(false)}
         />
       )}

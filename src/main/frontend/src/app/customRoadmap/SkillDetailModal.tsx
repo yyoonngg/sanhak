@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { quiz, SkillDetail } from "@/models/skill";
 import { ExitIcon } from "@/components/icon";
 import QuizModal from "./QuizModal";
+import Loading from "@/components/Loading";
 
 type SkillDetailModalProps = {
     style?: string;
     skillDetail: SkillDetail;
     selectedSkillPng: string;
+    fromPage: string;
     onClose: () => void;
 };
 
@@ -14,6 +16,7 @@ const SkillDetailModal: React.FC<SkillDetailModalProps> = ({
                                                                 style,
                                                                skillDetail,
                                                                selectedSkillPng,
+                                                               fromPage,
                                                                onClose,
                                                            }) => {
     const [quiz, setQuiz] = useState<quiz | null>(null);
@@ -94,12 +97,12 @@ const SkillDetailModal: React.FC<SkillDetailModalProps> = ({
                             <div>
                                 <div className="flex">
                                     <div className="font-bold">{topic.title}</div>
-                                    {topic.status !== "completed" && (
+                                    {topic.status !== "completed" && fromPage == "customRoadmap" && (
                                         <button
-                                            className="text-white bg-primary rounded-xl px-5 ml-2 w-fit"
+                                            className="w-24 h-8 text-white bg-primary rounded-xl px-5 ml-2 w-fit"
                                             onClick={() => fetchQuiz(topic.id)}
                                         >
-                                            {topic.status}
+                                            {'테스트'}
                                         </button>
                                     )}
                                 </div>

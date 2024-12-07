@@ -431,6 +431,7 @@ export default function CustomRoadmapPage() {
             {isEditMode ? (
               <CustomSkillList 
               skillData={allCategorySkills}
+              selectedSkills={selectedRoadmap.skills}
               onSelectSkill={onSelectSkill}
               />
             ) : (
@@ -516,8 +517,10 @@ export default function CustomRoadmapPage() {
       </div>
       {isDetailVisible && (
         <SkillDetailModal
+          style={'w-full sm:w-1/2 border-none'}
           skillDetail={skillDetailData as SkillDetail}
           selectedSkillPng={selectedSkillPng}
+          fromPage={'customRoadmap'}
           onClose={() => setIsDetailVisible(false)}
         />
       )}
@@ -531,6 +534,7 @@ export default function CustomRoadmapPage() {
               {isEditMode ? (
                 <CustomSkillList 
                 skillData={allCategorySkills}
+                selectedSkills={selectedRoadmap.skills}
                 onSelectSkill={onSelectSkill}
                 />
               ) : (
@@ -539,6 +543,7 @@ export default function CustomRoadmapPage() {
                   selectedRoadmapId={selectedRoadmap.id ? selectedRoadmap.id : null}
                   onSelectRoadmap={onSelectRoadmap}
                   handleCreateBtn={handleCreateBtn}
+                  closeSidePanel={closeSidePanel}
                 />
               )}
             </div>

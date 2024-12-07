@@ -17,8 +17,9 @@ export default function ChatRoomList({
 }: ChatRoomListProps) {
 
   const handleSelecteCard = (cardId: number, chatType:string) =>{
-    if(onSelectCard){
+    if(onSelectCard && closeSidePanel){
       onSelectCard(cardId,chatType);
+      closeSidePanel();
     }
   }
   return (

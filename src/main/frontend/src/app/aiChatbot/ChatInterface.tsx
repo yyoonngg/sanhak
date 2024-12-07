@@ -3,6 +3,7 @@ import RoleDropdown from './ChatRoleDropdown';
 import {AiCardChat, ChatRoleOption} from "@/models/card";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import Link from 'next/link';
 
 type ChatInterfaceProps = {
     roles: ChatRoleOption[];
@@ -122,12 +123,21 @@ export default function ChatInterface({
                                 className="w-8 h-7 flex justify-center items-center bg-primary rounded-full text-white font-semibold cursor-pointer text-xs mr-2 py-1"
                                 onClick={() => onSendChat({ id: chatData.length + 1, isUser: 1, content: chatInput })}
                             >
-                                전송
+                                <img src='asset/png/icon_chat_send.png' />
                             </div>
                         </div>
                     </>
                ) : (
-                <div className='font-bold text-xl mb-4'>AI경험카드를 선택해주세요.</div>
+                <div className='w-full flex flex-col items-center'>
+                    <div className="text-xl mb-4">AI경험카드를 선택해주세요.</div>
+                    <div>
+                        아직 없다면{' '}
+                        <Link href="/card" className="text-blue-500 underline">
+                        여기서
+                        </Link>
+                        {' '}추가해보세요!
+                    </div>
+                </div>
                )}
                 
             </div>
