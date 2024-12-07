@@ -31,7 +31,7 @@ export default function UserProfile({
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(userInfo?.name || '');
   const [selectedCategory, setSelectedCategory] = useState(userInfo?.desirePosition || '');
-  const [profileImg, setProfileImg] = useState(userInfo?.profileImgURL || '/asset/png/profile_default_image.png');
+  const [profileImg, setProfileImg] = useState(userInfo?.profileImgURL || '/asset/png/profile_default_img.png');
   const [profileImgBlob, setProfileImgBlob] = useState<File | null>(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const router = useRouter();
@@ -79,7 +79,7 @@ export default function UserProfile({
     if (userInfo) {
       setEditedName(userInfo.name);
       setSelectedCategory(categoryLabels[userInfo.desirePosition] || '예비');
-      setProfileImg(userInfo.profileImgURL === 'default' ? '/asset/png/profile_default_image.png' : userInfo.profileImgURL);
+      setProfileImg(userInfo.profileImgURL === 'default' ? '/asset/png/profile_default_img.png' : userInfo.profileImgURL);
     }
   }, [userInfo]);
 
