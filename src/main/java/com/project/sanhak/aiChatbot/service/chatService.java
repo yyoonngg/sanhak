@@ -143,13 +143,13 @@ public class chatService {
         String url;
         switch (chat_type) {
             case 0:
-                url = apiBaseUrl + "/generalAi";
-                break;
-            case 1:
                 url = apiBaseUrl + "/interviewAi";
                 break;
-            case 2:
+            case 1:
                 url = apiBaseUrl + "/introduceAi";
+                break;
+            case 2:
+                url = apiBaseUrl + "/positionAi";
                 break;
             default:
                 throw new IllegalArgumentException("유효하지 않은 chat_type입니다: " + chat_type);

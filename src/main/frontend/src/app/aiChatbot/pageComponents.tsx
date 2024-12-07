@@ -155,6 +155,7 @@ const AiChatbotPage: React.FC = () => {
   };
 
   const handleSelectRole = (role:ChatRoleOption) => {
+    console.log("선택한 role:", role);
     setSelectedRole(role);
     if (selectedChatRoom) {
       initializeChat(selectedChatRoom.id, role.label);
@@ -228,20 +229,12 @@ const AiChatbotPage: React.FC = () => {
     }
   }, [chatData]);
 
-  useEffect(() => {
-    if (selectedChatRoom && selectedRole) {
-      console.log("Role updated, reinitializing chat:", selectedRole);
-      initializeChat(selectedChatRoom.id, selectedRole.label);
-      fetchChatMessages(selectedChatRoom.id, selectedRole.label);
-    }
-  }, [selectedRole]);
-
   return (
       <div className="w-full h-full flex flex-col items-center">
         <div className='max-w-[1400px] w-full py-0 px-4 2xl:w-[1400px] xl:px-20 lg:px-10 h-[calc(100dvh-5rem)]'>
           <div className='w-full h-full flex'>
             <div className='w-full h-full flex justify-between items-center'>
-              <div className='hidden lg:flex w-1/3 h-full justify-between items-center'>
+              <div className='hidden lg:flex w-[250px] h-full justify-between items-center'>
                 <ChatRoomList
                   chatRoomMockData={chatRoomData}
                   selectedCardId={selectedCard ? selectedCard.id : 0}
@@ -250,7 +243,7 @@ const AiChatbotPage: React.FC = () => {
               </div>
               <div className="lg:hidden fixed top-20 right-0 z-40">
                 <button
-                  className="w-28 p-3 text-xs rounded-l-lg bg-primary text-white shadow-lg"
+                  className="w-28 px-3 py-2 text-xs rounded-l-lg bg-primary text-white shadow-lg"
                   onClick={toggleSidePanel}
                 >
                   {isSidePanelOpen ? '닫기' : '현재 AI경험카드'}
@@ -267,7 +260,6 @@ const AiChatbotPage: React.FC = () => {
                   onKeyDown={handleKeyDown}
                   onResetChat={() => setChatData([])}
                   selectedChatId={selectedChatRoom?.id || 0}
-                  selectedChatType={selectedRole?.label || ""}
                   selectedRole={selectedRole}
                   handleSelectRole={handleSelectRole}
                   initializeChat={initializeChat}

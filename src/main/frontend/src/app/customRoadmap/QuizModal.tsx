@@ -29,7 +29,7 @@ const QuizModal: React.FC<QuizModalProps> = ({ quiz, onSubmit, onClose }) => {
                     ))}
                 </ul>
                 <button
-                    className="mt-3 px-4 py-2 bg-gray-500 text-white rounded w-full"
+                    className="mt-3 px-4 py-2 bg-gray-500 text-white rounded w-full flex justify-center"
                     onClick={onClose}
                 >
                     <ExitIcon/>

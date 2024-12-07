@@ -7,18 +7,21 @@ type CustomRoadmapListProps = {
   selectedRoadmapId: number | null;
   onSelectRoadmap?: (id: number) => void;
   handleCreateBtn: () => void;
+  closeSidePanel?: () => void;
 };
 
 export default function CustomRoadmapList({
   roadmapData,
   selectedRoadmapId,
   onSelectRoadmap,
-  handleCreateBtn
+  handleCreateBtn,
+  closeSidePanel
 }: CustomRoadmapListProps) {
 
   const handleSelectedCard = (id: number) =>{
-    if(onSelectRoadmap){
+    if(onSelectRoadmap && closeSidePanel){
       onSelectRoadmap(id);
+      closeSidePanel();
     }
   }
   return (
@@ -26,7 +29,7 @@ export default function CustomRoadmapList({
       <div className='w-full flex justify-between items-center '>
         <div className="w-full mb-2 px-4 font-gmarketsansMedium text-lg">커스텀 로드맵 목록</div>
         <div 
-          className='w-[35px] h-[25px] flex items-center justify-center border-2 rounded-2xl pb-1 mx-4 mb-2 font-black cursor-pointer hover:bg-white'
+          className='w-[35px] h-[25px] flex items-center justify-center border-2 rounded-2xl mx-4 mb-2 font-black cursor-pointer hover:bg-white'
           onClick={handleCreateBtn}  
         >{'+'}</div>
       </div>

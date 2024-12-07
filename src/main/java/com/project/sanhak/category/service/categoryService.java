@@ -30,7 +30,7 @@ public class categoryService {
     public List<categoryDTO> getSkilNode(String csCate) {
         // 1. 특정 카테고리에 매칭된 CodeSkil만 가져오기
         List<CodeSkil> codeSkils = categoryRepository.findAll().stream()
-                .filter(codeSkil -> isCategoryMatched(codeSkil, csCate))
+                .filter(codeSkil -> isCategory(codeSkil, csCate))
                 .toList();
 
         // 2. 가져온 CodeSkil 엔티티들의 ID를 저장
@@ -46,7 +46,7 @@ public class categoryService {
 
             // 카테고리별 좌표 설정
             dto.setPosition(getCategoryPosition(codeSkil, csCate));
-            dto.setTag(codeSkil.getCSTag());
+            dto.setTag(getCategoryTag(codeSkil,csCate));
 
             // 부모 설정
             List<Integer> parents = skilPrequeRepository.findBySPChildcsid(codeSkil).stream()
@@ -113,6 +113,33 @@ public class categoryService {
         };
     }
 
+    private String getCategoryTag(CodeSkil codeSkil, String csCate) {
+        if (codeSkil == null || csCate == null) {
+            return "none";
+        }
+
+        // 카테고리에 따라 위치 반환
+        return switch (csCate.toLowerCase()) {
+            case "frontend" -> codeSkil.getFrontend() != null
+                    ? codeSkil.getFrontend().getTag()
+                    : "none";
+            case "backend" -> codeSkil.getBackend() != null
+                    ? codeSkil.getBackend().getTag()
+                    : "none";
+            case "data" -> codeSkil.getData() != null
+                    ? codeSkil.getData().getTag()
+                    : "none";
+            case "security" -> codeSkil.getSecurity() != null
+                    ? codeSkil.getSecurity().getTag()
+                    : "none";
+            case "application" -> codeSkil.getApplication() != null
+                    ? codeSkil.getApplication().getTag()
+                    : "none";
+            default -> "none"; // 기본값 반환
+        };
+    }
+
+
     private boolean isCategoryMatched(SkilPrequeCateFlags flags, String csCate) {
         if (flags == null || csCate == null) {
             return false;
@@ -124,6 +151,21 @@ public class categoryService {
             case "data" -> flags.isData();
             case "security" -> flags.isSecurity();
             case "application" -> flags.isApplication();
+            default -> false;
+        };
+    }
+
+    private boolean isCategory(CodeSkil codeSkil, String csCate) {
+        if (codeSkil == null || csCate == null) {
+            return false;
+        }
+
+        return switch (csCate.toLowerCase()) {
+            case "frontend" -> codeSkil.getFrontend() != null && codeSkil.getFrontend().isActive();
+            case "backend" -> codeSkil.getBackend() != null && codeSkil.getBackend().isActive();
+            case "data" -> codeSkil.getData() != null && codeSkil.getData().isActive();
+            case "security" -> codeSkil.getSecurity() != null && codeSkil.getSecurity().isActive();
+            case "application" -> codeSkil.getApplication() != null && codeSkil.getApplication().isActive();
             default -> false;
         };
     }

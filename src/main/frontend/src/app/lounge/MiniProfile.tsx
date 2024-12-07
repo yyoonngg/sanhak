@@ -18,7 +18,11 @@ const categoryLabels: Record<string, string> = {
 export default function MiniProfile({
   profile
 }: MiniProfileProps) {
-  const [profileImg, setProfileImg] = useState(profile.imageURL || '/asset/png/profile_default_img.png');
+  const [profileImg, setProfileImg] = useState(
+      !profile.imageURL || profile.imageURL === 'default'
+          ? '/asset/png/profile_default_image.png'
+          : profile.imageURL
+  );
   const [category, setCategory] = useState(profile.category ? categoryLabels[profile.category] : "예비");
   return (
     <div className='w-44 h-72 xs:w-56 xs:h-80 2xl:w-64 2xl:h-96 transform transition-transform duration-300 hover:scale-105'>

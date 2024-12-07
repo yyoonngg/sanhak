@@ -28,7 +28,7 @@ useEffect(() => {
     };
 
     return (
-        <div className="flex flex-wrap gap-4 mt-2">
+        <div className="flex flex-wrap gap-4">
             <button
                 className={`flex items-center gap-2 px-2 py-1 border rounded-xl hover:bg-gray-d9 ${
                     selectedFilter === 'time' ? 'bg-primary text-white' : 'bg-white'

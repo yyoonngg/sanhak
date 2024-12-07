@@ -3,6 +3,7 @@ import RoleDropdown from './ChatRoleDropdown';
 import {AiCardChat, ChatRoleOption} from "@/models/card";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import Link from 'next/link';
 
 type ChatInterfaceProps = {
     roles: ChatRoleOption[];
@@ -15,7 +16,6 @@ type ChatInterfaceProps = {
     onKeyDown: (event: React.KeyboardEvent) => void;
     onResetChat: () => void;
     selectedChatId: number;
-    selectedChatType: string | undefined;
     selectedRole: ChatRoleOption;
     handleSelectRole: (role: ChatRoleOption) => void;
     initializeChat: (chatId: number, chatRole: string) => void;
@@ -30,28 +30,31 @@ const aiRoles: ChatRoleOption[] = [
 ];
 
 export default function ChatInterface({
-                                          chatData,
-                                          chatInput,
-                                          isLoading,
-                                          selectedCardTitle,
-                                          onSendChat,
-                                          onInputChange,
-                                          onKeyDown,
-                                          onResetChat,
-                                          selectedChatId,
-                                          selectedChatType,
-                                          initializeChat,
-                                          fetchChatMessages,
-                                          handleSideList
-                                      }: ChatInterfaceProps) {
+    chatData,
+    chatInput,
+    isLoading,
+    selectedCardTitle,
+    onSendChat,
+    onInputChange,
+    onKeyDown,
+    onResetChat,
+    selectedChatId,
+    selectedRole,
+    handleSelectRole,
+    initializeChat,
+    fetchChatMessages,
+    handleSideList
+}: ChatInterfaceProps) {
     const chatEndRef = useRef<HTMLDivElement | null>(null);
     const [roles, setRoles] = useState<ChatRoleOption[]>(aiRoles);
-    const [selectedRole, setSelectedRole] = useState<ChatRoleOption>(roles[0]);
-    const handleSelectRole = useCallback((role: ChatRoleOption) => {
-        console.log("Previous role:", selectedRole);
+    const [currentRole, setCurrentRole] = useState<ChatRoleOption>(selectedRole);
+
+    const handleCurrentRole = useCallback((role: ChatRoleOption) => {
+        console.log("Previous role:", currentRole);
         console.log("New role selected:", role);
-        setSelectedRole(role);
-    }, [selectedRole]);
+        setCurrentRole(role);
+        handleSelectRole(role);
+    }, [currentRole]);
 
     useEffect(() => {
         if (chatEndRef.current) {
@@ -61,12 +64,6 @@ export default function ChatInterface({
         }
     }, [chatData]);
 
-    useEffect(() => {
-        if (roles.length > 0) {
-            setSelectedRole(roles[0]);
-        }
-    }, [roles]);
-
     return (
         <div className="w-full h-full flex flex-col">
             <div className="w-full h-[3rem] flex items-center">
@@ -75,11 +72,11 @@ export default function ChatInterface({
                     onClick={handleSideList}
                 ><img src='asset/png/icon_list_open.png'/></div>
                 <RoleDropdown roles={roles}
-                    selectedRole={selectedRole}
+                    selectedRole={currentRole}
                     onResetChat={() => {
                         onResetChat();
                     }}
-                    handleSelectRole={handleSelectRole}
+                    handleSelectRole={handleCurrentRole}
                     initializeChat={initializeChat} // 추가
                     fetchChatMessages={fetchChatMessages} // 추가
                     selectedChatId={selectedChatId} // 추가
@@ -126,12 +123,21 @@ export default function ChatInterface({
                                 className="w-8 h-7 flex justify-center items-center bg-primary rounded-full text-white font-semibold cursor-pointer text-xs mr-2 py-1"
                                 onClick={() => onSendChat({ id: chatData.length + 1, isUser: 1, content: chatInput })}
                             >
-                                전송
+                                <img src='asset/png/icon_chat_send.png' />
                             </div>
                         </div>
                     </>
                ) : (
-                <div className='font-bold text-xl mb-4'>AI경험카드를 선택해주세요.</div>
+                <div className='w-full flex flex-col items-center'>
+                    <div className="text-xl mb-4">AI경험카드를 선택해주세요.</div>
+                    <div>
+                        아직 없다면{' '}
+                        <Link href="/card" className="text-blue-500 underline">
+                        여기서
+                        </Link>
+                        {' '}추가해보세요!
+                    </div>
+                </div>
                )}
                 
             </div>
