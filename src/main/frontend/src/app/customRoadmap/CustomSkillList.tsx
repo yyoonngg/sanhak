@@ -1,9 +1,10 @@
 "use client";
-import { AllKindOfSkills } from '@/models/skill';
-import React, { useState } from 'react';
+import { AllKindOfSkills, RoadmapSkill } from '@/models/skill';
+import React, { useEffect, useState } from 'react';
 
 type CustomSkillListProps = {
   skillData: AllKindOfSkills[];
+  selectedSkills: RoadmapSkill[];
   onSelectSkill?: (skillName: string) => void;
 };
 
@@ -18,10 +19,12 @@ const categoryLabels: Record<string, string> = {
 
 export default function CustomSkillList({
   skillData,
+  selectedSkills,
   onSelectSkill
 }: CustomSkillListProps) {
+  console.log(selectedSkills);
   const [selectedCategory, setSelectedCategory] = useState<AllKindOfSkills | null>(null);
-  
+
   const handleSelectedCate = (category: string) => {
     const selected = skillData.find((skill) => skill.category === category);
     if(selected && selected === selectedCategory){
@@ -32,9 +35,8 @@ export default function CustomSkillList({
   };
 
   const handleSelectedSkill = (skillName: string) => {
-    console.log(skillName);
-    if(onSelectSkill){
-      onSelectSkill(skillName);
+    if (onSelectSkill) {
+      onSelectSkill(skillName); 
     }
   };
 
@@ -63,15 +65,24 @@ export default function CustomSkillList({
           </div>
 
           {cate.category === selectedCategory?.category &&
-            selectedCategory.skills.map((skill) => (
-              <div
-                key={skill.id}
-                className="w-10/12 ml-auto mr-auto py-2 px-3 mb-2 bg-gray-f2 rounded-md border border-gray-d9 hover:bg-white cursor-pointer"
-                onClick={() => handleSelectedSkill(skill.name)}
-              >
-                {skill.name}
-              </div>
-            ))}
+            selectedCategory.skills.map((skill) => {
+              const isSelected = selectedSkills.some(
+                (selectedSkill) => selectedSkill.name === skill.name
+              );
+
+              return (
+                <div
+                  key={skill.id}
+                  className={`w-10/12 ml-auto mr-auto py-2 px-3 mb-2 rounded-md border border-gray-d9 cursor-pointer ${
+                    isSelected ? "bg-gray-cc cursor-not-allowed" : "bg-gray-f2 hover:bg-white"
+                  }`}
+                  onClick={isSelected ? undefined : () => handleSelectedSkill(skill.name)}
+                >
+                  {skill.name}
+                </div>
+              );
+            })
+          }
         </div>
       ))}
       </div>

@@ -86,7 +86,7 @@ export default function LoungePage() {
         <div className='max-w-[1400px] h-full px-4 2xl:w-[1400px] xl:px-20 lg:px-10'>
           <div className='w-full flex flex-col'>
             <div className='font-bold text-2xl mb-1'>커리어라운지</div>
-            <div className='font-md text-md mb-5'>다양한 커리어 경험들을 살펴보세요!</div>
+            <div className='font-md text-md mb-4'>다양한 커리어 경험들을 살펴보세요!</div>
             <LoungeFilter selectedFilter={selectedFilter} handleClickFilter={handleClickFilter} />
           </div>
           <div className='w-full h-full flex flex-col pt-10 mb-10'>

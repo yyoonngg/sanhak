@@ -137,10 +137,10 @@ export default function Card({
           <div className='w-full h-2/3 flex flex-col justify-around'>
             <div className='flex flex-col justify-between items-start px-4'>
               {(card?.fromDate || card?.toDate) && (
-                <div className='font-normal text-gray-cc'>{card?.fromDate} ~ {card?.toDate}</div>
+                <div className='text-sm md:text-normal text-gray-cc'>{card?.fromDate} ~ {card?.toDate}</div>
               )}
               {card?.title && (
-                <div className='font-semibold text-2xl mb-2'>{card?.title}</div>
+                <div className='font-semibold text-2xl my-1'>{card?.title}</div>
               )}
               <div className='w-full flex justify-between items-center'>
                 <div className='flex items-center'>

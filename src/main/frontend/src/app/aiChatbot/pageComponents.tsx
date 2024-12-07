@@ -243,7 +243,7 @@ const AiChatbotPage: React.FC = () => {
               </div>
               <div className="lg:hidden fixed top-20 right-0 z-40">
                 <button
-                  className="w-28 p-3 text-xs rounded-l-lg bg-primary text-white shadow-lg"
+                  className="w-28 px-3 py-2 text-xs rounded-l-lg bg-primary text-white shadow-lg"
                   onClick={toggleSidePanel}
                 >
                   {isSidePanelOpen ? '닫기' : '현재 AI경험카드'}
