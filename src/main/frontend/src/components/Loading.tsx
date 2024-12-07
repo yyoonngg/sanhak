@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import BeatLoader from "react-spinners/BeatLoader";
 import axios from "axios";
 
+
 const Loading: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [data, setData] = useState<any>(null);
