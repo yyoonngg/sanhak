@@ -77,6 +77,24 @@ export default function LoungePage() {
     }
   };
 
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => {
+        const newPage = prev - 1;
+        localStorage.setItem('currentPage', newPage.toString());
+        return newPage;
+      });
+    }
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage((prev) => {
+      const newPage = prev + 1;
+      localStorage.setItem('currentPage', newPage.toString());
+      return newPage;
+    });
+  };
+
   useEffect(() => {
     fetchProfileData();
   }, [selectedFilter, currentPage]);
@@ -86,7 +104,7 @@ export default function LoungePage() {
         <div className='max-w-[1400px] h-full px-4 2xl:w-[1400px] xl:px-20 lg:px-10'>
           <div className='w-full flex flex-col'>
             <div className='font-bold text-2xl mb-1'>커리어라운지</div>
-            <div className='font-md text-md mb-5'>다양한 커리어 경험들을 살펴보세요!</div>
+            <div className='font-md text-md mb-4'>다양한 커리어 경험들을 살펴보세요!</div>
             <LoungeFilter selectedFilter={selectedFilter} handleClickFilter={handleClickFilter} />
           </div>
           <div className='w-full h-full flex flex-col pt-10 mb-10'>
@@ -103,6 +121,22 @@ export default function LoungePage() {
                 ))}
               </div>
             </div>
+          </div>
+          <div className='flex justify-center items-center mt-4'>
+            <button
+                onClick={handlePreviousPage}
+                disabled={currentPage === 1}
+                className='px-4 py-2 mx-2 bg-gray-200 rounded disabled:opacity-50'
+            >
+              이전
+            </button>
+            <span className='px-4 py-2'>{currentPage}</span>
+            <button
+                onClick={handleNextPage}
+                className='px-4 py-2 mx-2 bg-gray-200 rounded'
+            >
+              다음
+            </button>
           </div>
         </div>
       </div>

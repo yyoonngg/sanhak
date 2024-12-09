@@ -2,6 +2,6 @@ import MypagePage from "@/app/mypage/pageComponents";
 
 export default function Page() {
     return (
-        <MypagePage />
+        <MypagePage logged={0}/>
     );
 }

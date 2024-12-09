@@ -237,14 +237,17 @@ const Roadmap = ({
         })}
 
         {skills.map((skill) => (
-          <SkillNode 
-            key={skill.id} 
-            skill={skill} 
-            scale={ROADMAP_SCALE} 
-            isSelected={selectedSkillIds.includes(skill.id)}
-            onSelect={isEditMode ? handleSelectForPath : handleSelectForDetail}
-            onDrag={isEditMode ? handleDrag : undefined}
-          />
+          <g className='cursor-pointer' key={skill.id}>
+            <SkillNode 
+              key={skill.id} 
+              skill={skill} 
+              scale={ROADMAP_SCALE} 
+              isSelected={selectedSkillIds.includes(skill.id)}
+              onSelect={isEditMode ? handleSelectForPath : handleSelectForDetail}
+              onDrag={isEditMode ? handleDrag : undefined}
+            />
+          </g>
+          
         ))}
       </svg>
     </div>

@@ -1,10 +1,14 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import RoleDropdown from './ChatRoleDropdown';
 import {AiCardChat, ChatRoleOption} from "@/models/card";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import Link from 'next/link';
 
 type ChatInterfaceProps = {
     roles: ChatRoleOption[];
     chatData: AiCardChat[];
+    isLoading: boolean;
     chatInput: string;
     selectedCardTitle: string | undefined;
     onSendChat: (userMessage: { id: number; isUser: number; content: string }) => void;
@@ -12,11 +16,11 @@ type ChatInterfaceProps = {
     onKeyDown: (event: React.KeyboardEvent) => void;
     onResetChat: () => void;
     selectedChatId: number;
-    selectedChatType: string | undefined;
     selectedRole: ChatRoleOption;
     handleSelectRole: (role: ChatRoleOption) => void;
     initializeChat: (chatId: number, chatRole: string) => void;
     fetchChatMessages: (chatId: number, chatRole: string) => void;
+    handleSideList: () => void;
 };
 
 const aiRoles: ChatRoleOption[] = [
@@ -26,28 +30,31 @@ const aiRoles: ChatRoleOption[] = [
 ];
 
 export default function ChatInterface({
-                                          chatData,
-                                          chatInput,
-                                          selectedCardTitle,
-                                          onSendChat,
-                                          onInputChange,
-                                          onKeyDown,
-                                          onResetChat,
-                                          selectedChatId,
-                                          selectedChatType,
-                                          initializeChat,
-                                          fetchChatMessages,
-                                      }: ChatInterfaceProps) {
+    chatData,
+    chatInput,
+    isLoading,
+    selectedCardTitle,
+    onSendChat,
+    onInputChange,
+    onKeyDown,
+    onResetChat,
+    selectedChatId,
+    selectedRole,
+    handleSelectRole,
+    initializeChat,
+    fetchChatMessages,
+    handleSideList
+}: ChatInterfaceProps) {
     const chatEndRef = useRef<HTMLDivElement | null>(null);
     const [roles, setRoles] = useState<ChatRoleOption[]>(aiRoles);
-    const [selectedRole, setSelectedRole] = useState<ChatRoleOption>(roles[0]);
-    const [loading, setLoading] = useState(false);
+    const [currentRole, setCurrentRole] = useState<ChatRoleOption>(selectedRole);
 
-    const handleSelectRole = useCallback((role: ChatRoleOption) => {
-        console.log("Previous role:", selectedRole);
+    const handleCurrentRole = useCallback((role: ChatRoleOption) => {
+        console.log("Previous role:", currentRole);
         console.log("New role selected:", role);
-        setSelectedRole(role);
-    }, [selectedRole]);
+        setCurrentRole(role);
+        handleSelectRole(role);
+    }, [currentRole]);
 
     useEffect(() => {
         if (chatEndRef.current) {
@@ -57,68 +64,82 @@ export default function ChatInterface({
         }
     }, [chatData]);
 
-    useEffect(() => {
-        if (roles.length > 0) {
-            setSelectedRole(roles[0]);
-        }
-    }, [roles]);
-
     return (
         <div className="w-full h-full flex flex-col">
-            <div className="w-full">
+            <div className="w-full h-[3rem] flex items-center">
+                <div 
+                    className='lg:hidden flex'
+                    onClick={handleSideList}
+                ><img src='asset/png/icon_list_open.png'/></div>
                 <RoleDropdown roles={roles}
-                              selectedRole={selectedRole}
-                              onResetChat={() => {
-                                  onResetChat();
-                              }}
-                              handleSelectRole={handleSelectRole}
-                              initializeChat={initializeChat} // 추가
-                              fetchChatMessages={fetchChatMessages} // 추가
-                              selectedChatId={selectedChatId} // 추가
+                    selectedRole={currentRole}
+                    onResetChat={() => {
+                        onResetChat();
+                    }}
+                    handleSelectRole={handleCurrentRole}
+                    initializeChat={initializeChat} // 추가
+                    fetchChatMessages={fetchChatMessages} // 추가
+                    selectedChatId={selectedChatId} // 추가
                 />
             </div>
-            <div className={`w-full h-full flex flex-col items-center ${chatData.length > 0 ? 'justify-between' : 'justify-center'}`}>
-                {chatData.length > 0 ? (
-                    <div className="w-5/6 h-full overflow-y-auto scrollbar-none pt-4">
-                        {chatData.map((chat) => (
-                            <div
-                                key={chat.id}
-                                className={`w-full mb-2 flex ${chat.isUser === 1 ? 'justify-end' : 'justify-start'}`}
-                            >
-                                <div className={`${chat.isUser === 1 ? 'bg-primary text-white' : 'bg-gray-ec text-black'} p-2 rounded-lg max-w-xs`}>
-                                    <div>{chat.content}</div>
-                                </div>
+            <div className={`w-full h-[calc(100%-3rem)] flex flex-col items-center ${chatData.length > 0 ? 'justify-between' : 'justify-center'}`}>
+               {selectedCardTitle ? (
+                    <>
+                        {chatData.length > 0 ? (
+                            <div className="w-5/6 h-full overflow-y-auto scrollbar-none pt-4">
+                                {chatData.map((chat) => (
+                                    <div
+                                        key={chat.id}
+                                        className={`w-full mb-2 flex ${chat.isUser === 1 ? 'justify-end' : 'justify-start'}`}
+                                    >
+                                        <div className={`${chat.isUser === 1 ? 'bg-primary text-white' : 'bg-gray-ec text-black'} p-2 rounded-lg max-w-xs`}>
+                                            <ReactMarkdown remarkPlugins={[remarkGfm]}>{chat.content}</ReactMarkdown>
+                                        </div>
+                                    </div>
+                                ))}
+                                {isLoading && ( // 로딩 상태에 따라 표시
+                                    <div className="w-full mb-2 flex justify-start">
+                                        <div className="bg-gray-ec text-black p-2 rounded-lg max-w-xs">
+                                            <div>대기중...</div>
+                                        </div>
+                                    </div>
+                                )}
+                                <div ref={chatEndRef} />
                             </div>
-                        ))}
-                        {loading && (
-                            <div className="w-full mb-2 flex justify-start">
-                                <div className="bg-gray-ec text-black p-2 rounded-lg max-w-xs">
-                                    <div>대기중...</div>
-                                </div>
-                            </div>
+                        ) : (
+                            <div className="font-bold text-xl mb-4">{selectedRole.guideNotice}</div>
                         )}
-                        <div ref={chatEndRef} />
-                    </div>
-                ) : (
-                    <div className="font-bold text-xl mb-4">{selectedRole.guideNotice}</div>
-                )}
 
-                <div className="w-5/6 flex items-center bg-white rounded-xl border border-gray-d9 mb-2">
-                    <input
-                        type="text"
-                        value={chatInput}
-                        className="w-full h-10 border-0 rounded-xl text-sm focus:outline-0"
-                        placeholder={`AI에게 '${selectedCardTitle}'에 대한 질문을 해보세요.`}
-                        onChange={onInputChange}
-                        onKeyDown={onKeyDown}
-                    />
-                    <div
-                        className="w-8 h-7 flex justify-center items-center bg-primary rounded-full text-white font-semibold cursor-pointer text-xs mr-2 py-1"
-                        onClick={() => onSendChat({ id: chatData.length + 1, isUser: 1, content: chatInput })}
-                    >
-                        전송
+                        <div className="w-5/6 flex items-center bg-white rounded-xl border border-gray-d9 mb-2">
+                            <input
+                                type="text"
+                                value={chatInput}
+                                className="w-full h-10 border-0 rounded-xl text-sm focus:outline-0"
+                                placeholder={`AI에게 '${selectedCardTitle}'에 대한 질문을 해보세요.`}
+                                onChange={onInputChange}
+                                onKeyDown={onKeyDown}
+                            />
+                            <div
+                                className="w-8 h-7 flex justify-center items-center bg-primary rounded-full text-white font-semibold cursor-pointer text-xs mr-2 py-1"
+                                onClick={() => onSendChat({ id: chatData.length + 1, isUser: 1, content: chatInput })}
+                            >
+                                <img src='asset/png/icon_chat_send.png' />
+                            </div>
+                        </div>
+                    </>
+               ) : (
+                <div className='w-full flex flex-col items-center'>
+                    <div className="text-xl mb-4">AI경험카드를 선택해주세요.</div>
+                    <div>
+                        아직 없다면{' '}
+                        <Link href="/card" className="text-blue-500 underline">
+                        여기서
+                        </Link>
+                        {' '}추가해보세요!
                     </div>
                 </div>
+               )}
+                
             </div>
         </div>
     );
