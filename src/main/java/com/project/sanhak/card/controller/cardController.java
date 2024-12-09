@@ -97,7 +97,7 @@ public class cardController {
             if ("success".equals(result)) {
                 return ResponseEntity.ok("{\"status\":\"success\"}");
             } else {
-                return ResponseEntity.badRequest().body("카드 생성 과정에서 오류가 발생했습니다.");
+                return ResponseEntity.status(500).body("서버 오류가 발생했습니다. 다시 시도해주세요.");
             }
 
         } catch (Exception e) {
@@ -178,7 +178,7 @@ public class cardController {
             if ("success".equals(result)) {
                 return ResponseEntity.ok("{\"status\":\"success\"}");
             } else {
-                return ResponseEntity.badRequest().body("카드 업데이트 과정에서 오류가 발생했습니다.");
+                return ResponseEntity.status(500).body("서버 오류가 발생했습니다. 다시 시도해주세요.");
             }
 
         } catch (Exception e) {
