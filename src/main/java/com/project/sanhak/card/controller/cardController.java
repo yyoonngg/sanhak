@@ -63,9 +63,9 @@ public class cardController {
     @PostMapping("/create")
     @Transactional
     public ResponseEntity<String> createAiCard(HttpSession session,
-                                                     @RequestPart("cardInfo") aiCardDTO cardInfoDTO,
-                                                     @RequestPart("image") MultipartFile imageFile,
-                                                     @RequestPart("pdfFile") MultipartFile pdfFile) {
+                                               @RequestPart("cardInfo") aiCardDTO cardInfoDTO,
+                                               @RequestPart("image") MultipartFile imageFile,
+                                               @RequestPart("pdfFile") MultipartFile pdfFile) {
         try {
             Integer uidAttribute = (Integer) session.getAttribute("uid");
             if (uidAttribute == null) {
@@ -97,7 +97,7 @@ public class cardController {
             if ("success".equals(result)) {
                 return ResponseEntity.ok("{\"status\":\"success\"}");
             } else {
-                return ResponseEntity.badRequest().body("카드 생성 과정에서 오류가 발생했습니다.");
+                return ResponseEntity.status(500).body("서버 오류가 발생했습니다. 다시 시도해주세요.");
             }
 
         } catch (Exception e) {
@@ -125,10 +125,10 @@ public class cardController {
     @PostMapping("/update/{card_id}")
     @Transactional
     public ResponseEntity<String> updateAiCard(@PathVariable int card_id,
-                                                     HttpSession session,
-                                                     @RequestPart("cardInfo") aiCardDTO updatedCardDTO,
-                                                     @RequestPart(value = "image", required = false) MultipartFile imageFile,
-                                                     @RequestPart(value = "pdfFile", required = false) MultipartFile pdfFile) {
+                                               HttpSession session,
+                                               @RequestPart("cardInfo") aiCardDTO updatedCardDTO,
+                                               @RequestPart(value = "image", required = false) MultipartFile imageFile,
+                                               @RequestPart(value = "pdfFile", required = false) MultipartFile pdfFile) {
         try {
             Integer uidAttribute = (Integer) session.getAttribute("uid");
             if (uidAttribute == null) {
@@ -136,16 +136,18 @@ public class cardController {
             }
             int uid = uidAttribute;
             User user = userService.getUserFromUid(uid);
-            ExperienceCard existingCard = cardRepository.findByECIdAndECuid(card_id, user)
-                    .orElseThrow(() -> new IllegalArgumentException("카드를 찾을 수 없습니다."));
-            ExperienceCard card = CardMapper.toEntity(updatedCardDTO, user);
+            ExperienceCard existingCard = cardRepository.findById(card_id)
+                    .orElseThrow(() -> new IllegalArgumentException("해당 카드가 존재하지 않습니다."));
+            ExperienceCard updatedCard = CardMapper.toEntity(updatedCardDTO, user);
+            updateFields(existingCard, updatedCard);
+
             if (updatedCardDTO.getTitle() != null) {
                 existingCard.setECTitle(updatedCardDTO.getTitle());
             }
             if (updatedCardDTO.getReflection() != null) {
                 existingCard.setECReflection(updatedCardDTO.getReflection());
             }
-            if(imageFile != null &&!imageFile.isEmpty()){
+            if (imageFile != null && !imageFile.isEmpty()) {
                 S3FileService.deleteFileFromS3(updatedCardDTO.getImageUrl());
                 String imageUrl = null;
                 if (!imageFile.isEmpty()) {
@@ -156,9 +158,9 @@ public class cardController {
                         log.warn("이미지 업로드 실패: {}", e.getMessage());
                     }
                 }
-                card.setECImageUrl(imageUrl);
+                existingCard.setECImageUrl(imageUrl);
             }
-            if(pdfFile != null &&!pdfFile.isEmpty()){
+            if (pdfFile != null && !pdfFile.isEmpty()) {
                 S3FileService.deleteFileFromS3(updatedCardDTO.getPdfUrl());
                 String pdfUrl;
                 try {
@@ -169,21 +171,14 @@ public class cardController {
                     log.error("PDF 파일 업로드 실패: {}", e.getMessage());
                     return ResponseEntity.badRequest().body("PDF 파일 업로드에 실패했습니다.");
                 }
-                card.setECPdfUrl(pdfUrl);
-            } else {
-                try {
-                    pdfFile= S3FileService.downloadFileAsMultipartFile(updatedCardDTO.getPdfUrl());
-                } catch (Exception e) {
-                    log.error("PDF 파일 다운로드 실패: {}", e.getMessage());
-                    return ResponseEntity.status(500).body("PDF 파일 다운로드에 실패했습니다.");
-                }
+                existingCard.setECPdfUrl(pdfUrl);
             }
             // Call the service to update the card
             String result = cardService.updateAiCard(user, card_id, existingCard);
             if ("success".equals(result)) {
                 return ResponseEntity.ok("{\"status\":\"success\"}");
             } else {
-                return ResponseEntity.badRequest().body("카드 업데이트 과정에서 오류가 발생했습니다.");
+                return ResponseEntity.status(500).body("서버 오류가 발생했습니다. 다시 시도해주세요.");
             }
 
         } catch (Exception e) {
@@ -217,6 +212,48 @@ public class cardController {
         } catch (Exception e) {
             log.error("카드 삭제 오류: {}", e.getMessage());
             return ResponseEntity.badRequest().body("카드를 삭제하는 과정에서 오류가 발생했습니다.");
+        }
+    }
+
+    private void updateFields(ExperienceCard existingCard, ExperienceCard updatedCard) {
+        if (updatedCard.getECFromDate() != null) {
+            existingCard.setECFromDate(updatedCard.getECFromDate());
+        }
+        if (updatedCard.getECToDate() != null) {
+            existingCard.setECToDate(updatedCard.getECToDate());
+        }
+        if (updatedCard.getECTitle() != null) {
+            existingCard.setECTitle(updatedCard.getECTitle());
+        }
+        if (updatedCard.getECPosition() != null) {
+            existingCard.setECPosition(updatedCard.getECPosition());
+        }
+        if (updatedCard.getECSkill() != null) {
+            existingCard.setECSkill(updatedCard.getECSkill());
+        }
+        if (updatedCard.getECTool() != null) {
+            existingCard.setECTool(updatedCard.getECTool());
+        }
+        if (updatedCard.getECReflection() != null) {
+            existingCard.setECReflection(updatedCard.getECReflection());
+        }
+        if (updatedCard.getECSummary() != null) {
+            existingCard.setECSummary(updatedCard.getECSummary());
+        }
+        if (updatedCard.getECImageUrl() != null) {
+            existingCard.setECImageUrl(updatedCard.getECImageUrl());
+        }
+        if (updatedCard.getECPdfName() != null) {
+            existingCard.setECPdfName(updatedCard.getECPdfName());
+        }
+        if (updatedCard.getECPdfUrl() != null) {
+            existingCard.setECPdfUrl(updatedCard.getECPdfUrl());
+        }
+        if (updatedCard.getECLink() != null) {
+            existingCard.setECLink(updatedCard.getECLink());
+        }
+        if (updatedCard.getECText() != null) {
+            existingCard.setECText(updatedCard.getECText());
         }
     }
 }
